@@ -1,0 +1,7 @@
+node_modules
+app/browser
+app/packages
+app/packages/*
+packages/
+app/public/i18n/*.json
+app/.meteor/dev_bundle
