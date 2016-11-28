@@ -34,7 +34,7 @@ The receive route, showing the wallet overview
 
 // Default route
 Router.route('/', {
-    template: 'views_view1',
+    template: 'views_home',
     name: 'home'
 });
 

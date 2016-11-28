@@ -42,6 +42,10 @@
 			, "networkHealth": {
 				"header": "Network Health"
 			}
+		},
+		"home" : {
+			"title" : "Home",
+			"defaultName" : "Home"
 		}
 		, "view1": {
 			"title": "View 1"
