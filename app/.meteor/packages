@@ -4,10 +4,10 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-reactive-var
-less
+reactive-var@1.0.11
+less@2.7.8
 iron:router
-fastclick
+fastclick@1.0.13
 tap:i18n
 3stack:bignumber
 zimme:iron-router-active
@@ -27,20 +27,22 @@ dburles:collection-helpers
 matb33:collection-hooks
 raix:handlebar-helpers
 chuangbo:cookie
-markdown
-standard-minifiers
-meteor-base
-mobile-experience
-mongo
+markdown@1.0.11
+meteor-base@1.0.4
+mobile-experience@1.0.4
+mongo@1.1.14
 blaze-html-templates
-session
-jquery
-tracker
-logging
-reload
-random
-ejson
+session@1.1.7
+jquery@1.11.10
+tracker@1.1.1
+logging@1.1.16
+reload@1.1.11
+random@1.0.10
+ejson@1.0.13
 spacebars
-check
+check@1.2.4
 silentcicero:solc
 mike:mocha
+standard-minifier-css
+standard-minifier-js
+shell-server

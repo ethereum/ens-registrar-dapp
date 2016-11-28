@@ -3,6 +3,7 @@
 		"app": {
 			"title": "My Ethereum ÐApp"
 			, "buttons": {
+				"home": "Home",
 				"view1": "View1"
 				, "view2": "View2"
 			}
@@ -29,7 +30,7 @@
 			}
 			, "accounts": {
 				"header": "My Accounts"
-				, "description": "These are your Ethereum addresses. The identicons are generated based on the address value. Note, balance is static."			
+				, "description": "These are your Ethereum addresses. The identicons are generated based on the address value. Note, balance is static."
 			}
 			, "multiplyContract": {
 				"header": "Multiply Contract"
@@ -39,7 +40,7 @@
 				, "placeholder": "Number To Multiply"
 			}
 			, "networkHealth": {
-				"header": "Network Health"			
+				"header": "Network Health"
 			}
 		}
 		, "view1": {
