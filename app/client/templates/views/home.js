@@ -5,9 +5,9 @@ Template Controllers
 */
 
 /**
-The view1 template
+The home template
 
-@class [template] views_view1
+@class [template] views_home
 @constructor
 */
 
@@ -20,6 +20,10 @@ Template['views_home'].helpers({
 
     'name': function(){
         return this.name || TAPi18n.__('dapp.home.defaultName');
+    },
+    'ens' : function() {
+      import ens from 'ethereum-ens';
+      return ens;
     }
 });
 
