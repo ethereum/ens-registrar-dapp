@@ -20,10 +20,6 @@ Template['views_home'].helpers({
 
     'name': function(){
         return this.name || TAPi18n.__('dapp.home.defaultName');
-    },
-    'ens' : function() {
-      import ens from 'ethereum-ens';
-      return ens;
     }
 });
 
