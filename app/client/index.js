@@ -1,7 +1,7 @@
 
 // disconnect any meteor server
-if(location.host !== 'localhost:3000' 
-   && location.host !== '127.0.0.1:3000' 
+if(location.host !== 'localhost:3000'
+   && location.host !== '127.0.0.1:3000'
    && typeof MochaWeb === 'undefined')
     Meteor.disconnect();
 
@@ -18,14 +18,15 @@ if (Meteor.isClient) {
 
 Meteor.startup(function() {
     // set providor, which should be a geth node
-    // my RPC settings are: 
+    // my RPC settings are:
     // geth --rpc --rpcaddr="0.0.0.0" --rpccorsdomain="*" --mine --unlock=YOUR_ACCOUNT --verbosity=5 --maxpeers=0 --minerthreads="3"
     if(!web3.currentProvider)
         web3.setProvider(new web3.providers.HttpProvider("http://localhost:8545"));
-    
-    // Setup EthAccounts
+
+    // Init collections
     EthAccounts.init();
-        
+    EthBlocks.init();
+
     // SET default language
     if(Cookie.get('TAPi18next')) {
         TAPi18n.setLanguage(Cookie.get('TAPi18next'));
@@ -36,7 +37,7 @@ Meteor.startup(function() {
         // set default language
         if (_.isObject(availLang) && availLang[userLang]) {
             TAPi18n.setLanguage(userLang);
-            // lang = userLang; 
+            // lang = userLang;
         } else if (_.isObject(availLang) && availLang[userLang.substr(0,2)]) {
             TAPi18n.setLanguage(userLang.substr(0,2));
             // lang = userLang.substr(0,2);
@@ -52,7 +53,7 @@ Meteor.startup(function() {
             moment.locale(TAPi18n.getLanguage().substr(0,2));
             numeral.language(TAPi18n.getLanguage().substr(0,2));
         }
-    });	
+    });
 
 	// Set Meta Title
 	Meta.setTitle(TAPi18n.__("dapp.app.title"));
