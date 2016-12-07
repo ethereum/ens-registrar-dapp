@@ -46,3 +46,4 @@ standard-minifier-css
 standard-minifier-js
 shell-server
 ecmascript
+ethereum:dapp-styles
