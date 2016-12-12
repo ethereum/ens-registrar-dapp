@@ -436,6 +436,3 @@ var auctionRegistrarContract = web3.eth.contract([
     "type": "event"
   }
 ]);
-
-//registrar = auctionRegistrarContract.at(ens.resolver('eth').addr());
-//console.log(registrar);
