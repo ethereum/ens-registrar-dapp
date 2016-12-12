@@ -18,11 +18,14 @@ Template['views_home'].helpers({
     @method (name)
     */
 
-    'name': function(){
+    'name': function() {
         return this.name || TAPi18n.__('dapp.home.defaultName');
     },
-    'searched': function(){
+    'searched': function() {
       return Session.get('searched');
+    },
+    'network': function() {
+      return Session.get('network');
     }
 });
 
