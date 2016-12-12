@@ -33,7 +33,6 @@ mobile-experience@1.0.4
 mongo@1.1.14
 blaze-html-templates
 session@1.1.7
-jquery@1.11.10
 tracker@1.1.1
 logging@1.1.16
 reload@1.1.11
@@ -47,3 +46,4 @@ standard-minifier-css
 standard-minifier-js
 shell-server
 ecmascript
+ethereum:dapp-styles

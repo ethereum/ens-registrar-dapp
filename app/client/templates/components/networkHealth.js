@@ -86,7 +86,7 @@ Template['components_networkHealth'].helpers({
     */
 
 	'blockNumber': function(){
-		return web3.eth.blockNumber;
+		return EthBlocks.latest.number;
 	},
 
 
