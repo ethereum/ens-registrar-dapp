@@ -43,6 +43,7 @@ frozeman:reactive-timer@0.1.7
 frozeman:storage@0.1.9
 frozeman:template-var@1.3.0
 geojson-utils@1.0.10
+hashanp:geopattern@0.0.1
 hot-code-push@1.0.4
 html-tools@1.0.11
 htmljs@1.0.11
