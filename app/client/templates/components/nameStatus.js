@@ -1,23 +1,44 @@
 
 Template['components_nameStatus'].onCreated(function() {
     var template = this;
-    TemplateVar.set('status', 'Looking up status...');
     function lookUp() {
       var searched = Session.get('searched');
-      if (!searched || searched === '') {
-        TemplateVar.set(template, 'name', searched);
-        TemplateVar.set(template, 'status', 'No name entered');
+      if (!searched) {
         return;
       }
+      //Two tasks: get address, and get entry.
+      let tasks = 2;
+      let address = null;
+      let entry = null;
+      function taskDone() {
+        tasks--;
+        if (tasks === 0) {
+          TemplateVar.set(template, 'state', {
+            name: searched + '.eth',
+            address,
+            entry
+          })
+        }
+      }
       ens.resolver(searched + '.eth', (err, res) => {
-          TemplateVar.set(template, 'name', searched);
-          TemplateVar.set(template, 'status', err ?
-            String(err.message || err) :
-            String(res)
-          );
+        if (!err) {
+          address = res.addr();
+        }
+        taskDone();
+      });
+      registrar.getEntry(searched, (err, res) => {
+        if(!err) {
+          entry = res;
+        }
+        taskDone();
       });
     }
     lookUp();
+    this.autorun(function() {
+      Session.get('searched');
+      //Look up name on 'searched' change.
+      lookUp();
+    })
     this.updateStatusInterval = Meteor.setInterval(lookUp, 1 * 1000);
 });
 
@@ -26,10 +47,10 @@ Template['components_nameStatus'].onDestroyed(function() {
 });
 
 Template['components_nameStatus'].helpers({
-    'status': function(){
-		    return TemplateVar.get('status');
+    searched() {
+      return Session.get('searched');
     },
-    name: function() {
-      return TemplateVar.get('name') + '.eth';
+    state() {
+      return TemplateVar.get('state');
     }
 });

@@ -1,6 +1,11 @@
 <template name="components_nameStatus">
     <div>
-        <p>Name: {{name}}</p>
-        <p>Status: {{status}}</p>
+      {{#if searched}}
+        <p>Name: {{state.name}}</p>
+        <p>Address: {{state.address}}</p>
+        <p>Entry: {{> components_entry entry=state.entry}}</p>
+      {{else}}
+        <p>No name entered</p>
+      {{/if}}
     </div>
 </template>
