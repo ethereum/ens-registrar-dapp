@@ -1,7 +1,7 @@
 Template['components_nameStatus'].onCreated(function() {
     var template = this;
     function lookUp() {
-      searched = Session.get('searched');
+      var searched = Session.get('searched');
       if (!searched) {
         return;
       }
@@ -33,6 +33,11 @@ Template['components_nameStatus'].onCreated(function() {
       });
     }
     lookUp();
+    this.autorun(function() {
+      Session.get('searched');
+      //Look up name on 'searched' change.
+      lookUp();
+    })
     this.updateStatusInterval = Meteor.setInterval(lookUp, 1 * 1000);
 });
 
