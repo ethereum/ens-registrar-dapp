@@ -1,3 +1,4 @@
+
 Template['components_nameStatus'].onCreated(function() {
     var template = this;
     TemplateVar.set('status', 'Looking up status...');
