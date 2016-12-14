@@ -1,5 +1,5 @@
 var ENS = require('ethereum-ens');
-var Registrar = require('dot-eth-js');
+var Registrar = require('eth-registrar-ens');
 
 //TODO: set address according to network
 ens = new ENS(web3, '0x112234455c3a32fd11230c42e7bccd4a84e02010');
