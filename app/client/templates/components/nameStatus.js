@@ -1,3 +1,4 @@
+import getNameStatus from '/imports/get-name-status';
 
 Template['components_nameStatus'].onCreated(function() {
     var template = this;
@@ -6,31 +7,8 @@ Template['components_nameStatus'].onCreated(function() {
       if (!searched) {
         return;
       }
-      //Two tasks: get address, and get entry.
-      let tasks = 2;
-      let address = null;
-      let entry = null;
-      function taskDone() {
-        tasks--;
-        if (tasks === 0) {
-          TemplateVar.set(template, 'state', {
-            name: searched + '.eth',
-            address,
-            entry
-          })
-        }
-      }
-      ens.resolver(searched + '.eth', (err, res) => {
-        if (!err) {
-          address = res.addr();
-        }
-        taskDone();
-      });
-      registrar.getEntry(searched, (err, res) => {
-        if(!err) {
-          entry = res;
-        }
-        taskDone();
+      getNameStatus(searched, (err, res) => {
+        TemplateVar.set(template, 'state', res);
       });
     }
     lookUp();
