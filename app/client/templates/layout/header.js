@@ -5,11 +5,14 @@ Template['layout_header'].events({
 })
 
 Template['layout_header'].helpers({
-  'backgroundDataUrl': function(){
+  backgroundDataUrl() {
     var searched = Session.get('searched');
     if (!searched) {
       return 'none';
     }
     return GeoPattern.generate(searched).toDataUrl();
+  },
+  searched() {
+    return Session.get('searched');
   }
 });
