@@ -1,11 +1,63 @@
 <template name="components_nameStatus">
     <div>
+
+
+      <div>
+        {{> Template.dynamic template=(TemplateVar.get 'status')}}
+      </div>
+
       {{#if searched}}
-        <p>Name: {{state.name}}</p>
-        <p>Address: {{state.address}}</p>
-        <p>Entry: {{> components_entry entry=state.entry}}</p>
+        <p>Name: {{nameInfo.name}}</p>
+        <p>State: {{TemplateVar.get 'status'}}</p>
       {{else}}
         <p>No name entered</p>
       {{/if}}
+    </div>
+</template>
+<template name="status-invalid">
+    <div>
+        INVALID!
+    </div>
+</template>
+
+<template name="status-can-invalidate">
+    <div>
+        INVALIDATE AND GET MONIES
+    </div>
+</template>
+
+<template name="status-open">
+    <div>
+        OPEN IT NOW!
+    </div>
+</template>
+
+<template name="status-auction">
+    <div>
+        BIDS NOW OPEN!
+    </div>
+</template>
+
+<template name="status-reveal">
+    <div>
+        REVEAL TIME!
+    </div>
+</template>
+
+<template name="status-finalize">
+    <div>
+        FINISH IT!
+    </div>
+</template>
+
+<template name="status-finalize-open">
+    <div>
+        FINISH IT (or open it)
+    </div>
+</template>
+
+<template name="status-owned">
+    <div>
+        OWNED
     </div>
 </template>
