@@ -24,42 +24,6 @@ Meteor.Spinner.options = {
 };
 
 
-
-// Stop app operation, when the node is syncing
-web3.eth.isSyncing(function(error, syncing) {
-    if(!error) {
-
-        if(syncing === true) {
-            console.log('Node started syncing, stopping app operation');
-            web3.reset(true);
-
-            // clear observers
-            _.each(collectionObservers, function(observer) {
-                if(observer)
-                    observer.stop();
-            });
-            collectionObservers = [];
-
-        
-        } else if(_.isObject(syncing)) {
-            
-            syncing.progress = Math.floor(((syncing.currentBlock - syncing.startingBlock) / (syncing.highestBlock - syncing.startingBlock)) * 100);
-            syncing.blockDiff = numeral(syncing.highestBlock - syncing.currentBlock).format('0,0');
-
-            TemplateVar.setTo('header nav', 'syncing', syncing);
-            
-        } else {
-            console.log('Restart app operation again');
-
-            TemplateVar.setTo('header nav', 'syncing', false);
-
-            // re-gain app operation
-            connectToNode();
-        }
-    }
-});
-
-
 var connect = function(){
 
     if(web3.isConnected()) {
@@ -78,7 +42,7 @@ var connect = function(){
             var gethRPC = (web3.admin) ? 'geth' : 'geth --rpc --rpccorsdomain "'+window.location.protocol + '//' + window.location.host+'"';
 
             EthElements.Modal.question({
-                text: new Spacebars.SafeString(TAPi18n.__('wallet.app.texts.connectionError' + (web3.admin ? 'Mist' : 'Browser'), 
+                text: new Spacebars.SafeString(TAPi18n.__('wallet.app.texts.connectionError' + (web3.admin ? 'Mist' : 'Browser'),
                     {node: gethRPC})),
                 ok: function(){
                     Tracker.afterFlush(function(){
