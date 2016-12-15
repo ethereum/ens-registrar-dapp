@@ -1,3 +1,4 @@
+/*
 Session.setDefault('network', false);
 web3.eth.getBlock(0, function(e, res){
     if(!e){
@@ -17,3 +18,4 @@ web3.eth.getBlock(0, function(e, res){
         }
     }
 });
+*/

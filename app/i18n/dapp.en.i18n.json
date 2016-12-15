@@ -1,59 +1,64 @@
 {
-	"dapp": {
-		"app": {
-			"title": "My Ethereum ÐApp"
-			, "buttons": {
-				"home": "Home",
-				"view1": "View1"
-				, "view2": "View2"
-			}
-			, "headers": {
-				"identicon": "Identicon"
-				, "address": "Address"
-				, "balance": "Balance"
-				, "account": "Account"
-				, "solidity": "Solidity Code"
-				, "coinbase": "Coinbase"
-				, "listening": "Listening"
-				, "peerCount": "Peer Count"
-				, "blockNumber": "Block Numbr"
-				, "defaultBlock": "Default Block"
-				, "mining": "Mining"
-				, "gasPrice": "Gas Price"
-			}
-			, "copyright": "Copyright © My Ethereum ÐApp 2015. All Rights Reserved"
-		}
-		, "components": {
-			"balance": {
-				"header": "My Balance"
-				, "original": "Original Balance"
-			}
-			, "accounts": {
-				"header": "My Accounts"
-				, "description": "These are your Ethereum addresses. The identicons are generated based on the address value. Note, balance is static."
-			}
-			, "multiplyContract": {
-				"header": "Multiply Contract"
-				, "description": "Create a new contract and interact with it through the api call method. Note, if the multiply result remains zero you may not have enough ETH."
-				, "create": "Create New Contract"
-				, "deployed": "The contract was deployed to this address"
-				, "placeholder": "Number To Multiply"
-			}
-			, "networkHealth": {
-				"header": "Network Health"
-			}
-		},
-		"home" : {
-			"title" : "Home",
-			"defaultName" : "Home"
-		}
-		, "view1": {
-			"title": "View 1"
-			, "defaultName": "View1"
-		}
-		, "view2": {
-			"title": "View 2"
-			, "defaultName": "View2"
-		}
-	}
+  "dapp": {
+    "app": {
+       "title": "Ethereum Name Service Registrar",
+       "buttons": {
+          "home": "Home",
+          "view1": "View1",
+          "view2": "View2"
+        },
+       "headers": {
+         "identicon": "Identicon",
+         "address": "Address",
+         "balance": "Balance",
+         "account": "Account",
+         "solidity": "Solidity Code",
+         "coinbase": "Coinbase",
+         "listening": "Listening",
+         "peerCount": "Peer Count",
+         "blockNumber": "Block Numbr",
+         "defaultBlock": "Default Block",
+         "mining": "Mining",
+         "gasPrice": "Gas Price"
+      },
+      "copyright": "Copyright © My Ethereum ÐApp 2015. All Rights Reserved",
+      "texts": {
+          "connectionErrorMist": "Unable to connect. Please start geth using:<br><br><small><code>__node__</code><br><br>Make sure you set your IPC path to the default one when using a different <code>datadir</code> e.g.<br><code>geth --datadir ... --ipcpath /Users/&lt;yourUser&gt;/Library/Ethereum/geth.ipc</code><br>or<br><code>geth --datadir ... --ipcpath /Users/&lt;yourUser&gt;/.ethereum/geth.ipc</code>. <br><br>Optional add: <code>--unlock &lt;yourAccount&gt;.</code></small>",
+          "connectionErrorBrowser": "Unable to connect. Please start geth with the following options:<br><br><small><code>__node__</code><br><br>Optional add: <code>--unlock &lt;yourAccount&gt;.</code></small>"
+      }
+    },
+    "components": {
+      "balance": {
+        "header": "My Balance",
+         "original": "Original Balance"
+      },
+       "accounts": {
+        "header": "My Accounts",
+         "description": "These are your Ethereum addresses. The identicons are generated based on the address value. Note balance is static."
+      },
+       "multiplyContract": {
+        "header": "Multiply Contract",
+         "description": "Create a new contract and interact with it through the api call method. Note if the multiply result remains zero you may not have enough ETH.",
+         "create": "Create New Contract",
+         "deployed": "The contract was deployed to this address",
+         "placeholder": "Number To Multiply"
+      },
+       "networkHealth": {
+        "header": "Network Health"
+      },
+
+    "home" : {
+      "title" : "Home",
+      "defaultName" : "Home"
+    },
+    "view1": {
+      "title": "View 1",
+      "defaultName": "View1"
+    },
+     "view2": {
+      "title": "View 2",
+      "defaultName": "View2"
+    }
+  }
+}
 }
