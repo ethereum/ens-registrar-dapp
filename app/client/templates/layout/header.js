@@ -8,14 +8,14 @@ Template['layout_header'].events({
 })
 
 Template['layout_header'].helpers({
-  backgroundDataUrl() {
-    var searched = Session.get('searched');
+  'backgroundDataUrl': function(){
+    var searched = Session.get('name');
     if (!searched) {
       return 'none';
     }
     return GeoPattern.generate(searched).toDataUrl();
   },
-  searched() {
-    return Session.get('searched');
+  'returnedName': function() {
+    return Session.get('name');
   }
 });
