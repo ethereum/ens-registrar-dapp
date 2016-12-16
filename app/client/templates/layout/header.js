@@ -1,6 +1,9 @@
+var StringPrep = require('node-stringprep').StringPrep;
+var NamePrep = new StringPrep('nameprep');
+
 Template['layout_header'].events({
   'keyup #search-input': function(event) {
-      Session.set('searched', event.target.value);
+      Session.set('searched', NamePrep.prepare(event.target.value));
   }
 })
 
