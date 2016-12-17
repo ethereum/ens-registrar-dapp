@@ -6,3 +6,4 @@ packages/
 app/public/i18n/*.json
 app/.meteor/dev_bundle
 /build
+npm-debug.log
