@@ -1,10 +1,10 @@
 <template name="views_home">
   <!-- content-->
-  <main class="dapp-content">
-      <span>Should render template: {{shouldRender}}</span>
-      <span>{{> components_nameStatus }}</span>
-
-      <aside class="dapp-aside">
+  <main class="dapp-content container">
+      <div class="col-md-8">
+      {{> components_nameStatus }}
+      </div>
+      <aside class="dapp-aside col-md-4">
         Network: {{network}}
       </aside>
   </main>
