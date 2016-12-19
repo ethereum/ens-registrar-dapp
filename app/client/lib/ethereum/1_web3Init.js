@@ -1,7 +1,10 @@
-import Web3 from 'web3';
 
 // set providor
-if(typeof web3 !== 'undefined')
+if(typeof web3 !== 'undefined') {
   web3 = new Web3(web3.currentProvider);
-else
+}
+else {
+  let Web3 = require('web3');
   web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+}
+  
