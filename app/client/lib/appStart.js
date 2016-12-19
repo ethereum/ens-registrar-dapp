@@ -11,7 +11,8 @@ var connectToNode = function() {
 
   //Init ENS
   ens = new ENS(web3, '0x112234455c3a32fd11230c42e7bccd4a84e02010');
-  registrar = new Registrar(web3, ens.owner('eth'), 7, 'eth', ens.registry.address);
+  registrar = new Registrar(web3);
+  registrar.init();
 }
 
 //Called from Meteor.startup below
