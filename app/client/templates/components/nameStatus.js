@@ -18,54 +18,10 @@ Template['components_nameStatus'].onCreated(function() {
               entry
             })
 
-            
+            console.log('entry:', entry);
 
-            if (searched.length <= 7) {
-              // If name is short, check if it has been bought
-              if (entry.status == 0) {
-                TemplateVar.set('status', 'status-invalid');
-              } else {
-                TemplateVar.set('status', 'status-can-invalidate');
-              }
-            } else {
-              // If name is of valid length
-              if (entry.status == 0) {
-                // Not an auction yet
-                TemplateVar.set('status', 'status-open');
-              } else if (entry.status == 1) {
-
-                let now = new Date();
-                let registration = new Date(entry.registrationDate*1000);
-                let hours = 60*60*1000;
-
-                if ((registration - now) > 24 * hours ) {
-                  // Bids are open
-                  TemplateVar.set('status', 'status-auction');
-                } else if (now < registration && (registration - now) < 24 * hours ) {
-                  // reveal time!
-                  TemplateVar.set('status', 'status-reveal');
-                } else if (now > registration && (now - registration) < 24 * hours ) {
-                  // finalize now
-                  TemplateVar.set('status', 'status-finalize');
-                } else {
-                  // finalize now but can open?
-                  TemplateVar.set('status', 'status-finalize-open');
-                }
-
-
-              } else if (entry.status == 2) {
-                TemplateVar.set('status', 'status-owned');
-              } 
-
-            } 
-
-            
-            
-            
-            //<!--  Open, Auction, Owned, Forbidden  -->
-
-            // console.log('name', TemplateVar.get('nameInfo'));
-
+            TemplateVar.set('name', entry.name);
+            TemplateVar.set('status', 'status-' + entry.mode);
             Session.set('name', entry.name);
 
           }
@@ -85,6 +41,9 @@ Template['components_nameStatus'].onDestroyed(function() {
 Template['components_nameStatus'].helpers({
     searched() {
       return Session.get('searched');
+    },
+    name() {
+      return TemplateVar.get('nameInfo').name;
     },
     state() {
       return TemplateVar.get('nameInfo');

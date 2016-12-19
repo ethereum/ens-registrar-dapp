@@ -9,11 +9,11 @@ import { statuses, getNameStatus, getTemplateName } from '/imports/hens';
 /**
 The home template
 
-@class [template] views_home
+@class [template] layout_body
 @constructor
 */
 
-Template['views_home'].helpers({
+Template['layout_body'].helpers({
     /**
     Get the name
 
@@ -35,10 +35,10 @@ Template['views_home'].helpers({
 });
 
 // When the template is created
-Template['views_home'].onCreated(function(){
+Template['layout_body'].onCreated(function(){
   var template = this;
   TemplateVar.set(template, 'status', statuses.noName)
-	Meta.setSuffix(TAPi18n.__("dapp.home.title"));
+  Meta.setSuffix(TAPi18n.__("dapp.home.title"));
   this.autorun(function() {
     var name = Session.get('searched');
     getNameStatus(name)

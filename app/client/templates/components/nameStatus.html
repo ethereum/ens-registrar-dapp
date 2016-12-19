@@ -1,63 +1,94 @@
 <template name="components_nameStatus">
     <div>
-
-
-      <div>
-        {{> Template.dynamic template=(TemplateVar.get 'status')}}
-      </div>
-
       {{#if searched}}
-        <p>Name: {{nameInfo.name}}</p>
-        <p>State: {{TemplateVar.get 'status'}}</p>
+        <div>{{TemplateVar.get 'name'}} - {{name}}
+        {{> Template.dynamic template=(TemplateVar.get 'status')}}
+        </div>
       {{else}}
-        <p>No name entered</p>
+        <h1>Type a name</h1>
       {{/if}}
     </div>
 </template>
+
 <template name="status-invalid">
     <div>
-        INVALID!
+        <h1>Name is too short</h1>
+        <p>
+            On the temporary registrar only names longer than 7 characters are allowed
+        </p>
     </div>
 </template>
 
 <template name="status-can-invalidate">
     <div>
-        INVALIDATE AND GET MONIES
+        <h1>Name is too short</h1>
+        <p>
+            On the temporary registrar only names longer than 7 characters are allowed. 
+        </p>
+        <p>
+            <strong>But wait!</strong> Someone has accidentally registered this name. Invalidate it and you'll get 50% of their refund.
+        </p>    
+
+        <button class="dapp-block-button invalidate"> Invalidate </button>
+
     </div>
 </template>
 
 <template name="status-open">
     <div>
-        OPEN IT NOW!
+        <h1> This domain is available </h1>
+        <p>
+            You can open an auction now
+        </p>
+        <button class="dapp-block-button open-auction"> Open auction</button>
     </div>
 </template>
 
 <template name="status-auction">
     <div>
-        BIDS NOW OPEN!
+        <h1> This domain is open for bids </h1>
+        <p>
+            You can open an auction now
+        </p>
+        <button class="dapp-block-button"> Bid now</button>    
     </div>
 </template>
 
 <template name="status-reveal">
     <div>
-        REVEAL TIME!
+        <h1> This domain auction is waiting for bids to be revealed </h1>
+        <p>
+            Wait for it..
+        </p>
+        <button class="dapp-block-button"> Reveal yours </button> 
     </div>
 </template>
 
 <template name="status-finalize">
     <div>
-        FINISH IT!
+        <h1> This domain needs to be finalized </h1>
+        <p>
+            Anyone can do it..
+        </p>
+        <button class="dapp-block-button"> Finalize it </button>     
     </div>
 </template>
 
 <template name="status-finalize-open">
     <div>
-        FINISH IT (or open it)
+        <h1> This domain needs to be finalized </h1>
+        <p>
+            Anyone can do it.. Otherwise someone else can invalidate it
+        </p>
+        <button class="dapp-block-button"> Finalize it </button>      
     </div>
 </template>
 
 <template name="status-owned">
     <div>
-        OWNED
-    </div>
+        <h1> Domain is owned </h1>
+        <p>
+            See data about it
+        </p>
+    </div>  
 </template>

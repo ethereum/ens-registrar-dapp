@@ -6,14 +6,11 @@
 
 reactive-var@1.0.11
 less@2.7.8
-iron:router
 fastclick@1.0.13
 tap:i18n
 3stack:bignumber
-zimme:iron-router-active
 yasinuslu:blaze-meta
 numeral:numeral
-ethereum:web3
 ethereum:accounts@0.3.5
 ethereum:elements
 ethereum:tools

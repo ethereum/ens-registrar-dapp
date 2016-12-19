@@ -1,3 +1,5 @@
+import Web3 from 'web3';
+
 // set providor
 if(typeof web3 !== 'undefined')
   web3 = new Web3(web3.currentProvider);
