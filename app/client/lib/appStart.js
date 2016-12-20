@@ -7,7 +7,6 @@ if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')
 var connectToNode = function() {
   //Init collections
   EthAccounts.init();
-  EthBlocks.init();
 
   //Init ENS
   ens = new ENS(web3, '0x112234455c3a32fd11230c42e7bccd4a84e02010');
