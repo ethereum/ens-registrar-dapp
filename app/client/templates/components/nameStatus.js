@@ -1,5 +1,3 @@
-import getNameStatus from '/imports/get-name-status';
-
 Template['components_nameStatus'].onCreated(function() {
     var template = this;
 
@@ -27,7 +25,7 @@ Template['components_nameStatus'].onCreated(function() {
           }
         });
       }
-      
+
 
       // lookUp();
     })
