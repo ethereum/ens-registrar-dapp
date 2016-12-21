@@ -6,14 +6,14 @@ export default ethereum = (function() {
     isReady = false;
 
   function initWeb3() {
-    if(typeof web3 !== 'undefined') {
-      web3 = new Web3(web3.currentProvider);
-    }
-    else {
-      let Web3 = require('web3');
-      web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-    }
     return new Promise((resolve, reject) => {
+      if(typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+      }
+      else {
+        let Web3 = require('web3');
+        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+      }
       resolve(web3);
     })
   }
@@ -98,7 +98,7 @@ export default ethereum = (function() {
       reportStatus('Connecting to Ethereum network...');
       return initWeb3()
         .then(checkConnection)
-        .then(checkSyncStatus)
+//        .then(checkSyncStatus)
         .then(initRegistrar)
         .then(setGlobals)
         .then(() => {
