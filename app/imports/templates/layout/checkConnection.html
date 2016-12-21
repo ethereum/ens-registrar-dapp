@@ -1,0 +1,7 @@
+<template name="layout_checkConnection">
+  {{#if connectionOk }}
+    {{> layout_main }}
+  {{else}}
+    <h1 class="connectionStatus">{{ connectionStatus }}</h1>
+  {{/if}}
+</template>
