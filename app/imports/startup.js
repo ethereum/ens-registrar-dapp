@@ -20,6 +20,3 @@ import './templates/index.html';
 import './collections';
 import './meta.js';
 import './index.js';
-
-import ethereum from './lib/ethereum';
-ethereum.init();
