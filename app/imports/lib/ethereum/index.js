@@ -28,7 +28,7 @@ export default ethereum = (function() {
           clearInterval(checkInterval)
           resolve(web3);
         } else if (attempts <= 0) {
-          reportStatus('Ethereum network is disconnected');
+          reportStatus('Ethereum network is disconnected. Awaiting connection...');
         }
       }
       checkInterval = setInterval(check, 800);
@@ -38,20 +38,20 @@ export default ethereum = (function() {
 
   function checkSyncStatus(web3) {
     reportStatus('Checking sync status...');
-    var checkInterval;
     return new Promise((resolve, reject) => {
-      function check(onConnect) {
-        web3.eth.getSyncing(function(e, sync) {
-            if(e || !sync) {
-              clearInterval(checkInterval)
-              resolve(web3);
-            } else {
-              reportStatus('Waiting for Ethereum synchronization...');
-            }
-        })
-      }
-      checkInterval = setInterval(check, 1000);
-      check();
+      var sync = web3.eth.isSyncing((err, sync) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if(!sync) {
+          resolve(web3);
+        } else {
+          reportStatus(`Getting blocks...` +
+            ` (${sync.currentBlock} / ${sync.highestBlock})`
+          );
+        }
+      })
     });
   }
 
