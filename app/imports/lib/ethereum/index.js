@@ -2,8 +2,7 @@ import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
 
 export default ethereum = (function() {
-  let subscribers = [],
-    isReady = false;
+  let subscribers = [];
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -25,14 +24,11 @@ export default ethereum = (function() {
     return new Promise((resolve, reject) => {
       function check() {
         attempts--;
-        if (attempts === 0) {
-          reject('Could not connect to Ethereum network');
-          clearInterval(checkInterval)
-          return;
-        }
         if(web3.isConnected()) {
           clearInterval(checkInterval)
           resolve(web3);
+        } else if (attempts <= 0) {
+          reportStatus('Ethereum network is disconnected');
         }
       }
       checkInterval = setInterval(check, 800);
@@ -42,24 +38,19 @@ export default ethereum = (function() {
 
   function checkSyncStatus(web3) {
     reportStatus('Checking sync status...');
-    var attempts = 4,
-      checkInterval;
+    var checkInterval;
     return new Promise((resolve, reject) => {
       function check(onConnect) {
-        attempts--;
-        if (attempts === 0) {
-          reject('Etherum node needs to sync');
-          clearInterval(checkInterval)
-          return;
-        }
         web3.eth.getSyncing(function(e, sync) {
             if(e || !sync) {
               clearInterval(checkInterval)
               resolve(web3);
+            } else {
+              reportStatus('Waiting for Ethereum synchronization...');
             }
         })
       }
-      checkInterval = setInterval(check, 800);
+      checkInterval = setInterval(check, 1000);
       check();
     });
   }
@@ -85,7 +76,7 @@ export default ethereum = (function() {
     });
   }
 
-  function reportStatus(description) {
+  function reportStatus(description, isReady) {
     subscribers.forEach((subscriber) => subscriber({
       isReady,
       description
@@ -98,15 +89,14 @@ export default ethereum = (function() {
       reportStatus('Connecting to Ethereum network...');
       return initWeb3()
         .then(checkConnection)
-//        .then(checkSyncStatus)
+        .then(checkSyncStatus)
         .then(initRegistrar)
         .then(setGlobals)
         .then(() => {
-          isReady = true;
-          reportStatus('Ready');
+          reportStatus('Ready', true);
         })
         .catch(err => {
-          reportStatus(err);
+          reportStatus('Error: ' + err);
         })
     },
     onStatusChange(callback) {
