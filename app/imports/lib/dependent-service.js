@@ -20,14 +20,6 @@ module.exports = function dependentService({checker, starter, dependsOn, interva
     })
   }
 
-  function startChecking() {
-    //check periodically
-    checkIntervalID = setInterval(checkStatus, interval)
-    checkStatus();
-  }
-
-  startChecking();
-
   return {
     listenStatus(handler) {
       listeners.push(handler);
@@ -35,6 +27,9 @@ module.exports = function dependentService({checker, starter, dependsOn, interva
     stopChecking() {
       clearInterval(checkIntervalID)
     },
-    startChecking
+    startChecking() {
+      checkIntervalID = setInterval(checkStatus, interval)
+      checkStatus();
+    }
   }
 }
