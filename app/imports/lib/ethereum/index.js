@@ -89,7 +89,7 @@ export default ethereum = (function() {
       reportStatus('Connecting to Ethereum network...');
       return initWeb3()
         .then(checkConnection)
-        .then(checkSyncStatus)
+        //.then(checkSyncStatus)
         .then(initRegistrar)
         .then(setGlobals)
         .then(() => {
