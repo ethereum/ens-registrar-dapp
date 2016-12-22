@@ -13,7 +13,9 @@
     "node-stringprep": "^0.8.0",
     "web3": "^0.17.0-beta"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tape": "^4.6.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
