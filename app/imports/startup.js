@@ -11,6 +11,8 @@ import './templates/layout/checkConnection.js';
 import './templates/components/entry.html';
 import './templates/components/nameStatus.html';
 import './templates/components/nameStatus.js';
+import './templates/status/owned.html';
+import './templates/status/owned.js';
 import './templates/layout/body.html';
 import './templates/layout/body.js';
 import './templates/layout/header.html';
