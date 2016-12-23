@@ -11,5 +11,8 @@ Template['status-owned'].onCreated(function() {
 Template['status-owned'].helpers({
   address() {
     return TemplateVar.get('address')
+  },
+  owner() {
+    return TemplateVar.get('owner')
   }
 })
