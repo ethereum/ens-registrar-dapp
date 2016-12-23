@@ -3,6 +3,7 @@
         <h1> Domain is owned </h1>
         <p>
             {{name}}
+            <strong>Owned by: {{TemplateVar.get 'owner'}}</strong>
             {{> components_entry entry=entry }}
         </p>
     </div>
