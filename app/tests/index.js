@@ -43,7 +43,7 @@ test('dependent-service: start, stop, and listen', (t) => {
     },
     interval: 20
   });
-  serviceA.listenStatus(() => listenCounter++)
+  serviceA.listenStatus(({ok, starting} = {}) => listenCounter++)
   serviceA.startChecking();
   setTimeout(() => {
     serviceA.stopChecking();
@@ -64,4 +64,49 @@ test('dependent-service: start, stop, and listen', (t) => {
     }, 80)
   }, 80);
 
+})
+
+test('dependent-service: dependencies', (t) => {
+  t.plan(4);
+  let dependentService = require('../imports/lib/dependent-service');
+  let serviceAisOn = false;
+  let serviceBisOn = true;
+  let serviceAStatus;
+  let serviceBStatus;
+  let serviceA = dependentService({
+    checker: (cb) => cb(null, serviceAisOn),
+    starter: (onStarted) => {
+      setTimeout(() => {
+        serviceAisOn = true;
+        onStarted();
+      }, 110)
+    },
+    interval: 20
+  });
+  let serviceB = dependentService({
+    checker: (cb) => cb(null, serviceBisOn),
+    starter: (onStarted) => {
+      setTimeout(() => {
+        serviceBisOn = true;
+        onStarted();
+      }, 110)
+    },
+    interval: 20,
+    dependsOn: serviceA
+  });
+  serviceA.listenStatus(status => serviceAStatus = status)
+  serviceB.listenStatus(status => serviceBStatus = status)
+  serviceA.startChecking()
+  serviceB.startChecking()
+  setTimeout(()=> {
+    t.deepEqual(serviceAStatus, {ok: false, starting: true}, 'Service A is starting');
+    t.deepEqual(serviceBStatus, {ok: false, starting: false}, 'Service B is not ok because it depends on A');
+    setTimeout(() => {
+      t.deepEqual(serviceAStatus, {ok: true, starting: false}, 'Service A is restored');
+      t.deepEqual(serviceBStatus, {ok: false, starting: true}, 'Service B restarts after A is restored');
+      serviceA.stopChecking()
+      serviceB.stopChecking()
+      t.end();
+    }, 130)
+  }, 45)
 })
