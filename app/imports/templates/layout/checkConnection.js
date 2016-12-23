@@ -1,18 +1,19 @@
 import ethereum from '/imports/lib/ethereum';
 
 Template['layout_checkConnection'].onCreated(function() {
-  ethereum.onStatusChange((status) => {
-    TemplateVar.set(this, 'connectionOk', status.isReady);
-    TemplateVar.set(this, 'connectionStatus', status.description);
+  let services = ethereum.init();
+  Object.keys(services).forEach(name => {
+    //services: ethereum, sync, ens
+    services[name].listenStatus(status => {
+      TemplateVar.set(this, name + 'Status', status)
+    })
   })
-  ethereum.init();
 });
 
 Template['layout_checkConnection'].helpers({
-  connectionOk() {
-    return TemplateVar.get('connectionOk');
-  },
-  connectionStatus() {
-    return TemplateVar.get('connectionStatus');
+  allServicesOk() {
+    return TemplateVar.get('ethereumStatus').ok &&
+      TemplateVar.get('syncStatus').ok &&
+      TemplateVar.get('ensStatus').ok;
   }
 })
