@@ -26,11 +26,5 @@ Template['components_nameStatus'].onCreated(function() {
 Template['components_nameStatus'].helpers({
     searched() {
       return Session.get('searched');
-    },
-    name() {
-      return TemplateVar.get('nameInfo').name;
-    },
-    state() {
-      return TemplateVar.get('nameInfo');
     }
 });

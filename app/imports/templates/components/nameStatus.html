@@ -1,8 +1,8 @@
 <template name="components_nameStatus">
     <div>
       {{#if searched}}
-        <div>{{TemplateVar.get 'name'}} - {{name}}
-        {{> Template.dynamic template=(TemplateVar.get 'status')}}
+        <div>{{TemplateVar.get 'name'}}
+        {{> Template.dynamic template=(TemplateVar.get 'status') data=(TemplateVar.get 'nameInfo')}}
         </div>
       {{else}}
         <h1>Type a name</h1>
@@ -23,7 +23,7 @@
     <div>
         <h1>Name is too short</h1>
         <p>
-            On the temporary registrar only names longer than 7 characters are allowed.
+            On the temporary registrar only names longer than 6 characters are allowed.
         </p>
         <p>
             <strong>But wait!</strong> Someone has accidentally registered this name. Invalidate it and you'll get 50% of their refund.
