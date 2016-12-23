@@ -16,8 +16,7 @@ export default ethereum = (function() {
         web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
       }
       services.ethereum = service({
-        checker: (cb) => cb(null, web3.isConnected()),
-        starter: (cb) => cb() //starts by itself
+        checker: (cb) => cb(null, web3.isConnected())
       })
       services.sync = service({
         checker: (cb) => {
@@ -25,7 +24,6 @@ export default ethereum = (function() {
             cb(null, e || !sync);
           });
         },
-        starter: (cb) => cb(), //starts by itself
         dependsOn: services.ethereum
       })
       services.ens = service({

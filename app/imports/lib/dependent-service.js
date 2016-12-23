@@ -1,5 +1,5 @@
 
-module.exports = function dependentService({checker, starter, dependsOn, interval=800} = {}) {
+module.exports = function dependentService({checker, starter=cb=>cb(), dependsOn, interval=800} = {}) {
   var listeners = [],
     lastStatus,
     starting = false,
