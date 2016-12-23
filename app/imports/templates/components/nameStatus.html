@@ -1,7 +1,7 @@
 <template name="components_nameStatus">
     <div>
       {{#if searched}}
-        <div>{{TemplateVar.get 'name'}}
+        <div>
         {{> Template.dynamic template=(TemplateVar.get 'status') data=(TemplateVar.get 'nameInfo')}}
         </div>
       {{else}}

@@ -26,5 +26,9 @@ Template['components_nameStatus'].onCreated(function() {
 Template['components_nameStatus'].helpers({
     searched() {
       return Session.get('searched');
+    },
+    fullName() {
+      //searched + .eth
+      return TemplateVar.get('nameInfo').name
     }
 });

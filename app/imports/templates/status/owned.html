@@ -1,10 +1,12 @@
 <template name="status-owned">
-    <div>
-        <h1> Domain is owned </h1>
-        <p>
-            {{name}}
-            <strong>Owned by: {{TemplateVar.get 'owner'}}</strong>
-            {{> components_entry entry=entry }}
-        </p>
+    <div class="status-owned">
+        <h1 class="domain-name">{{name}}</h1><h2>Owned</h2>
+        {{#if address}}
+          <p>Points to: <strong>{{address}}</strong></p>
+        {{else}}
+          <p>The owner has not set a resolver for this address yet</p>
+        {{/if}}
+        <p>Owned by: <strong>{{TemplateVar.get 'owner'}}</strong></p>
+        <p>Deed address: <strong>{{entry.deed}}</strong></p>
     </div>
 </template>

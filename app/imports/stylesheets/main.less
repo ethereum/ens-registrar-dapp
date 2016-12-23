@@ -39,11 +39,11 @@ header {
 }
 
 .service-ok {
-  color: green;
+  color: @colorGreen;
 }
 
 .service-not-ok {
-  color: #D19C47;
+  color: @colorOrange;
 }
 
 .serviceStatus {
@@ -52,4 +52,17 @@ header {
 
 .services {
   text-align: center;
+}
+
+.domain-name {
+  color: @colorBlue
+}
+
+.status-owned {
+  h1, h2 {
+    display: inline;
+  }
+  h2 {
+    margin-left: 20px;
+  }
 }
