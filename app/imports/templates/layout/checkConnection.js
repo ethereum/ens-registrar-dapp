@@ -13,7 +13,6 @@ Template['layout_checkConnection'].onCreated(function() {
 Template['layout_checkConnection'].helpers({
   allServicesOk() {
     return TemplateVar.get('ethereumStatus').ok &&
-      TemplateVar.get('syncStatus').ok &&
       TemplateVar.get('ensStatus').ok;
   }
 })

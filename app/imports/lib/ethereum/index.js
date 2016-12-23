@@ -18,14 +18,6 @@ export default ethereum = (function() {
       services.ethereum = service({
         checker: (cb) => cb(null, web3.isConnected())
       })
-      services.sync = service({
-        checker: (cb) => {
-          web3.eth.getSyncing((e, sync) => {
-            cb(null, e || !sync);
-          });
-        },
-        dependsOn: services.ethereum
-      })
       services.ens = service({
         checker: (cb) => {
           let ok = typeof registrar !== 'undefined' &&
@@ -39,10 +31,9 @@ export default ethereum = (function() {
           registrar.init();
           cb();
         },
-        dependsOn: services.sync
+        dependsOn: services.ethereum
       })
       services.ethereum.startChecking();
-      services.sync.startChecking();
       services.ens.startChecking();
       return services;
     }

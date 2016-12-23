@@ -4,7 +4,6 @@
   {{else}}
   <h1 class="services">
     {{> components_serviceStatus name='ethereum' status=(TemplateVar.get 'ethereumStatus')}}
-    {{> components_serviceStatus name='sync' status=(TemplateVar.get 'syncStatus')}}
     {{> components_serviceStatus name='ens' status=(TemplateVar.get 'ensStatus')}}
   </h1>
   {{/if}}
