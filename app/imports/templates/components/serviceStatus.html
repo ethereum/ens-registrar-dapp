@@ -1,0 +1,10 @@
+<template name="components_serviceStatus">
+  <div class="serviceStatus">
+    <span class="{{class}}">
+      {{name}}
+    </span>
+    {{#if status.ok}}
+      <span class="service-ok">OK</span>
+    {{/if}}
+  </div>
+</template>

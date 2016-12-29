@@ -14,7 +14,9 @@
     "meteor-node-stubs": "^0.2.4",
     "web3": "^0.17.0-beta"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "tape": "^4.6.3"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

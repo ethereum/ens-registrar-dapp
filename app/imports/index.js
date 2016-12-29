@@ -1,19 +1,5 @@
-// disconnect any meteor server
-if(location.host !== 'localhost:3000'
-   && location.host !== '127.0.0.1:3000'
-   && typeof MochaWeb === 'undefined')
+if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')
     Meteor.disconnect();
-
-
-// Set the default unit to ether
-if(!LocalStore.get('etherUnit'))
-    LocalStore.set('etherUnit', 'ether');
-
-
-// Set Session default values for components
-if (Meteor.isClient) {
-	Session.setDefault('balance', '0');
-}
 
 Meteor.startup(function() {
     // SET default language
@@ -44,6 +30,6 @@ Meteor.startup(function() {
         }
     });
 
-	// Set Meta Title
-	Meta.setTitle(TAPi18n.__("dapp.app.title"));
+  // Set Meta Title
+  Meta.setTitle(TAPi18n.__("dapp.app.title"));
 });

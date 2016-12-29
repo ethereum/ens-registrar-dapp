@@ -1,0 +1,12 @@
+<template name="status-owned">
+    <div class="status-owned">
+        <h1 class="domain-name">{{name}}</h1><h2>Owned</h2>
+        {{#if address}}
+          <p>Points to: <strong>{{> dapp_identicon identity=address class="dapp-small"}}{{address}}</strong></p>
+        {{else}}
+          <p>The owner has not set a resolver for this address yet</p>
+        {{/if}}
+        <p>Owned by: <strong>{{> dapp_identicon identity=owner class="dapp-small"}}{{TemplateVar.get 'owner'}}</strong></p>
+        <p>Deed address: <strong>{{> dapp_identicon identity=(entry.deed) class="dapp-small"}}{{entry.deed}}</strong></p>
+    </div>
+</template>

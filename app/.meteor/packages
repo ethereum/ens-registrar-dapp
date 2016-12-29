@@ -4,44 +4,41 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-reactive-var@1.0.11
-less@2.7.8
-fastclick@1.0.13
-tap:i18n
-3stack:bignumber
-yasinuslu:blaze-meta
-numeral:numeral
-ethereum:accounts@0.3.5
-ethereum:elements
-ethereum:tools
-ethereum:blocks
-frozeman:persistent-minimongo
-frozeman:storage
-frozeman:template-var
-frozeman:reactive-timer
-mrt:moment
-dburles:collection-helpers
-matb33:collection-hooks
-raix:handlebar-helpers
-chuangbo:cookie
-markdown@1.0.11
+
+# Standard Meteor stuff
+
 meteor-base@1.0.4
 mobile-experience@1.0.4
 mongo@1.1.14
 blaze-html-templates
-session@1.1.7
+reactive-var@1.0.11
 tracker@1.1.1
-logging@1.1.16
-reload@1.1.11
-random@1.0.10
-ejson@1.0.13
-spacebars
-check@1.2.4
-silentcicero:solc
-mike:mocha
+
 standard-minifier-css
 standard-minifier-js
-shell-server
+# es5-shim ?
 ecmascript
+
+
+# Ethereum
+
+ethereum:accounts@0.3.5
+ethereum:elements
+ethereum:tools
 ethereum:dapp-styles
+frozeman:persistent-minimongo
+frozeman:storage
+frozeman:template-var
+frozeman:reactive-timer
+
+
+# Extra
+
+less@2.7.8
+tap:i18n
+mrt:moment
+session@1.1.7
 hashanp:geopattern
+yasinuslu:blaze-meta
+chuangbo:cookie
+numeral:numeral
