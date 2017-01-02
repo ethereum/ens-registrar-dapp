@@ -61,7 +61,7 @@ export default ethereum = (function() {
         checker: cb => web3.eth.getBlockNumber((err, block) => {
           let info = getEnsInfo(network);
           if (!info) {
-            cb(null, false);
+            return cb(null, false);
           }
           cb(null, block > info.block);
         }),
