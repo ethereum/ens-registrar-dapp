@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Look up and register names in the Ethereum Name Service",
   "main": "index.js",
+  "repository": "https://github.com/ferni/ens-registrar-dapp",
   "directories": {
     "test": "tests"
   },
