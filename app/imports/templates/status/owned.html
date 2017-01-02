@@ -1,5 +1,5 @@
 <template name="status-owned">
-    <div class="status-owned">
+    <div class="status-owned col-md-8">
         <h1 class="domain-name">{{name}}</h1><h2>Owned</h2>
         {{#if address}}
           <p>Points to: <strong>{{> dapp_identicon identity=address class="dapp-small"}}{{address}}</strong></p>
@@ -8,5 +8,14 @@
         {{/if}}
         <p>Owned by: <strong>{{> dapp_identicon identity=owner class="dapp-small"}}{{TemplateVar.get 'owner'}}</strong></p>
         <p>Deed address: <strong>{{> dapp_identicon identity=(entry.deed) class="dapp-small"}}{{entry.deed}}</strong></p>
+    </div>
+    <div class="col-md-4">
+        <h3>about this name</h3>
+
+        <span class="big-numeral">{{deedValue}}</span> <span class="unit">ETHER</span>
+        <h3> locked on this contract </h3>
+        
+        Registered at {{registrationDate}}
+
     </div>
 </template>

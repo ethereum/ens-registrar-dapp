@@ -34,7 +34,7 @@ frozeman:reactive-timer
 
 # Extra
 
-less@2.7.8
+less
 tap:i18n
 mrt:moment
 session@1.1.7
