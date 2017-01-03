@@ -61,10 +61,12 @@ export default ethereum = (function() {
     });
   }
 
-  function reportStatus(description, isReady) {
+  function reportStatus(description, isReady, theresAnError) {
+    console.log(description);
     subscribers.forEach((subscriber) => subscriber({
       isReady,
-      description
+      description,
+      theresAnError
     }));
   }
 
@@ -80,7 +82,7 @@ export default ethereum = (function() {
           reportStatus('Ready', true);
         })
         .catch(err => {
-          reportStatus('Error: ' + err);
+          reportStatus(err, false, true);
         })
     },
     onStatusChange(callback) {

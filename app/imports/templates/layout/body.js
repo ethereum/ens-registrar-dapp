@@ -34,6 +34,13 @@ Template['layout_body'].onCreated(function(){
   ethereum.onStatusChange(status => {
     TemplateVar.set(this, 'isReady', status.isReady)
     TemplateVar.set(this, 'description', status.description)
+    TemplateVar.set(this, 'theresAnError', status.theresAnError)
   })
   ethereum.init();
 });
+
+Template['layout_body'].events({
+  'click .retry': function() {
+    ethereum.init();
+  }
+})

@@ -5,7 +5,13 @@
         {{#if (TemplateVar.get 'isReady') }}
           {{> components_nameStatus }}
         {{else}}
-          <h1 class="connection-status">{{TemplateVar.get 'description'}}</h1>
+          {{#if (TemplateVar.get 'theresAnError') }}
+            <h1>Something has gone awry</h1>
+            <p>{{TemplateVar.get 'description'}}</p>
+            <button class="dapp-block-button retry">Retry</button>
+          {{else}}
+            <h1 class="connection-status">{{TemplateVar.get 'description'}}</h1>
+          {{/if}}
         {{/if}}
       </div>
   </main>
