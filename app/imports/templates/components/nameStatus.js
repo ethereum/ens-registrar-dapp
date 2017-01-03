@@ -1,3 +1,5 @@
+import { registrar } from '/imports/lib/ethereum';
+
 Template['components_nameStatus'].onCreated(function() {
     TemplateVar.set('error', false);
     this.autorun(function() {
