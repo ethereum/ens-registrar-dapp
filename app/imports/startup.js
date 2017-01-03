@@ -4,8 +4,6 @@ import './lib/helpers/templateHelpers.js';
 
 import './stylesheets/main.less';
 
-import './templates/layout/checkConnection.html';
-import './templates/layout/checkConnection.js';
 import './templates/components/entry.html';
 import './templates/components/nameStatus.html';
 import './templates/components/nameStatus.js';

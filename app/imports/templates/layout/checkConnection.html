@@ -1,7 +1,0 @@
-<template name="layout_checkConnection">
-  {{#if (TemplateVar.get 'isReady') }}
-    {{> layout_main }}
-  {{else}}
-    <h1 class="connection-status">{{TemplateVar.get 'description'}}</h1>
-  {{/if}}
-</template>
