@@ -2,7 +2,12 @@
     <div>
       {{#if searched}}
         <div>
-        {{> Template.dynamic template=(TemplateVar.get 'status') data=(TemplateVar.get 'nameInfo')}}
+          {{#if (TemplateVar.get 'error')}}
+            <h1>Error getting entry</h1>
+            <p>{{TemplateVar.get 'error'}}</p>
+          {{else}}
+            {{> Template.dynamic template=(TemplateVar.get 'status') data=(TemplateVar.get 'nameInfo')}}
+          {{/if}}
         </div>
       {{else}}
         <h1>Type a name</h1>
