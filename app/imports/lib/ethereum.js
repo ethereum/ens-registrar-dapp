@@ -39,10 +39,14 @@ export default ethereum = (function() {
   function initRegistrar(web3) {
     reportStatus('Initializing ENS registrar...');
     return new Promise((resolve, reject) => {
-      var ens = new ENS(web3, '0x112234455c3a32fd11230c42e7bccd4a84e02010');
-      var registrar = new Registrar(web3);
-      registrar.init();
-      resolve({web3, ens, registrar});
+      try {
+        var ens = new ENS(web3, '0x112234455c3a32fd11230c42e7bccd4a84e02010');
+        var registrar = new Registrar(web3);
+        registrar.init();
+        resolve({web3, ens, registrar});
+      } catch(e) {
+        reject('Error initialiting ENS registrar: ' + e);
+      }
     });
   }
 
