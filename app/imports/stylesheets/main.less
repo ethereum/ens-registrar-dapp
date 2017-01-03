@@ -9,7 +9,13 @@ header {
     height: @gridHeight * 15;
     background-color: #A39C9C;
     text-align: center;
-    transition: background-image 0.2s ease-in-out;
+    background-position: 50% 70%;    
+    transition: background-image 0.2s ease-in-out, filter 3s ease-out;
+    
+    &.invalid-name {
+      filter: grayscale(90%);
+      transition: background-image 0.2s ease-in-out, filter 0.5s ease-out;
+    }
 
     h1 {
         color: #FFF;
@@ -31,6 +37,8 @@ header {
         top: 1px;
         opacity: 0.4;
     }
+
+
 }
 
 .connectionStatus {
@@ -54,10 +62,6 @@ header {
   text-align: center;
 }
 
-.domain-name {
-  color: @colorBlue
-}
-
 .status-owned {
   h1, h2 {
     display: inline;
@@ -74,4 +78,21 @@ header {
 
 .unit {
   font-weight: 300;
+  text-transform: uppercase;
+}
+
+.about-aside {
+  ul {
+    padding: 0;
+
+    li {
+      list-style-type: none;
+      padding-bottom: 32px;
+    }
+  }
+}
+
+.dapp-identicon.dapp-tiny {
+  position: relative;
+  top: 5px;
 }

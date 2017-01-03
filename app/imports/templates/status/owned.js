@@ -6,6 +6,7 @@ Template['status-owned'].onCreated(function() {
   ens.resolver(name, (err, res) => {
     if (!err) {
       TemplateVar.set(this, 'address', res.addr());
+      TemplateVar.set(this, 'content', res.content());
     }
   });
 
@@ -20,13 +21,23 @@ Template['status-owned'].helpers({
     return TemplateVar.get('owner')
   },
   registrationDate() {
-    console.log('date', TemplateVar.get('entryData').registrationDate );
     var date = new Date(TemplateVar.get('entryData').registrationDate * 1000);
     return date.toLocaleString();
   },
+  renewalDate() {
+    var years = 365 * 24 * 60 * 60 * 1000;
+    var date = new Date(TemplateVar.get('entryData').registrationDate * 1000 + 2 * years);
+    return date.toLocaleDateString();
+  },
   deedValue() {
-    console.log('deedValue', TemplateVar.get('entryData'));
     var val = TemplateVar.get('entryData').deed.balance;
     return web3.fromWei(val.toFixed(), 'ether');
+  },
+  highestBid() {
+    var val = TemplateVar.get('entryData').highestBid;
+    return web3.fromWei(val, 'ether');
+  },
+  content() {
+    return TemplateVar.get('content') == '0x' ? 'not set' : TemplateVar.get('content') ;
   }
 })
