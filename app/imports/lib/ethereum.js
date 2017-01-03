@@ -36,25 +36,6 @@ export default ethereum = (function() {
     });
   }
 
-  function checkSyncStatus(web3) {
-    reportStatus('Checking sync status...');
-    return new Promise((resolve, reject) => {
-      var sync = web3.eth.isSyncing((err, sync) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        if(!sync) {
-          resolve(web3);
-        } else {
-          reportStatus(`Getting blocks...` +
-            ` (${sync.currentBlock} / ${sync.highestBlock})`
-          );
-        }
-      })
-    });
-  }
-
   function initRegistrar(web3) {
     reportStatus('Initializing ENS registrar...');
     return new Promise((resolve, reject) => {
@@ -89,7 +70,6 @@ export default ethereum = (function() {
       reportStatus('Connecting to Ethereum network...');
       return initWeb3()
         .then(checkConnection)
-        .then(checkSyncStatus)
         .then(initRegistrar)
         .then(setGlobals)
         .then(() => {
