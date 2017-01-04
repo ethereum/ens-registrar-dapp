@@ -1,3 +1,5 @@
+import { ens } from '/imports/lib/ethereum';
+
 Template['status-owned'].onCreated(function() {
   TemplateVar.set(this, 'entryData', Template.instance().data.entry);
 

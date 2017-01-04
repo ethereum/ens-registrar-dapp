@@ -1,3 +1,5 @@
+import ethereum from '/imports/lib/ethereum';
+
 /**
 Template Controllers
 
@@ -29,4 +31,16 @@ Template['layout_body'].helpers({
 // When the template is created
 Template['layout_body'].onCreated(function(){
   Meta.setSuffix(TAPi18n.__("dapp.home.title"));
+  ethereum.onStatusChange(status => {
+    TemplateVar.set(this, 'isReady', status.isReady)
+    TemplateVar.set(this, 'description', status.description)
+    TemplateVar.set(this, 'theresAnError', status.theresAnError)
+  })
+  ethereum.init();
 });
+
+Template['layout_body'].events({
+  'click .retry': function() {
+    ethereum.init();
+  }
+})

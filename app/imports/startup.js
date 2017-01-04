@@ -4,13 +4,11 @@ import './lib/helpers/templateHelpers.js';
 
 import './stylesheets/main.less';
 
-import './templates/components/serviceStatus.html';
-import './templates/components/serviceStatus.js';
-import './templates/layout/checkConnection.html';
-import './templates/layout/checkConnection.js';
 import './templates/components/entry.html';
 import './templates/components/nameStatus.html';
 import './templates/components/nameStatus.js';
+import './templates/status/open.html';
+import './templates/status/open.js';
 import './templates/status/owned.html';
 import './templates/status/owned.js';
 import './templates/layout/body.html';
