@@ -5,7 +5,7 @@ html, body {
 }
 
 header {
-    padding-top: @gridHeight * 5;
+    padding: @gridHeight * 5 @gridWidth @gridHeight * 2;
     height: @gridHeight * 15;
     background-color: #A39C9C;
     text-align: center;
@@ -13,13 +13,14 @@ header {
     transition: background-image 0.2s ease-in-out, filter 3s ease-out;
     
     &.invalid-name {
-      filter: grayscale(90%);
+      filter: grayscale(95%);
       transition: background-image 0.2s ease-in-out, filter 0.5s ease-out;
     }
 
     h1 {
         color: #FFF;
         margin-bottom: @gridHeight * 1;
+        line-height: 0.75;
     }
 
     .search-input {
@@ -58,7 +59,7 @@ header {
   text-transform: uppercase;
 }
 
-.about-aside {
+aside {
   ul {
     padding: 0;
 
