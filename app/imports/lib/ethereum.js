@@ -1,10 +1,7 @@
 import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
 
-let web3Global = web3;
-
 //These get assigned at init() below
-export let web3;
 export let ens;
 export let registrar;
 export let network;
@@ -14,8 +11,8 @@ export default ethereum = (function() {
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
-      if(typeof web3Global !== 'undefined') {
-        web3 = new Web3(web3Global.currentProvider);
+      if(typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
       }
       else {
         let Web3 = require('web3');
@@ -91,6 +88,13 @@ export default ethereum = (function() {
       }
     });
   }
+  
+  function initEthereumHelpers() {
+    return new Promise((resolve, reject) => {
+      EthAccounts.init();
+      resolve();
+    })
+  }
 
   function reportStatus(description, isReady, theresAnError) {
     console.log(description);
@@ -109,9 +113,10 @@ export default ethereum = (function() {
         .then(checkConnection)
         .then(checkNetwork)
         .then(initRegistrar)
+        .then(initEthereumHelpers)
         .then(() => {
           //set a global for easier debugging on the console
-          g = {web3, ens, registrar, network};
+          g = {ens, registrar, network};
           reportStatus('Ready', true);
         })
         .catch(err => {
