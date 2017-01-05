@@ -1,10 +1,10 @@
-Your seal word is:
+Your bid password is:
 
 WORD
 
-Your seal word is used to seal bids, and to reveal them. Write it down and don't forget it,
-or you would lose your bids along with their deposits.
+Your bid password is used to seal bids, and to reveal them. Remember it
+in case your pc fails, in order to not lose the bids you've placed.
 
-[checkbox] I have writen down or otherwise saved the seal word.
+[checkbox] I have writen down or otherwise saved the bid password.
 
 [DONE]

@@ -4,25 +4,27 @@
         <h2>
             Submit bid
         </h2>
-        <p>
-          Submit a bid for a chance of obtaining this domain name.
-        </p>
-        <p>
-          (temp bid password): <strong>"asdf"</strong> (todo: generate it)
-        </p>
-        <p>
-          Bid amount
-          <input type="text" min="0" step="any" name="amount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">
-        </p>
-        <p>
-          Decide how much Ether you want to deposit with the bid.
-          This must be at least as much as the value of your bid, but can be more,
-          in order to disguise the true value of the bid.
-        </p>
-        <p>
-          Deposit amount
-          <input type="text" min="0" step="any" name="amount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">        
-        </p>
-        <button class="dapp-block-button bid"> Bid now</button>
+        <form class="new-bid">
+          <p>
+            Submit a bid for a chance of obtaining this domain name.
+          </p>
+          <p>
+            (temp bid password): <strong>"asdf"</strong> (todo: generate it)
+          </p>
+          <p>
+            Bid amount
+            <input type="text" min="0" step="any" name="bidAmount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">
+          </p>
+          <p>
+            Decide how much Ether you want to deposit with the bid.
+            This must be at least as much as the value of your bid, but can be more,
+            in order to disguise the true value of the bid.
+          </p>
+          <p>
+            Deposit amount
+            <input type="text" min="0" step="any" name="depositAmount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">        
+          </p>
+          <button type="submit" class="dapp-block-button"> Bid now</button>
+        </form>
     </div>
 </template>
