@@ -1,0 +1,10 @@
+Your seal word is:
+
+WORD
+
+Your seal word is used to seal bids, and to reveal them. Write it down and don't forget it,
+or you would lose your bids along with their deposits.
+
+[checkbox] I have writen down or otherwise saved the seal word.
+
+[DONE]
