@@ -1,14 +1,5 @@
 import { registrar } from '/imports/lib/ethereum';
 
-Template['status-open'].onCreated(function() {
-  var myPrimaryAccount = EthAccounts.findOne({name: 'Coinbase'});
-  console.log(myPrimaryAccount);
-});
-
-Template['status-open'].helpers({
-
-})
-
 Template['status-open'].events({
   'click .open-auction': function openAuction() {
     let name = Session.get('searched');
