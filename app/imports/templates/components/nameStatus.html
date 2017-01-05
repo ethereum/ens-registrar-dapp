@@ -1,18 +1,22 @@
 <template name="components_nameStatus">
-    <div>
-      {{#if searched}}
-        <div>
-          {{#if (TemplateVar.get 'error')}}
-            <h1>Error getting entry</h1>
-            <p>{{TemplateVar.get 'error'}}</p>
-          {{else}}
-            {{> Template.dynamic template=(TemplateVar.get 'status') data=(TemplateVar.get 'nameInfo')}}
-          {{/if}}
-        </div>
+  {{#if searched}}
+    <div class="col-md-8">
+      {{#if (TemplateVar.get 'error')}}
+        <h1>Error getting entry</h1>
+        <p>{{TemplateVar.get 'error'}}</p>
       {{else}}
-        <h1>Type a name</h1>
+        {{> Template.dynamic template=(TemplateVar.get 'status') data=(TemplateVar.get 'nameInfo')}}
       {{/if}}
     </div>
+    <aside class="col-md-4">
+        {{> Template.dynamic template=(TemplateVar.get 'aside') data=(TemplateVar.get 'nameInfo')}}
+    </aside>    
+  {{else}}
+    <h1>Type a name</h1>
+    <p>
+        This app allows you to register a .eth domain name, for use in ethereum decentralized applications. 
+    </p>
+  {{/if}}
 </template>
 
 <template name="status-invalid">
@@ -37,6 +41,19 @@
         <button class="dapp-block-button invalidate"> Invalidate </button>
 
     </div>
+</template>
+
+<template name="aside-can-invalidate">
+   <h3>about this name</h3>
+
+    <ul>
+        <li>
+            <span class="big-numeral">{{value}}</span> <span class="unit">ether</span> locked in this name
+        </li>
+        <li>
+            <span class="big-numeral">{{invalidatorFee}}</span> <span class="unit">ether</span> will be paid to the first to report this invalid name
+        </li>
+    </ul>
 </template>
 
 <template name="status-auction">

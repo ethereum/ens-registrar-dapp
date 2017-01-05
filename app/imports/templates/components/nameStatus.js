@@ -17,6 +17,7 @@ Template['components_nameStatus'].onCreated(function() {
 
               TemplateVar.set('name', entry.name);
               TemplateVar.set('status', 'status-' + entry.mode);
+              TemplateVar.set('aside', 'aside-' + entry.mode);
               Session.set('name', entry.name);
             }
           });
@@ -38,3 +39,15 @@ Template['components_nameStatus'].helpers({
       return TemplateVar.get('nameInfo').name
     }
 });
+
+
+Template['aside-can-invalidate'].helpers({
+  value() {
+    var val = Template.instance().data.entry.deed.balance;
+    return web3.fromWei(val.toFixed(), 'ether');
+  },
+  invalidatorFee() {
+    var val = Template.instance().data.entry.deed.balance;
+    return web3.fromWei(val.toFixed()/2, 'ether');
+  }
+})
