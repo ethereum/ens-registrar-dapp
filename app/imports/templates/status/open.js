@@ -1,23 +1,18 @@
 import { registrar } from '/imports/lib/ethereum';
 
-Template['status-open'].events({
-  'click .open-auction': function openAuction() {
-    let name = Session.get('searched');
-    let accounts = EthAccounts.find().fetch();
-    if (accounts.length == 0) {
-      alert('No accounts added to Dapp');
-    } else {
-      registrar.openAuction(name, {
-        from: accounts[0].address,
-        gas: 1000000
-      }, (err, res) => {
-        if (err) {
-          alert(err)
-        } else {
-          console.log(res);
-          alert(res + ' (also printed on console)');
-        }
-      })
-    }
+Template['status-open'].helpers({
+  openAuction() {
+    return function(callback) {
+      let name = Session.get('searched');
+      let accounts = EthAccounts.find().fetch();
+      if (accounts.length == 0) {
+        callback('No accounts found');
+      } else {
+        registrar.openAuction(name, {
+          from: accounts[0].address,
+          gas: 1000000
+        }, callback)
+      }
+    };
   }
 })

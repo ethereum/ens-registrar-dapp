@@ -1,0 +1,16 @@
+<template name="components_txButton">
+  {{#if theresAnError}}
+    <div>{{error}} </div>
+  {{else}}
+    <button class="dapp-block-button" disabled="{{isBusy}}">
+      {{#if isSubmitting}}
+        {{doing}}
+      {{else}}
+        {{text}}
+      {{/if}}
+      {{#if isConfirming}}
+      <span style="font-size: x-small">Confirming...</span>
+      {{/if}}
+    </button>
+  {{/if}}
+</template>
