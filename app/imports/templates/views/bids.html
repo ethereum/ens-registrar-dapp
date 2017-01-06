@@ -1,0 +1,11 @@
+<template name="view_bids">
+  <h3>My bids</h3>
+
+  <ul>
+    {{#each bid in bids}}
+      <li>
+          {{bid.txid}}
+      </li>
+    {{/each}}
+  </ul>
+</template>
