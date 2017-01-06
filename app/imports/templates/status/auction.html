@@ -1,6 +1,6 @@
 <template name="status-auction">
     <div>
-        <h1> This domain is open for bids </h1>
+      <h1 class="domain-name"><strong>{{name}}</strong> is open for bids</h1> 
         <h2>
             Submit bid
         </h2>
@@ -27,4 +27,16 @@
           <button type="submit" class="dapp-block-button"> Bid now</button>
         </form>
     </div>
+</template>
+
+<template name="aside-auction">
+    <h3>My bids</h3>
+
+    <ul>
+      {{#each bid in bids}}
+        <li>
+            {{bid.txid}}
+        </li>
+      {{/each}}
+    </ul>
 </template>

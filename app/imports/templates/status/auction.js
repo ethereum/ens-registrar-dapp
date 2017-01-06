@@ -22,10 +22,16 @@ Template['status-auction'].events({
         if (err) {
           console.log(err)
         } else {
-          console.log(res)
+          MyBids.insert({txid:res});
+          console.log(res);
         }
       });
     }
   }
 })
 
+Template['aside-auction'].helpers({
+  bids() {
+    return MyBids.find();
+  }
+})
