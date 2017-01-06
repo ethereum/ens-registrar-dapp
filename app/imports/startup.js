@@ -7,6 +7,7 @@ import './stylesheets/main.less';
 import './templates/components/nameStatus.html';
 import './templates/components/nameStatus.js';
 import './templates/components/bid.html';
+import './templates/components/bid.js';
 import './templates/status/open.html';
 import './templates/status/open.js';
 import './templates/status/auction.html';

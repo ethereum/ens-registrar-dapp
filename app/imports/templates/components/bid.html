@@ -5,6 +5,16 @@
     <p>Bid: <strong>{{bid.bidAmount}}</strong> Deposit: <strong>{{bid.depositAmount}}</strong></p>
     <p>Date: <strong>{{bid.date}}</strong></p>
     <p>Reveal period starts in: (or "reveal period ends in")</p>
-    <p><button class="dapp-block-button reveal-bid">Reveal</button></p>
+    <p>
+      {{#if (TemplateVar.get 'revealed')}}
+        <span>This bid was revealed</span>
+      {{else}}
+        {{#if (TemplateVar.get 'revealing')}}
+          <button class="dapp-block-button disabled" disabled>Revealing...</button>
+        {{else}}
+          <button class="dapp-block-button reveal-bid">Reveal</button>
+        {{/if}}
+      {{/if}}
+    </p>
   </div>
 </template>

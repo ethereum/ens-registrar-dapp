@@ -12,13 +12,14 @@ Template['status-auction'].events({
     let accounts = EthAccounts.find().fetch();
     
     if (accounts.length == 0) {
-      alert('No accounts added to Dapp');
+      alert('No accounts added to dapp');
     } else {
-      let bid = registrar.shaBid(name, accounts[0].address, bidAmount,
+      let owner = accounts[0].address;
+      let bid = registrar.shaBid(name, owner, bidAmount,
         masterPassword);//todo: derive the salt using the password and the name
       registrar.newBid(bid, {
         value: depositAmount, 
-        from: accounts[0].address,
+        from: owner,
         gas: 500000
       }, (err, res) => {
         if (err) {
@@ -27,6 +28,7 @@ Template['status-auction'].events({
           MyBids.insert({
             txid: res,
             name,
+            owner,
             fullName: name + '.eth',
             bidAmount,
             depositAmount,
