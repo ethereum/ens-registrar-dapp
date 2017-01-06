@@ -4,8 +4,9 @@
   <ul>
     {{#each bid in bids}}
       <li>
-          {{bid.txid}}
+          {{> components_bid bid=bid }}
       </li>
     {{/each}}
   </ul>
 </template>
+
