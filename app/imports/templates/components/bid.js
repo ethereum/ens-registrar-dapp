@@ -1,4 +1,5 @@
 import { registrar } from '/imports/lib/ethereum';
+import Helpers from '/imports/lib/helpers/helperFunctions';
 
 Template['components_bid'].events({
   'click .reveal-bid': function() {
@@ -7,17 +8,22 @@ Template['components_bid'].events({
     TemplateVar.set('revealing', true)
     registrar.unsealBid(bid.name, bid.owner, bid.bidAmount, bid.masterPassword, {
       from: bid.owner,
-      gas: 200000
-    }, (err, res) => {
+      gas: 100000
+    }, (err, txid) => {
       if(err) {
         alert(err)
-      } else {
-        console.log(res)
-        //todo: it's not success yet; the tx must have no errors
-        TemplateVar.set(template, 'revealed', true)
-        //todo: get revealed status from the contract
+        return
       }
-      TemplateVar.set(template, 'revealing', false)
+      console.log(txid)
+      Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
+        if(isSuccessful) {
+          TemplateVar.set(template, 'revealed', true)
+          //todo: get revealed status from the contract
+        } else {
+          alert('Revealing the bid failed')
+        }
+        TemplateVar.set(template, 'revealing', false)
+      })      
     })
   }
 })

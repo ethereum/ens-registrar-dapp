@@ -140,6 +140,7 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
       return callback(err)
     }
     web3.eth.getTransactionReceipt(txid, (err, receipt) => {
+      console.log('Gas: ' + tx.gas + ' Gas used: ' + receipt.gasUsed)
       if (receipt.gasUsed < tx.gas) {
         callback(null, true)
       } else {
