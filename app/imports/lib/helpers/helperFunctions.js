@@ -104,3 +104,49 @@ Helpers.formatTime = function(time, format) { //parameters
     } else
         return '';
 };
+
+/**
+Refreshes the status of the currently searched name
+**/
+Helpers.refreshStatus = function refreshStatus() {
+  const name = Session.get('searched');
+  Session.set('searched', '');
+  Session.set('searched', name);
+}
+
+/**
+Waits for a tx to get mined into a block and
+returns if the tx was successful or not.
+**/
+Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
+  function whenMined(txid, cb) {
+    function check() {
+      web3.eth.getTransaction(txid, (err, tx) => {
+        if (err) {
+          return cb(err)
+        }
+        if (tx.blockNumber) {
+          cb(null, tx)
+        } else {
+          setTimeout(check, 500)
+        }
+      })
+    }
+    check();
+  }
+  
+  whenMined(txid, (err, tx) => {
+    if (err) {
+      return callback(err)
+    }
+    web3.eth.getTransactionReceipt(txid, (err, receipt) => {
+      if (receipt.gasUsed < tx.gas) {
+        callback(null, true)
+      } else {
+        callback(null, false)
+      }
+    })
+  })
+}
+
+export default Helpers;
