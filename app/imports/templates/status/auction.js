@@ -1,4 +1,5 @@
 import { registrar } from '/imports/lib/ethereum';
+import Helpers from '/imports/lib/helpers/helperFunctions';
 
 Template['status-auction'].events({
   'submit .new-bid'(event) {
@@ -21,22 +22,32 @@ Template['status-auction'].events({
         value: depositAmount, 
         from: owner,
         gas: 500000
-      }, (err, res) => {
+      }, (err, txid) => {
         if (err) {
           alert(err)
-        } else {
-          MyBids.insert({
-            txid: res,
-            name,
-            owner,
-            fullName: name + '.eth',
-            bidAmount,
-            depositAmount,
-            date: Date.now(),
-            masterPassword
-          });
-          console.log(res);
-        }
+          return;
+        } 
+        console.log(txid)
+        Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
+          if (err) {
+            alert(err)
+            return;
+          }
+          if (isSuccessful) {
+            MyBids.insert({
+              txid,
+              name,
+              owner,
+              fullName: name + '.eth',
+              bidAmount,
+              depositAmount,
+              date: Date.now(),
+              masterPassword
+            });
+          } else {
+            alert('The transaction failed')
+          }
+        })
       });
     }
   }
