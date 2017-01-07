@@ -4,6 +4,11 @@
         <p>
             You can open an auction now (TODO: Add explanation about auctions)
         </p>
-        {{> components_txButton text="Open auction" doing="Opening..." makeTx=openAuction }}
+        {{> components_txButton 
+          text="Open auction" 
+          doing="Opening..." 
+          makeTx=openAuction
+          onSuccess=refreshStatus
+        }}
     </div>
 </template>

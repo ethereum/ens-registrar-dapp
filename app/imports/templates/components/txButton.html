@@ -3,7 +3,7 @@
     <div>{{error}} </div>
   {{else}}
     <button class="dapp-block-button" disabled="{{isBusy}}">
-      {{#if isSubmitting}}
+      {{#if isBusy}}
         {{doing}}
       {{else}}
         {{text}}

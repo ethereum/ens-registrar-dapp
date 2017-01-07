@@ -4,6 +4,9 @@ Template['components_nameStatus'].onCreated(function() {
   var template = this;
   TemplateVar.set('error', false);
   function lookupName(name) {
+    if (!name) {
+      return;
+    }
     try {
       registrar.getEntry(name, (err, entry) => {
         if(!err && entry) {
@@ -19,17 +22,15 @@ Template['components_nameStatus'].onCreated(function() {
         }
       });
     } catch(e) {
-      TemplateVar.set('error', e);
+      TemplateVar.set(template, 'error', e);
     }
   }
   
   this.autorun(function() {
     var searched = Session.get('searched');
-    TemplateVar.set('error', false);
-    if (searched) {
+    TemplateVar.set(template, 'error', false);
       //Look up name on 'searched' change.
-      lookupName(searched);
-    }
+    lookupName(searched);
   })
   
   setInterval(() => lookupName(Session.get('searched')), 1000);

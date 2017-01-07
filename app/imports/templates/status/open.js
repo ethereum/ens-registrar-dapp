@@ -1,4 +1,5 @@
 import { registrar } from '/imports/lib/ethereum';
+import refreshStatus from '/imports/lib/refresh-status';
 
 Template['status-open'].helpers({
   openAuction() {
@@ -14,5 +15,8 @@ Template['status-open'].helpers({
         }, callback)
       }
     };
+  },
+  refreshStatus() {
+    return refreshStatus;
   }
 })
