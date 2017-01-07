@@ -1,32 +1,38 @@
 import { registrar } from '/imports/lib/ethereum';
 
 Template['components_nameStatus'].onCreated(function() {
-    TemplateVar.set('error', false);
-    this.autorun(function() {
-      var searched = Session.get('searched');
-      TemplateVar.set('error', false);
-      if (searched) {
-        //Look up name on 'searched' change.
-        try {
-          registrar.getEntry(searched, (err, entry) => {
-            if(!err && entry) {
-              TemplateVar.set('nameInfo', {
-                name: entry.name + '.eth',
-                entry
-              })
+  var template = this;
+  TemplateVar.set('error', false);
+  function lookupName(name) {
+    try {
+      registrar.getEntry(name, (err, entry) => {
+        if(!err && entry) {
+          TemplateVar.set(template, 'nameInfo', {
+            name: entry.name + '.eth',
+            entry
+          })
 
-              TemplateVar.set('name', entry.name);
-              TemplateVar.set('status', 'status-' + entry.mode);
-              TemplateVar.set('aside', 'aside-' + entry.mode);
-              Session.set('name', entry.name);
-            }
-          });
-        } catch(e) {
-          TemplateVar.set('error', e);
+          TemplateVar.set(template, 'name', entry.name);
+          TemplateVar.set(template, 'status', 'status-' + entry.mode);
+          TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
+          Session.set('name', entry.name);
         }
-        
-      }
-    })
+      });
+    } catch(e) {
+      TemplateVar.set('error', e);
+    }
+  }
+  
+  this.autorun(function() {
+    var searched = Session.get('searched');
+    TemplateVar.set('error', false);
+    if (searched) {
+      //Look up name on 'searched' change.
+      lookupName(searched);
+    }
+  })
+  
+  setInterval(() => lookupName(Session.get('searched')), 1000);
 });
 
 
