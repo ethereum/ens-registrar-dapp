@@ -28,7 +28,13 @@
             Deposit amount
             <input type="text" min="0" step="any" name="depositAmount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">        
           </p>
-          <button type="submit" class="dapp-block-button"> Bid now</button>
+          <button type="submit" class="dapp-block-button" disabled="{{bidding}}">
+            {{#if bidding}}
+              Bidding...
+            {{else}}
+              Bid
+            {{/if}}
+          </button>
         </form>
     </div>
 </template>

@@ -4,6 +4,12 @@
         <p>
             You can open an auction now (TODO: Add explanation about auctions)
         </p>
-        <button type="submit" class="dapp-block-button open-auction"> Open auction</button>
+        <button type="submit" class="dapp-block-button open-auction" disabled={{opening}}> 
+          {{#if opening}}
+            Opening...
+          {{else}}
+            Open auction
+          {{/if}}
+        </button>
     </div>
 </template>
