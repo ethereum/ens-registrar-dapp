@@ -1,6 +1,10 @@
 import { registrar } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
+Template['status-auction'].onCreated(function() {
+  TemplateVar.set(this, 'entryData', Template.instance().data.entry);
+});
+
 Template['status-auction'].events({
   'submit .new-bid'(event) {
     event.preventDefault();
@@ -50,6 +54,13 @@ Template['status-auction'].events({
         })
       });
     }
+  }
+})
+
+Template['status-auction'].helpers({
+  registrationDate() {
+    var date = new Date(TemplateVar.get('entryData').registrationDate * 1000);
+    return date.toLocaleString();
   }
 })
 
