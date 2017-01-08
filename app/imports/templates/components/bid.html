@@ -1,10 +1,8 @@
 <template name="components_bid">
   <div class="components_bid">
     <p>Name: {{bid.fullName}}</p>
-    <p>Tx: <strong>{{bid.txid}}</strong></p>
     <p>Bid: <strong>{{bid.bidAmount}}</strong> Deposit: <strong>{{bid.depositAmount}}</strong></p>
-    <p>Date: <strong>{{bid.date}}</strong></p>
-    <p>Reveal period starts in: (or "reveal period ends in")</p>
+    <p>Reveal period starts in (timer)</p>
     <p>
       {{#if isRevealed}}
         <span>This bid was revealed</span>

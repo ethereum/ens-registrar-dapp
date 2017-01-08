@@ -30,6 +30,7 @@ Template['components_bid'].events({
 
 Template['components_bid'].helpers({
   isRevealed() {
+    //todo: get revealed status from the contract
     return MyBids.findOne({_id: this.bid._id}).revealed;
   }
 })
