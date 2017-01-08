@@ -6,7 +6,7 @@
     <p>Date: <strong>{{bid.date}}</strong></p>
     <p>Reveal period starts in: (or "reveal period ends in")</p>
     <p>
-      {{#if (TemplateVar.get 'revealed')}}
+      {{#if isRevealed}}
         <span>This bid was revealed</span>
       {{else}}
         {{#if (TemplateVar.get 'revealing')}}

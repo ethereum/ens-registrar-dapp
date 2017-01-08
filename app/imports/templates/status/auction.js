@@ -46,7 +46,8 @@ Template['status-auction'].events({
               bidAmount,
               depositAmount,
               date: Date.now(),
-              masterPassword
+              masterPassword,
+              revealed: false
             });
           } else {
             alert('The transaction failed')

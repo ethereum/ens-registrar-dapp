@@ -17,13 +17,19 @@ Template['components_bid'].events({
       console.log(txid)
       Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
         if(isSuccessful) {
-          TemplateVar.set(template, 'revealed', true)
           //todo: get revealed status from the contract
+          MyBids.update({ _id: bid.id }, { $set: {revealed: true} })
         } else {
           alert('Revealing the bid failed')
         }
         TemplateVar.set(template, 'revealing', false)
       })      
     })
+  }
+})
+
+Template['components_bid'].helpers({
+  isRevealed() {
+    return MyBids.findOne({_id: this.bid._id}).revealed;
   }
 })
