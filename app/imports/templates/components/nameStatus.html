@@ -72,7 +72,7 @@
         <p>
             Anyone can do it..
         </p>
-        <button class="dapp-block-button"> Finalize it </button>
+        {{> finalizeButton }}
     </div>
 </template>
 
@@ -82,6 +82,16 @@
         <p>
             Anyone can do it.. Otherwise someone else can invalidate it
         </p>
-        <button class="dapp-block-button"> Finalize it </button>
+        {{> finalizeButton }}
     </div>
+</template>
+
+<template name="finalizeButton">
+  <button class="dapp-block-button finalize" disabled={{finalizing}}>
+    {{#if finalizing}}
+      Finalizing...
+    {{else}}
+      Finalize it 
+    {{/if}}
+  </button>
 </template>

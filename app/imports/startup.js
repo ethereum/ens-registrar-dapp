@@ -14,6 +14,7 @@ import './templates/status/auction.html';
 import './templates/status/auction.js';
 import './templates/status/owned.html';
 import './templates/status/owned.js';
+import './templates/status/finalize-button.js';
 import './templates/layout/body.html';
 import './templates/layout/body.js';
 import './templates/layout/header.html';
