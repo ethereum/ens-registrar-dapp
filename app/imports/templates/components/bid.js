@@ -18,7 +18,7 @@ Template['components_bid'].events({
       Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
         if(isSuccessful) {
           //todo: get revealed status from the contract
-          MyBids.update({ _id: bid.id }, { $set: {revealed: true} })
+          MyBids.update({ _id: bid._id }, { $set: {revealed: true} })
         } else {
           alert('Revealing the bid failed')
         }
