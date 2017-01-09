@@ -5,7 +5,7 @@ Template['components_bid'].events({
   'click .reveal-bid': function() {
     let template = Template.instance();
     let bid = template.data.bid;
-    TemplateVar.set('revealing', true)
+    MyBids.update({ _id: bid._id }, { $set: {revealing: true} })
     registrar.unsealBid(bid.name, bid.owner, bid.bidAmount, bid.masterPassword, {
       from: bid.owner,
       gas: 100000
@@ -23,6 +23,7 @@ Template['components_bid'].events({
           alert('Revealing the bid failed')
         }
         TemplateVar.set(template, 'revealing', false)
+        MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
       })      
     })
   }
@@ -32,5 +33,8 @@ Template['components_bid'].helpers({
   isRevealed() {
     //todo: get revealed status from the contract
     return MyBids.findOne({_id: this.bid._id}).revealed;
+  },
+  revealing() {
+    return MyBids.findOne({_id: this.bid._id}).revealing;
   }
 })

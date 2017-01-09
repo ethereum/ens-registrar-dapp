@@ -7,7 +7,7 @@
       {{#if isRevealed}}
         <span>This bid was revealed</span>
       {{else}}
-        {{#if (TemplateVar.get 'revealing')}}
+        {{#if revealing}}
           <button class="dapp-block-button disabled" disabled>Revealing...</button>
         {{else}}
           <button class="dapp-block-button reveal-bid">Reveal</button>
