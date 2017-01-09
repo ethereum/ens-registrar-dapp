@@ -5,12 +5,33 @@
       {{> components_nameStatus }}
     {{else}}
       {{#if (TemplateVar.get 'theresAnError') }}
-        <h1>Something has gone awry</h1>
-        <p>{{TemplateVar.get 'description'}}</p>
-        <button class="dapp-block-button retry">Retry</button>
+        {{#if (TemplateVar.get 'networkError')}}
+          {{> useCustomContract }}
+        {{else}}
+          <h1>Something has gone awry</h1>
+          <p>{{TemplateVar.get 'description'}}</p>
+          <button class="dapp-block-button retry">Retry</button>
+        {{/if}}
       {{else}}
         <h1 class="connection-status">{{TemplateVar.get 'description'}}</h1>
       {{/if}}
     {{/if}}
   </main>
+</template>
+
+
+<template name="useCustomContract">
+  <div class="use-custom-contract">
+    <h1>Unsupported network</h1>
+    <p>
+      ENS is only running on the Ropsten testnet network for now,
+      but you can enter a custom ENS contract address.
+    </p>
+    <p>
+      Custom ENS address: {{> dapp_addressInput class="ens-address" }}
+    </p>
+    <p>
+      <button class="dapp-block-button">Use custom address</button>
+    </p>
+  </div>
 </template>

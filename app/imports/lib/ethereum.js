@@ -6,8 +6,14 @@ export let ens;
 export let registrar;
 export let network;
 
+export let errors = {
+  invalidNetwork: new Error('Sorry, ENS is only available on the Ropsten testnet' +
+    ' network at the moment.')
+}
+
 export default ethereum = (function() {
   let subscribers = [];
+  let customEnsAddress;
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -47,8 +53,6 @@ export default ethereum = (function() {
         if (e) {
           return reject(e)
         }
-        let rejectMessage = 'Sorry, ENS is only available on the Ropsten testnet' +
-          ' network at the moment.'
         switch(res.hash) {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
             network='ropsten';
@@ -56,15 +60,15 @@ export default ethereum = (function() {
             break;
           case '0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303':
             network='morden';
-            reject(rejectMessage);
+            reject(errors.invalidNetwork);
             break;
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
-            reject(rejectMessage);
+            reject(errors.invalidNetwork);
             break;
           default:
             network='private';
-            reject(rejectMessage);
+            reject(errors.invalidNetwork);
         }
       });
     })
@@ -74,13 +78,16 @@ export default ethereum = (function() {
     reportStatus('Initializing ENS registrar...');
     return new Promise((resolve, reject) => {
       try {
-        ens = new ENS(web3, '0x112234455c3a32fd11230c42e7bccd4a84e02010');
+        ens = new ENS(web3, customEnsAddress || '0x112234455c3a32fd11230c42e7bccd4a84e02010');
         registrar = new Registrar(web3);
-        registrar.init();
-        let owner = registrar.ens.owner('eth')
-        if(owner !== '0xc68de5b43c3d980b0c110a77a5f78d3c4c4d63b4') {
-          throw 'Could not find ENS contract. Make sure your node' +
-            ' is synced to at least block 25409.';
+        registrar.init(ens);
+        if (!customEnsAddress) {
+          //Check correct Ropsten ENS contract
+          let owner = registrar.ens.owner('eth')
+          if(owner !== '0xc68de5b43c3d980b0c110a77a5f78d3c4c4d63b4') {
+            throw 'Could not find ENS contract. Make sure your node' +
+              ' is synced to at least block 25409.';
+          }
         }
         resolve();
       } catch(e) {
@@ -112,6 +119,11 @@ export default ethereum = (function() {
       return initWeb3()
         .then(checkConnection)
         .then(checkNetwork)
+        .catch(err => {
+          if (err !== errors.invalidNetwork || !customEnsAddress) {
+            throw err;
+          }
+        })
         .then(initRegistrar)
         .then(initEthereumHelpers)
         .then(() => {
@@ -119,12 +131,16 @@ export default ethereum = (function() {
           g = {ens, registrar, network};
           reportStatus('Ready', true);
         })
+        
         .catch(err => {
           reportStatus(err, false, true);
         })
     },
     onStatusChange(callback) {
       subscribers.push(callback);
+    },
+    setCustomContract(ensAddress) {
+      customEnsAddress = ensAddress;
     }
   };
 }());
