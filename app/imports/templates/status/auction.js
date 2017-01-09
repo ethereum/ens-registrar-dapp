@@ -22,9 +22,10 @@ Template['status-auction'].events({
     } else {
       TemplateVar.set(template, 'bidding', true)
       let owner = accounts[0].address;
-      let bid = registrar.shaBid(name, owner, bidAmount,
+      let bid = registrar.bidFactory(name, owner, bidAmount,
         masterPassword);//todo: derive the salt using the password and the name
-      registrar.newBid(bid, {
+      console.log('Bid: ', bid);
+      registrar.submitBid(bid, {
         value: depositAmount, 
         from: owner,
         gas: 500000
@@ -51,6 +52,7 @@ Template['status-auction'].events({
               depositAmount,
               date: Date.now(),
               masterPassword,
+              bid: bid,
               revealed: false
             });
           } else {
