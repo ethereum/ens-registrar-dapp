@@ -8,7 +8,7 @@ Template['components_bid'].events({
     MyBids.update({ _id: bid._id }, { $set: {revealing: true} })
     registrar.unsealBid(bid.bid, {
       from: bid.owner,//todo: check if account is bid owner
-      gas: 70000
+      gas: 300000
     }, (err, txid) => {
       if(err) {
         alert(err)
