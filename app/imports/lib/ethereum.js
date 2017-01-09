@@ -79,8 +79,7 @@ export default ethereum = (function() {
     return new Promise((resolve, reject) => {
       try {
         ens = new ENS(web3, customEnsAddress || '0x112234455c3a32fd11230c42e7bccd4a84e02010');
-        registrar = new Registrar(web3);
-        registrar.init(ens);
+        registrar = new Registrar(web3, ens);
         if (!customEnsAddress) {
           //Check correct Ropsten ENS contract
           let owner = registrar.ens.owner('eth')
