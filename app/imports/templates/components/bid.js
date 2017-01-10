@@ -1,6 +1,22 @@
 import { registrar } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
+function updateRevealedStatus(template, bid) {
+  registrar.isBidRevealed(bid, (err, isRevealed) => {
+    if(err) {
+      console.error('Error getting revealed status for bid');
+      return;
+    }
+    TemplateVar.set(template, 'isRevealed', isRevealed);
+  })
+}
+
+Template['components_bid'].onCreated(function() {
+  let template = Template.instance();
+  let bid = template.data.bid;
+  updateRevealedStatus(template, bid.bid);
+})
+
 Template['components_bid'].events({
   'click .reveal-bid': function() {
     let template = Template.instance();
@@ -12,17 +28,21 @@ Template['components_bid'].events({
     }, (err, txid) => {
       if(err) {
         alert(err)
+        MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
         return
       }
       console.log(txid)
       Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
+        if (err) {
+          alert(err)
+          MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
+          return;
+        }
         if(isSuccessful) {
-          //todo: get revealed status from the contract
-          MyBids.update({ _id: bid._id }, { $set: {revealed: true} })
+          updateRevealedStatus(template, bid.bid)
         } else {
           alert('Revealing the bid failed')
         }
-        TemplateVar.set(template, 'revealing', false)
         MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
       })      
     })
@@ -31,8 +51,7 @@ Template['components_bid'].events({
 
 Template['components_bid'].helpers({
   isRevealed() {
-    //todo: get revealed status from the contract
-    return MyBids.findOne({_id: this.bid._id}).revealed;
+    return TemplateVar.get('isRevealed');
   },
   revealing() {
     return MyBids.findOne({_id: this.bid._id}).revealing;
