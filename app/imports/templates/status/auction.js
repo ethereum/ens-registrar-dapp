@@ -10,8 +10,8 @@ Template['status-auction'].events({
     event.preventDefault();
     
     const target = event.target;
-    const bidAmount = target.bidAmount.value;
-    const depositAmount = target.depositAmount.value;
+    const bidAmount = EthTools.toWei(target.bidAmount.value);
+    const depositAmount = EthTools.toWei(target.depositAmount.value);
     const name = Session.get('searched');
     const masterPassword = 'asdf';
     const template = Template.instance();
