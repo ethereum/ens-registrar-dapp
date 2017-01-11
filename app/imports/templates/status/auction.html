@@ -1,52 +1,58 @@
 <template name="status-auction">
     <div>
       <h1 class="domain-name"><strong>{{name}}</strong> is open for bids</h1>
-        <p>
-          Auction ends at <em>{{registrationDate}}</em>.
-          TODO: "Reveal period starts in (timer)"
-        </p>
-        <h2>
-            Submit bid
-        </h2>
+ 
         <form class="new-bid">
           <p>
-            Submit a bid for a chance of obtaining this domain name.
+            You bid by submitting the maximum amount of ether you would be willing to lock in order to hold for this name. The top bidder will own the name, but you will be refunded of any amount more than the strictly necessary to overbid the second place, therefore you only need to bid once. Your maximum bid is kept secret until you reveal it.
           </p>
+          <br><h3>How much you value this name?</h3>          
           <p>
-            (temp bid password): <strong>"asdf"</strong> (todo: generate it)
+            Send the maximum amount of value you would be willing to lock for this name:<br>
+            <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="dapp-large" pattern="[0-9\.,]*">
           </p>
-          <p>
-            Bid amount
-            <input type="text" min="0" step="any" name="bidAmount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">
-          </p>
-          <p>
-            Decide how much Ether you want to deposit with the bid.
-            This must be at least as much as the value of your bid, but can be more,
-            in order to disguise the true value of the bid.
-          </p>
-          <p>
-            Deposit amount
-            <input type="text" min="0" step="any" name="depositAmount" placeholder="0.0" class="dapp-large" pattern="[0-9\.,]*">        
-          </p>
+          <br>
+          <h3>Protect Bid anonimity</h3>
+          <div class="dapp-selector">
+            Keep the exact amount a secret by sending a random amount up to <span>{{anonymizerAmount}}<span>%</span></span> 
+            <br>
+            <input type="range" name="anonymizer" min="0" max="1" step="0.01" value="{{TemplateVar.get 'anonymizer'}}">
+            <span>Cheap</span>
+            <span>Private</span>
+          </div>
+          <br>
+          <p class="clear">
           <button type="submit" class="dapp-block-button" disabled="{{bidding}}">
             {{#if bidding}}
               Bidding...
             {{else}}
               Bid
             {{/if}}
-          </button>
+          </button>            
+          </p>
+          
         </form>
     </div>
 </template>
 
 <template name="aside-auction">
-    <h3>My bids</h3>
+    <h3> Time remaining until reveal phase</h3>
+    <h1>{{timeRemaining}}</h1>
+    <p>{{revealDate}}</p>
+    
+    {{#if bids}}
+      <h3>My bids</h3>
 
-    <ul>
-      {{#each bid in bids}}
-        <li>
-            {{> components_bid bid=bid }}
-        </li>
-      {{/each}}
-    </ul>
+      <ul>
+        {{#each bid in bids}}
+          <li>
+              {{> components_bid bid=bid }}
+          </li>
+        {{/each}}
+      </ul>
+    {{/if}}
+
+    <p> 
+      <strong>Attention: You must reveal your bid within <em>24 hours</em> of the reveal phase, failing to do so will result in irreversible loss of funds</strong> 
+    </p>    
 </template>

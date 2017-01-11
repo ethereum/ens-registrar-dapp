@@ -19,6 +19,6 @@ Template['layout_header'].helpers({
     return Session.get('name');
   },
   'disabled': function() {
-    return Session.get('name').length > 7 ? '' : 'invalid-name' ;
+    return Session.get('name').length > 6 ? '' : 'invalid-name' ;
   }
 });
