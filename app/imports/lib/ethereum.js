@@ -110,31 +110,47 @@ export default ethereum = (function() {
       theresAnError
     }));
   }
-
+  
+  function watchDisconnect() {
+    function check() {
+      if(web3.isConnected()) {
+        setTimeout(check, 2500);
+      } else {
+        initEthereum();
+      }
+    }
+    
+    return new Promise((resolve, reject) => {
+      check();
+      resolve();
+    })
+  }
+  
+  function initEthereum() {
+    reportStatus('Connecting to Ethereum network...');
+    return initWeb3()
+      .then(checkConnection)
+      .then(watchDisconnect)
+      .then(checkNetwork)
+      .catch(err => {
+        if (err !== errors.invalidNetwork || !customEnsAddress) {
+          throw err;
+        }
+      })
+      .then(initRegistrar)
+      .then(initEthereumHelpers)
+      .then(() => {
+        //set a global for easier debugging on the console
+        g = {ens, registrar, network};
+        reportStatus('Ready', true);
+      })
+      .catch(err => {
+        reportStatus(err, false, true);
+      })
+  }
 
   return {
-    init() {
-      reportStatus('Connecting to Ethereum network...');
-      return initWeb3()
-        .then(checkConnection)
-        .then(checkNetwork)
-        .catch(err => {
-          if (err !== errors.invalidNetwork || !customEnsAddress) {
-            throw err;
-          }
-        })
-        .then(initRegistrar)
-        .then(initEthereumHelpers)
-        .then(() => {
-          //set a global for easier debugging on the console
-          g = {ens, registrar, network};
-          reportStatus('Ready', true);
-        })
-        
-        .catch(err => {
-          reportStatus(err, false, true);
-        })
-    },
+    init: initEthereum,
     onStatusChange(callback) {
       subscribers.push(callback);
     },

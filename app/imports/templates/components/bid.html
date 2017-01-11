@@ -1,7 +1,10 @@
 <template name="components_bid">
   <div class="components_bid">
     <p>Name: {{bid.fullName}}</p>
-    <p>Bid: <strong>{{bid.bidAmount}}</strong> Deposit: <strong>{{bid.depositAmount}}</strong></p>
+    <p>
+      Bid: <strong>{{dapp_formatBalance bid.bidAmount "0,0.00"}}</strong> 
+       Deposit: <strong>{{dapp_formatBalance bid.depositAmount "0,0.00"}}</strong>
+    </p>
     <p>Reveal period starts in (timer)</p>
     <p>
       {{#if isRevealed}}
