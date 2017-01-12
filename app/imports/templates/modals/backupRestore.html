@@ -1,0 +1,27 @@
+<template name="modals_backupRestore">
+  <div class="dapp-header" style="filter:none">
+    <nav>
+      <ul>
+          <li>
+              <a href="#" class="backup-link">
+                  <span>Backup</span>
+              </a>
+              <a href="#" class="restore-link">
+                  <span>Restore</span>
+              </a>
+          </li>
+      </ul>
+    </nav>
+  </div>
+  <div>
+    {{> Template.dynamic template=view }}
+  </div>
+</template>
+
+<template name="backup">
+  <p>Backup your bids in order to be able to reveal them later.</p>
+  <button class="dapp-block-button">Download bids</button>
+</template>
+
+<template name="restore">
+</template>

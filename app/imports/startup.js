@@ -25,6 +25,8 @@ import './templates/layout/router.html';
 import './templates/layout/router.js';
 import './templates/views/bids.html';
 import './templates/views/bids.js';
+import './templates/modals/backupRestore.html';
+import './templates/modals/backupRestore.js';
 import './templates/index.html';
 
 import './collections';

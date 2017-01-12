@@ -150,4 +150,11 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
   })
 }
 
+Helpers.showBackupModal = function showBackupModal() {
+  EthElements.Modal.question({
+    template: 'modals_backupRestore',
+    ok: true
+  })
+}
+
 export default Helpers;
