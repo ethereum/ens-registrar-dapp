@@ -26,4 +26,17 @@
 <template name="restore">
   <p>Import bids from a backup file. Your current bids won't get removed.</p>
   <input type="file" id="restore-input">
+  {{#if fileError}}
+    <p style="color: red">{{fileError}}</p>
+  {{else}}
+    {{#if fileIsLoaded}}
+      <p>{{totalBids}} total bids found on file.</p>
+      {{#if newBidsCount}}
+        <p>{{newBidsCount}} new bids will be imported.</p>
+      {{else}}
+        <p>No new bids found for importing</p>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+  <button class="dapp-block-button import" disabled={{buttonDisabled}}>Import bids</button>
 </template>
