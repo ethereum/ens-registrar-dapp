@@ -23,7 +23,7 @@ Template['modals_backupRestore'].helpers({
 
 Template['backup'].events({
   'click .dapp-block-button': function() {
-    const filename = 'ens-registrar-bids.json';
+    const filename = `ens-bids-backup_${new Date().toISOString()}.json`;
     const data = JSON.stringify(MyBids.find().fetch());
     
     //Download logic from http://stackoverflow.com/a/33542499/988367
