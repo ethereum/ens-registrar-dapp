@@ -16,7 +16,7 @@ Template['status-auction'].events({
     const randomFactor = 1 + Math.random() * (TemplateVar.get('anonymizerAmount') - 100) / 100;
     const depositAmount = EthTools.toWei(target.bidAmount.value * randomFactor, 'ether');
     const name = Session.get('searched');
-    const masterPassword = 'asdf';
+    const secret = Math.random().toString();
     const template = Template.instance();
     let accounts = EthAccounts.find().fetch();
 
@@ -33,8 +33,7 @@ Template['status-auction'].events({
     } else {
       TemplateVar.set(template, 'bidding', true)
       let owner = accounts[0].address;
-      let bid = registrar.bidFactory(name, owner, bidAmount,
-        masterPassword);//todo: derive the salt using the password and the name
+      let bid = registrar.bidFactory(name, owner, bidAmount, secret);
       console.log('Bid: ', bid);
       registrar.submitBid(bid, {
         value: depositAmount, 
@@ -69,7 +68,6 @@ Template['status-auction'].events({
               bidAmount,
               depositAmount,
               date: Date.now(),
-              masterPassword,
               bid: bid,
               revealed: false
             });
