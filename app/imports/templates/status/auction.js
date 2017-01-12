@@ -60,17 +60,16 @@ Template['status-auction'].events({
             return;
           }
           if (isSuccessful) {
-            MyBids.insert({
-              txid,
-              name,
-              owner,
-              fullName: name + '.eth',
-              bidAmount,
-              depositAmount,
-              date: Date.now(),
-              bid: bid,
-              revealed: false
-            });
+            MyBids.insert(
+              Object.assign(
+                {
+                  date: Date.now(),
+                  depositAmount,
+                  txid
+                },
+                bid
+              )
+            );
           } else {
             GlobalNotification.error({
                 content: 'The transaction failed',
