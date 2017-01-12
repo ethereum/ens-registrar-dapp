@@ -12,10 +12,15 @@
         {{> Template.dynamic template=(TemplateVar.get 'aside') data=(TemplateVar.get 'nameInfo')}}
     </aside>    
   {{else}}
-    <h1>Type a name</h1>
-    <p>
-        This app allows you to register a .eth domain name, for use in ethereum decentralized applications. 
-    </p>
+    <div class="col-md-8">
+        <h1>Type a name</h1>
+        <p>
+            This app allows you to register a .eth domain name, for use in ethereum decentralized applications. 
+        </p>
+    </div>
+    <aside class="col-md-4">
+        {{>view_bids}}
+    </aside> 
   {{/if}}
 </template>
 

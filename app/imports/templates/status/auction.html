@@ -40,7 +40,7 @@
 </template>
 
 <template name="aside-auction">
-    <h3>My bids</h3>
+    <h3>This bids</h3>
 
     <ul>
       {{#each bid in bids}}
@@ -49,4 +49,7 @@
         </li>
       {{/each}}
     </ul>
+
+    {{>view_bids}}
+
 </template>

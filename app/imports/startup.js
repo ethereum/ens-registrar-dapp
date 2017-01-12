@@ -21,8 +21,6 @@ import './templates/layout/header.html';
 import './templates/layout/header.js';
 import './templates/layout/main.html';
 import './templates/layout/notFound.html';
-import './templates/layout/router.html';
-import './templates/layout/router.js';
 import './templates/views/bids.html';
 import './templates/views/bids.js';
 import './templates/modals/backupRestore.html';
