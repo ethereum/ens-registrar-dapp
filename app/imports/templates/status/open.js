@@ -8,7 +8,10 @@ Template['status-open'].events({
     let template = Template.instance();
     
     if (accounts.length == 0) {
-      alert('No accounts found');
+      GlobalNotification.error({
+                content: 'No accounts found',
+                duration: 3
+            });
     } else {
       TemplateVar.set(template, 'opening', true)
       registrar.openAuction(name, {
@@ -17,19 +20,28 @@ Template['status-open'].events({
       }, (err, txid) => {
         if (err) {
           TemplateVar.set(template, 'opening', false)
-          alert(err)
+          GlobalNotification.error({
+                content: err.toString(),
+                duration: 3
+            });
           return;
         }
         Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
           if (err) {
             TemplateVar.set(template, 'opening', false)
-            alert(err)
+            GlobalNotification.error({
+                content: err.toString(),
+                duration: 3
+            });
             return;
           }
           if (isSuccessful) {
             Helpers.refreshStatus();
           } else {
-            alert('Transaction failed')
+            GlobalNotification.error({
+                content: 'Transaction failed',
+                duration: 3
+            });
           }
           TemplateVar.set(template, 'opening', false)
         })

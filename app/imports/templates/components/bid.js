@@ -27,21 +27,30 @@ Template['components_bid'].events({
       gas: 300000
     }, (err, txid) => {
       if(err) {
-        alert(err)
+        GlobalNotification.error({
+                content: err.toString(),
+                duration: 3
+            });
         MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
         return
       }
       console.log(txid)
       Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
         if (err) {
-          alert(err)
+          GlobalNotification.error({
+                content: err.toString(),
+                duration: 3
+            });
           MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
           return;
         }
         if(isSuccessful) {
           updateRevealedStatus(template, bid.bid)
         } else {
-          alert('Revealing the bid failed')
+          GlobalNotification.error({
+                content: 'Revealing the bid failed',
+                duration: 3
+            });
         }
         MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
       })      
