@@ -1,12 +1,21 @@
 <template name="view_bids">
-  <h3>My bids</h3>
+    {{#if bids}}
+        <h3> Watched Names </h3>
+        <ul class="bids">
+            {{#each bid in bids}}
+              <li>
+                  <a href='#{{bid.name}}' name='{{bid.name}}'>{{bid.fullName}}</a>  
+              </li>
+            {{/each}}
+        </ul>
+    {{/if}}
 
-  <ul>
-    {{#each bid in bids}}
-      <li>
-          {{> components_bid bid=bid }}
-      </li>
-    {{/each}}
-  </ul>
+    <h3>More Options</h3>
+    <ul>
+        <li><a href="" class="export-bids">Export Bids </a></li>
+        <li><a href="" class="import-bids">Import Bids</a></li>
+    </ul>
+
+
 </template>
 

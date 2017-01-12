@@ -36,6 +36,7 @@
 </template>
 
 <template name="aside-auction">
+
     <h3> Time remaining until reveal phase</h3>
     <h1>{{timeRemaining}}</h1>
     <p>{{revealDate}}</p>
@@ -55,4 +56,6 @@
     <p> 
       <strong>Attention: You must reveal your bid within <em>24 hours</em> of the reveal phase, failing to do so will result in irreversible loss of funds</strong> 
     </p>    
+
+    {{>view_bids}}
 </template>
