@@ -109,6 +109,10 @@ Template['status-auction'].events({
 
 
 Template['status-auction'].helpers({
+  bids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name});
+  },
   bidding() {
     return TemplateVar.get('bidding')
   },
@@ -120,7 +124,6 @@ Template['status-auction'].helpers({
 })
 
 
-
 Template['aside-auction'].onCreated(function() {
   var template = this;
   TemplateVar.set(template, 'entryData', Template.instance().data.entry);
@@ -128,11 +131,7 @@ Template['aside-auction'].onCreated(function() {
 });
 
 
-Template['aside-auction'].helpers({
-  bids() {
-    const name = Session.get('searched');
-    return MyBids.find({name: name});
-  }, 
+Template['aside-auction'].helpers({ 
   revealDate() {
     var m = TemplateVar.get('revealDate');
     return m.format('YYYY-MM-DD HH:mm');

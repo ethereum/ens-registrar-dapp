@@ -1,9 +1,8 @@
 <template name="components_bid">
   <div class="components_bid">
-    <p>Name: {{fullName bid.name}}</p>
     <p>
-      Bid: <strong>{{dapp_formatBalance bid.value "0,0.00"}}</strong> 
-       Deposit: <strong>{{dapp_formatBalance bid.depositAmount "0,0.00"}}</strong>
+      You are willing to pay at most: <strong>{{dapp_formatBalance bid.value "0,0.00"}}</strong> 
+      Deposit (will be partially refunded when you reveal your bid): <strong>{{dapp_formatBalance bid.depositAmount "0,0.00"}}</strong>
     </p>
     <p>
       {{#if isRevealed}}
