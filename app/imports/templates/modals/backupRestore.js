@@ -39,3 +39,41 @@ Template['backup'].events({
     //window.URL.revokeObjectURL(blob);
   }
 })
+
+// RESTORE
+
+var GlobalNotification = {
+  error(e) {
+    alert(e.content)
+  }
+};
+
+Template['restore'].onRendered(function() {
+  
+  function handleFiles() {
+    let file = this.files[0];
+    
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      let bids;
+      try {
+        bids = JSON.parse(e.target.result); 
+      } catch(e) {
+        GlobalNotification.error({
+          content: 'Can\'t parse file: ' + e,
+          duration: 5
+       });
+      }
+      bids.forEach(function(bid) {
+        if(!MyBids.findOne({ "_id": bid._id })) {
+          MyBids.insert(bid);
+        }
+      });
+    };
+    reader.readAsText(file);
+  }
+  
+  var inputElement = document.getElementById("restore-input");
+  inputElement.addEventListener("change", handleFiles, false);
+})
+
