@@ -19,8 +19,9 @@ Template['layout_header'].helpers({
     }
   },
   'returnedName': function() {
-    window.location.hash = Session.get('name');
-    return Session.get('name');
+    var name = Session.get('name');
+    if (name) window.location.hash = name;
+    return name;
   },
   'disabled': function() {
     return (Session.get('name').length > 0 && Session.get('name').length < 7) ? 'invalid-name' : '';
