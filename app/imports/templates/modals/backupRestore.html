@@ -1,0 +1,42 @@
+<template name="modals_backupRestore">
+  <div>
+    {{> Template.dynamic template=view }}
+  </div>
+</template>
+
+<template name="backup">
+  <h1> Backup your bids</h1>
+
+  <p>This allows you to give them to someone else to reveal them, or restore them in case of data loss <br></p>
+
+  <div class="dapp-modal-buttons no-margins">
+    <button class="ok dapp-primary-button">Download bids</button>
+  </div>
+</template>
+
+<template name="restore">
+  <h1>Import Bids</h1>
+  <p>
+    This allows you to reveal bids made in other computers. Your current bids won't get removed. <br>
+    
+    <input type="file" id="restore-input" style="margin: 30px auto 0;">
+
+    {{#if fileError}}
+      <p style="color: red">{{fileError}}</p>
+    {{else}}
+      {{#if fileIsLoaded}}
+        <p>{{totalBids}} total bids found on file.</p>
+        {{#if newBidsCount}}
+          <p>{{newBidsCount}} new bids will be imported.</p>
+        {{else}}
+          <p>No new bids found for importing</p>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+    <br>
+  </p>  
+
+  <div class="dapp-modal-buttons no-margins">
+    <button class="ok import dapp-primary-button" disabled={{buttonDisabled}}>Import bids</button>
+  </div>  
+</template>
