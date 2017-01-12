@@ -16,9 +16,24 @@ Template['status-auction'].events({
     const randomFactor = 1 + Math.random() * (TemplateVar.get('anonymizerAmount') - 100) / 100;
     const depositAmount = EthTools.toWei(target.bidAmount.value * randomFactor, 'ether');
     const name = Session.get('searched');
-    const secret = Math.random().toString();
+    let secret;
     const template = Template.instance();
     let accounts = EthAccounts.find().fetch();
+    
+    if (window.crypto && window.crypto.getRandomValues) {
+      secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
+    } else {
+      EthElements.Modal.question({
+        text: 'Your browser does not support window.crypto.getRandomValues ' + 
+          'your bid anonymity is going to be weaker.',
+        ok: true
+      });
+      secret = Math.floor(Math.random()*1000000).toString() +
+        Math.floor(Math.random()*1000000).toString() +
+        Math.floor(Math.random()*1000000).toString() +
+        Math.floor(Math.random()*1000000).toString();
+    }
+    console.log('secret', secret);
 
     if (accounts.length == 0) {
       GlobalNotification.error({
