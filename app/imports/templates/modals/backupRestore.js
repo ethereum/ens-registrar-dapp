@@ -2,6 +2,11 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 Template['modals_backupRestore'].onCreated(function() {
   this.view = new ReactiveVar('backup');
+
+  if (this.data && this.data.action) {
+    this.view.set(this.data.action);
+  }
+  console.log('modal', this, this.data, this.data.action)
 })
 
 Template['modals_backupRestore'].events({
@@ -22,7 +27,7 @@ Template['modals_backupRestore'].helpers({
 // BACKUP
 
 Template['backup'].events({
-  'click .dapp-block-button': function() {
+  'click .download': function() {
     const filename = `ens-bids-backup_${new Date().toISOString()}.json`;
     const data = JSON.stringify(MyBids.find().fetch());
     

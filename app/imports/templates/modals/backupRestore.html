@@ -1,42 +1,42 @@
 <template name="modals_backupRestore">
-  <div class="dapp-header" style="filter:none">
-    <nav>
-      <ul>
-          <li>
-              <a href="#" class="backup-link">
-                  <span>Backup</span>
-              </a>
-              <a href="#" class="restore-link">
-                  <span>Restore</span>
-              </a>
-          </li>
-      </ul>
-    </nav>
-  </div>
   <div>
     {{> Template.dynamic template=view }}
   </div>
 </template>
 
 <template name="backup">
-  <p>Backup your bids in order to be able to reveal them later.</p>
-  <button class="dapp-block-button">Download bids</button>
+  <h1> Backup your bids</h1>
+
+  <p>This allows you to give them to someone else to reveal them, or restore them in case of data loss <br></p>
+
+  <div class="dapp-modal-buttons no-margins">
+    <button class="ok dapp-primary-button">Download bids</button>
+  </div>
 </template>
 
 <template name="restore">
-  <p>Import bids from a backup file. Your current bids won't get removed.</p>
-  <input type="file" id="restore-input">
-  {{#if fileError}}
-    <p style="color: red">{{fileError}}</p>
-  {{else}}
-    {{#if fileIsLoaded}}
-      <p>{{totalBids}} total bids found on file.</p>
-      {{#if newBidsCount}}
-        <p>{{newBidsCount}} new bids will be imported.</p>
-      {{else}}
-        <p>No new bids found for importing</p>
+  <h1>Import Bids</h1>
+  <p>
+    This allows you to reveal bids made in other computers. Your current bids won't get removed. <br>
+    
+    <input type="file" id="restore-input" style="margin: 30px auto 0;">
+
+    {{#if fileError}}
+      <p style="color: red">{{fileError}}</p>
+    {{else}}
+      {{#if fileIsLoaded}}
+        <p>{{totalBids}} total bids found on file.</p>
+        {{#if newBidsCount}}
+          <p>{{newBidsCount}} new bids will be imported.</p>
+        {{else}}
+          <p>No new bids found for importing</p>
+        {{/if}}
       {{/if}}
     {{/if}}
-  {{/if}}
-  <button class="dapp-block-button import" disabled={{buttonDisabled}}>Import bids</button>
+    <br>
+  </p>  
+
+  <div class="dapp-modal-buttons no-margins">
+    <button class="ok import dapp-primary-button" disabled={{buttonDisabled}}>Import bids</button>
+  </div>  
 </template>

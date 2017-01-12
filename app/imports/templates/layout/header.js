@@ -11,9 +11,12 @@ Template['layout_header'].helpers({
   'backgroundDataUrl': function(){
     var searched = Session.get('name');
     if (!searched) {
-      GeoPattern.generate('.eth').toDataUrl();
+      // Otherwise generate a new pattern everyday
+      return GeoPattern.generate(new Date().toISOString().substr(0,10)).toDataUrl();
+    } else {
+      // generate a pattern for the name
+      return GeoPattern.generate(searched).toDataUrl();
     }
-    return GeoPattern.generate(searched).toDataUrl();
   },
   'returnedName': function() {
     return Session.get('name');
