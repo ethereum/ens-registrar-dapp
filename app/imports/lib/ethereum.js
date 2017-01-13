@@ -151,6 +151,7 @@ export default ethereum = (function() {
         reportStatus('Ready', true);
       })
       .catch(err => {
+        console.error(err);
         reportStatus(err, false, true);
       })
   }
