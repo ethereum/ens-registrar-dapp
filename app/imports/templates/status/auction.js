@@ -8,7 +8,7 @@ Template['status-auction'].onCreated(function() {
 });
 
 Template['status-auction'].events({
-  'submit .new-bid'(event) {
+  'submit .new-bid'(event, template) {
     event.preventDefault();
     
     const target = event.target;
@@ -17,7 +17,6 @@ Template['status-auction'].events({
     const depositAmount = EthTools.toWei(target.bidAmount.value * randomFactor, 'ether');
     const name = Session.get('searched');
     let secret;
-    const template = Template.instance();
     let accounts = EthAccounts.find().fetch();
     
     if (window.crypto && window.crypto.getRandomValues) {
@@ -49,51 +48,27 @@ Template['status-auction'].events({
       TemplateVar.set(template, 'bidding', true)
       let owner = accounts[0].address;
       let bid = registrar.bidFactory(name, owner, bidAmount, secret);
+      //todo: save bid here with pending status
       console.log('Bid: ', bid);
       registrar.submitBid(bid, {
         value: depositAmount, 
         from: owner,
         gas: 500000
-      }, (err, txid) => {
-        if (err) {
-          TemplateVar.set(template, 'bidding', false)
-          GlobalNotification.error({
-                content: err.toString(),
-                duration: 3
-            });
-          return;
-        } 
-        console.log(txid)
-        Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
-          if (err) {
-            GlobalNotification.error({
-                content: err.toString(),
-                duration: 3
-            });
-
-            TemplateVar.set(template, 'bidding', false)
-            return;
-          }
-          if (isSuccessful) {
-            MyBids.insert(
-              Object.assign(
-                {
-                  date: Date.now(),
-                  depositAmount,
-                  txid
-                },
-                bid
-              )
-            );
-          } else {
-            GlobalNotification.error({
-                content: 'The transaction failed',
-                duration: 3
-            });
-          }
-          TemplateVar.set(template, 'bidding', false)
-        })
-      });
+      }, Helpers.getTxHandler({
+        onDone: () => TemplateVar.set(template, 'bidding', false),
+        onSuccess: txid => {
+          MyBids.insert(
+            Object.assign(
+              {
+                date: Date.now(),
+                depositAmount,
+                txid
+              },
+              bid
+            )
+          )
+        }
+      }));
     }
   },
   /**

@@ -14,26 +14,10 @@ Template['status-open'].events({
       registrar.openAuction(name, {
         from: accounts[0].address,
         gas: 1000000
-      }, (err, txid) => {
-        if (err) {
-          TemplateVar.set(template, 'opening', false)
-          alert(err)
-          return;
-        }
-        Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
-          if (err) {
-            TemplateVar.set(template, 'opening', false)
-            alert(err)
-            return;
-          }
-          if (isSuccessful) {
-            Helpers.refreshStatus();
-          } else {
-            alert('Transaction failed')
-          }
-          TemplateVar.set(template, 'opening', false)
-        })
-      })
+      }, Helpers.getTxHandler({
+        onDone: () => TemplateVar.set(template, 'opening', false),
+        onSuccess: () => Helpers.refreshStatus()
+      }));
     }
   }
 })
