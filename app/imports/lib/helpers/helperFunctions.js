@@ -142,12 +142,41 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
     web3.eth.getTransactionReceipt(txid, (err, receipt) => {
       console.log('Gas: ' + tx.gas + ' Gas used: ' + receipt.gasUsed)
       if (receipt.gasUsed < tx.gas) {
-        callback(null, true)
+        callback(null, receipt)
       } else {
         callback(null, false)
       }
     })
   })
+}
+
+Helpers.getTxHandler = function({onDone, onSuccess}) {
+  function reportError(err) {
+    GlobalNotification.error({
+        content: err.toString(),
+        duration: 3
+    });
+    onDone();
+  }
+  
+  return function(err, txid) {
+    if (err) {
+      return reportError(err);
+    } 
+    console.log('Tx: ' +txid);
+    Helpers.checkTxSuccess(txid, (err, receipt) => {
+      if (err) {
+        return reportError(err);
+      }
+      if (receipt) {
+        onSuccess(txid, receipt);
+        onDone();
+      } else {
+        reportError('The transaction failed')
+      }
+      
+    })
+  };
 }
 
 export default Helpers;

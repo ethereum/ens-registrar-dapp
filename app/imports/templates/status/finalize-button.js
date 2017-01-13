@@ -15,27 +15,10 @@ Template['finalizeButton'].events({
     registrar.finalizeAuction(name, {
       from: accounts[0].address,
       gas: 1000000
-    }, (err, txid) => {
-      if (err) {
-        alert(err)
-        TemplateVar.set(template, 'finalizing', false);
-        return;
-      }
-      console.log(txid)
-      Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
-        if (err) {
-          alert(err)
-          TemplateVar.set(template, 'finalizing', false)
-          return;
-        }
-        if (isSuccessful) {
-          Helpers.refreshStatus();
-        } else {
-          alert('Finalizing the auction failed')
-        }
-        TemplateVar.set(template, 'finalizing', false)
-      });
-    })
+    }, Helpers.getTxHandler({
+      onDone: () => TemplateVar.set(template, 'finalizing', false),
+      onSuccess: () => Helpers.refreshStatus()
+    }));
   }
 })
 

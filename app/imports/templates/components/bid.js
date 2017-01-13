@@ -25,27 +25,10 @@ Template['components_bid'].events({
     registrar.unsealBid(bid, {
       from: bid.owner,//todo: check if account is bid owner
       gas: 300000
-    }, (err, txid) => {
-      if(err) {
-        alert(err)
-        MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
-        return
-      }
-      console.log(txid)
-      Helpers.checkTxSuccess(txid, (err, isSuccessful) => {
-        if (err) {
-          alert(err)
-          MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
-          return;
-        }
-        if(isSuccessful) {
-          updateRevealedStatus(template, bid)
-        } else {
-          alert('Revealing the bid failed')
-        }
-        MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
-      })      
-    })
+    }, Helpers.getTxHandler({
+      onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} }),
+      onSuccess: () => updateRevealedStatus(template, bid)
+    }));
   }
 })
 
