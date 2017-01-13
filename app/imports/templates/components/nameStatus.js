@@ -47,7 +47,6 @@ Template['components_nameStatus'].helpers({
     }
 });
 
-
 Template['aside-can-invalidate'].helpers({
   value() {
     var val = Template.instance().data.entry.deed.balance;

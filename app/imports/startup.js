@@ -21,10 +21,12 @@ import './templates/layout/header.html';
 import './templates/layout/header.js';
 import './templates/layout/main.html';
 import './templates/layout/notFound.html';
-import './templates/layout/router.html';
-import './templates/layout/router.js';
 import './templates/views/bids.html';
 import './templates/views/bids.js';
+import './templates/modals/backup.html';
+import './templates/modals/backup.js';
+import './templates/modals/restore.html';
+import './templates/modals/restore.js';
 import './templates/index.html';
 
 import './collections';
