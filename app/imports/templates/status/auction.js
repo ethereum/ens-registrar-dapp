@@ -1,10 +1,11 @@
 import { registrar } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
+var template;
 
 Template['status-auction'].onCreated(function() {
-  var template = this;
+  template = this;
   TemplateVar.set(template, 'entryData', Template.instance().data.entry);
-  TemplateVar.set(template, 'anonymizer', 0.3)
+  TemplateVar.set(template, 'anonymizer', 0.5)
 });
 
 Template['status-auction'].events({
@@ -13,8 +14,7 @@ Template['status-auction'].events({
     
     const target = event.target;
     const bidAmount = EthTools.toWei(target.bidAmount.value, 'ether');
-    const randomFactor = 1 + Math.random() * (TemplateVar.get('anonymizerAmount') - 100) / 100;
-    const depositAmount = EthTools.toWei(target.bidAmount.value * randomFactor, 'ether');
+    const depositAmount = EthTools.toWei(Number(target.bidAmount.value) + Math.random() * TemplateVar.get('anonymizerAmount'), 'ether');
     const name = Session.get('searched');
     let secret;
     const template = Template.instance();
@@ -97,9 +97,15 @@ Template['status-auction'].events({
     }
   },
   /**
-  Change the selected fee
+  Change the Bid amount
   
   @event change input[name="fee"], input input[name="fee"]
+  */
+  'change input[name="bidAmount"], input input[name="bidAmount"]': function(e){
+      TemplateVar.set('bidAmount', Number(e.currentTarget.value));
+  },
+  /**
+  Anonymizer slider  
   */
   'change input[name="anonymizer"], input input[name="anonymizer"]': function(e){
       TemplateVar.set('anonymizer', Number(e.currentTarget.value));
@@ -121,7 +127,14 @@ Template['status-auction'].helpers({
     return TemplateVar.get('bidding')
   },
   anonymizerAmount() {
-    var amount = Math.round(100*Math.pow(10,TemplateVar.get('anonymizer')));
+    let mainAccount = EthAccounts.find().fetch()[0].address;
+    web3.eth.getBalance(mainAccount, function(e, balance) { 
+        TemplateVar.set(template, 'maxAmount', web3.fromWei(balance, 'ether').toFixed());
+    });
+
+    let maxAmount = TemplateVar.get(template, 'maxAmount');
+
+    let amount = Math.floor(10 * (maxAmount * Math.pow(TemplateVar.get('anonymizer'), 3)))/10;
     TemplateVar.set('anonymizerAmount', amount);
     return amount;
   }
