@@ -12,11 +12,11 @@ Template['view_bids'].events({
     Session.set('searched', NamePrep.prepare(e.target.name));
   },
   'click .export-bids': function(e) {
-    EthElements.Modal.show({template:'modals_backupRestore', data: {action: 'backup'}});
+    EthElements.Modal.show('modals_backup');
     e.preventDefault();
   },
   'click .import-bids': function(e) {
-    EthElements.Modal.show({template:'modals_backupRestore', data: {action: 'restore'}});
+    EthElements.Modal.show('modals_restore');
     e.preventDefault();
   }
 })

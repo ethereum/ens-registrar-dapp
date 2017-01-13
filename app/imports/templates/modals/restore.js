@@ -1,52 +1,3 @@
-import { ReactiveVar } from 'meteor/reactive-var';
-
-Template['modals_backupRestore'].onCreated(function() {
-  this.view = new ReactiveVar('backup');
-
-  if (this.data && this.data.action) {
-    this.view.set(this.data.action);
-  }
-  console.log('modal', this, this.data, this.data.action)
-})
-
-Template['modals_backupRestore'].events({
-  'click .backup-link': function(e, template) {
-    template.view.set('backup');
-  },
-  'click .restore-link': function(e, template) {
-    template.view.set('restore');
-  }
-})
-
-Template['modals_backupRestore'].helpers({
-  view() {
-    return Template.instance().view.get();
-  }
-})
-
-// BACKUP
-
-Template['backup'].events({
-  'click .download': function() {
-    const filename = `ens-bids-backup_${new Date().toISOString()}.json`;
-    const data = JSON.stringify(MyBids.find().fetch());
-    
-    //Download logic from http://stackoverflow.com/a/33542499/988367
-    var blob = new Blob([data], {type: 'text/json'});
-    var elem = window.document.createElement('a');
-    elem.href = window.URL.createObjectURL(blob);
-    elem.download = filename;        
-    document.body.appendChild(elem);
-    elem.click();        
-    document.body.removeChild(elem);
-    
-    //Do this on closing the window?
-    //window.URL.revokeObjectURL(blob);
-  }
-})
-
-// RESTORE
-
 function checkBids(bids) {
   if (!Array.isArray(bids)) {
     throw 'Expected an array.';
@@ -61,13 +12,13 @@ function checkBids(bids) {
   })
 }
 
-Template['restore'].onCreated(function() {
+Template['modals_restore'].onCreated(function() {
   this.allBids = new ReactiveVar();
   this.newBids = new ReactiveVar();
   this.fileError = new ReactiveVar();
 })
 
-Template['restore'].onRendered(function() {
+Template['modals_restore'].onRendered(function() {
   var template = this;
   function handleFiles() {
     let file = this.files[0];
@@ -100,7 +51,7 @@ Template['restore'].onRendered(function() {
   inputElement.addEventListener("change", handleFiles, false);
 })
 
-Template['restore'].events({
+Template['modals_restore'].events({
   'click .import': function(e, template) {
     let newBids = template.newBids.get();
     try {
@@ -129,7 +80,7 @@ Template['restore'].events({
   }
 })
 
-Template['restore'].helpers({
+Template['modals_restore'].helpers({
   fileIsLoaded() {
     return Template.instance().allBids.get();
   },
@@ -147,5 +98,3 @@ Template['restore'].helpers({
     return !newBids || newBids.length == 0;
   }
 })
-
-

@@ -23,8 +23,10 @@ import './templates/layout/main.html';
 import './templates/layout/notFound.html';
 import './templates/views/bids.html';
 import './templates/views/bids.js';
-import './templates/modals/backupRestore.html';
-import './templates/modals/backupRestore.js';
+import './templates/modals/backup.html';
+import './templates/modals/backup.js';
+import './templates/modals/restore.html';
+import './templates/modals/restore.js';
 import './templates/index.html';
 
 import './collections';
