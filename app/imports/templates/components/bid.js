@@ -14,7 +14,7 @@ function updateRevealedStatus(template, bid) {
 Template['components_bid'].onCreated(function() {
   let template = Template.instance();
   let bid = template.data.bid;
-  updateRevealedStatus(template, bid.bid);
+  updateRevealedStatus(template, bid);
 })
 
 Template['components_bid'].events({
@@ -22,7 +22,7 @@ Template['components_bid'].events({
     let template = Template.instance();
     let bid = template.data.bid;
     MyBids.update({ _id: bid._id }, { $set: {revealing: true} })
-    registrar.unsealBid(bid.bid, {
+    registrar.unsealBid(bid, {
       from: bid.owner,//todo: check if account is bid owner
       gas: 300000
     }, (err, txid) => {
@@ -39,7 +39,7 @@ Template['components_bid'].events({
           return;
         }
         if(isSuccessful) {
-          updateRevealedStatus(template, bid.bid)
+          updateRevealedStatus(template, bid)
         } else {
           alert('Revealing the bid failed')
         }

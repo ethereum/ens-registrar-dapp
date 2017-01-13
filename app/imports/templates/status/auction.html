@@ -6,6 +6,16 @@
           <p>
             You bid by submitting the maximum amount of ether you would be willing to lock in order to hold for this name. The top bidder will own the name, but you will be refunded of any amount more than the strictly necessary to overbid the second place, therefore you only need to bid once. Your maximum bid is kept secret until you reveal it.
           </p>
+
+        {{#if hasBids}}
+          <h3>Your bids</h3>
+
+          {{#each bid in bids}}
+          {{> components_bid bid=bid }}
+          {{/each}}
+
+        {{else}}
+
           <br><h3>How much you value this name?</h3>          
           <p>
             Send the maximum amount of value you would be willing to lock for this name:<br>
@@ -30,28 +40,17 @@
             {{/if}}
           </button>            
           </p>
+
+          {{/if}}
           
         </form>
     </div>
 </template>
 
 <template name="aside-auction">
-
     <h3> Time remaining until reveal phase</h3>
     <h1>{{timeRemaining}}</h1>
     <p>{{revealDate}}</p>
-    
-    {{#if bids}}
-      <h3>My bids</h3>
-
-      <ul>
-        {{#each bid in bids}}
-          <li>
-              {{> components_bid bid=bid }}
-          </li>
-        {{/each}}
-      </ul>
-    {{/if}}
 
     <p> 
       <strong>Attention: You must reveal your bid within <em>24 hours</em> of the reveal phase, failing to do so will result in irreversible loss of funds</strong> 
