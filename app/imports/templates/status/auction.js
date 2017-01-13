@@ -16,9 +16,24 @@ Template['status-auction'].events({
     const randomFactor = 1 + Math.random() * (TemplateVar.get('anonymizerAmount') - 100) / 100;
     const depositAmount = EthTools.toWei(target.bidAmount.value * randomFactor, 'ether');
     const name = Session.get('searched');
-    const masterPassword = 'asdf';
+    let secret;
     const template = Template.instance();
     let accounts = EthAccounts.find().fetch();
+    
+    if (window.crypto && window.crypto.getRandomValues) {
+      secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
+    } else {
+      EthElements.Modal.question({
+        text: 'Your browser does not support window.crypto.getRandomValues ' + 
+          'your bid anonymity is going to be weaker.',
+        ok: true
+      });
+      secret = Math.floor(Math.random()*1000000).toString() +
+        Math.floor(Math.random()*1000000).toString() +
+        Math.floor(Math.random()*1000000).toString() +
+        Math.floor(Math.random()*1000000).toString();
+    }
+    console.log('secret', secret);
 
     if (accounts.length == 0) {
       GlobalNotification.error({
@@ -33,8 +48,7 @@ Template['status-auction'].events({
     } else {
       TemplateVar.set(template, 'bidding', true)
       let owner = accounts[0].address;
-      let bid = registrar.bidFactory(name, owner, bidAmount,
-        masterPassword);//todo: derive the salt using the password and the name
+      let bid = registrar.bidFactory(name, owner, bidAmount, secret);
       console.log('Bid: ', bid);
       registrar.submitBid(bid, {
         value: depositAmount, 
@@ -61,18 +75,16 @@ Template['status-auction'].events({
             return;
           }
           if (isSuccessful) {
-            MyBids.insert({
-              txid,
-              name,
-              owner,
-              fullName: name + '.eth',
-              bidAmount,
-              depositAmount,
-              date: Date.now(),
-              masterPassword,
-              bid: bid,
-              revealed: false
-            });
+            MyBids.insert(
+              Object.assign(
+                {
+                  date: Date.now(),
+                  depositAmount,
+                  txid
+                },
+                bid
+              )
+            );
           } else {
             GlobalNotification.error({
                 content: 'The transaction failed',
@@ -97,6 +109,14 @@ Template['status-auction'].events({
 
 
 Template['status-auction'].helpers({
+  bids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name});
+  },
+  hasBids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name}).count() > 0 ;
+  },
   bidding() {
     return TemplateVar.get('bidding')
   },
@@ -108,7 +128,6 @@ Template['status-auction'].helpers({
 })
 
 
-
 Template['aside-auction'].onCreated(function() {
   var template = this;
   TemplateVar.set(template, 'entryData', Template.instance().data.entry);
@@ -116,13 +135,10 @@ Template['aside-auction'].onCreated(function() {
 });
 
 
-Template['aside-auction'].helpers({
-  bids() {
-    const name = Session.get('searched');
-    return MyBids.find({name: name});
-  }, 
+Template['aside-auction'].helpers({ 
   revealDate() {
     var m = TemplateVar.get('revealDate');
+
     return m.format('YYYY-MM-DD HH:mm');
   }, 
   timeRemaining() {
