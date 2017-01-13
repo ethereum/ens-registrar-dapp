@@ -113,6 +113,10 @@ Template['status-auction'].helpers({
     const name = Session.get('searched');
     return MyBids.find({name: name});
   },
+  hasBids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name}).count() > 0 ;
+  },
   bidding() {
     return TemplateVar.get('bidding')
   },
@@ -134,6 +138,7 @@ Template['aside-auction'].onCreated(function() {
 Template['aside-auction'].helpers({ 
   revealDate() {
     var m = TemplateVar.get('revealDate');
+
     return m.format('YYYY-MM-DD HH:mm');
   }, 
   timeRemaining() {
