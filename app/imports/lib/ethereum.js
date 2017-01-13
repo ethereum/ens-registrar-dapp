@@ -82,13 +82,19 @@ export default ethereum = (function() {
         registrar = new Registrar(web3, ens);
         if (!customEnsAddress) {
           //Check correct Ropsten ENS contract
-          let owner = registrar.ens.owner('eth')
-          if(owner !== '0xc68de5b43c3d980b0c110a77a5f78d3c4c4d63b4') {
-            throw 'Could not find ENS contract. Make sure your node' +
-              ' is synced to at least block 25409.';
-          }
+          registrar.ens.owner('eth', (err, owner) => {
+            if (err) {
+              return reject(err);
+            }
+            console.log('owner: ' + owner);
+            if(owner !== '0xc68de5b43c3d980b0c110a77a5f78d3c4c4d63b4') {
+              reject('Could not find ENS contract. Make sure your node' +
+                ' is synced to at least block 25409.');
+            } else {
+              resolve();
+            }
+          })
         }
-        resolve();
       } catch(e) {
         reject('Error initialiting ENS registrar: ' + e);
       }
