@@ -2,7 +2,6 @@
     <div>
       <h1 class="domain-name"><strong>{{name}}</strong> is open for bids</h1>
  
-        <form class="new-bid">
           <p>
             You bid by submitting the maximum amount of ether you would be willing to lock in order to hold for this name. The top bidder will own the name, but you will be refunded of any amount more than the strictly necessary to overbid the second place, therefore you only need to bid once. Your maximum bid is kept secret until you reveal it.
           </p>
@@ -15,6 +14,7 @@
           {{/each}}
 
         {{else}}
+        <form class="new-bid">
 
           <br><h3>How much you value this name?</h3>          
           <p>
@@ -40,10 +40,11 @@
             {{/if}}
           </button>            
           </p>
-
-          {{/if}}
-          
         </form>
+
+
+        {{/if}}
+          
     </div>
 </template>
 

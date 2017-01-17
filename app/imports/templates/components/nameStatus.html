@@ -24,7 +24,7 @@
   {{/if}}
 </template>
 
-<template name="status-invalid">
+<template name="status-forbidden">
     <div>
         <h1>Name is too short</h1>
         <p>
@@ -33,7 +33,7 @@
     </div>
 </template>
 
-<template name="status-can-invalidate">
+<template name="status-forbidden-can-invalidate">
     <div>
         <h1>Name is too short</h1>
         <p>
@@ -48,7 +48,7 @@
     </div>
 </template>
 
-<template name="aside-can-invalidate">
+<template name="aside-forbidden-can-invalidate">
    <h3>about this name</h3>
 
     <ul>
@@ -63,32 +63,42 @@
 
 <template name="status-reveal">
     <div>
-        <h1> This domain auction is waiting for bids to be revealed </h1>
-        <p>
-            Wait for it..
-        </p>
-        <button class="dapp-block-button"> Reveal yours </button>
+        <h1> Reveal Phase </h1>
+        {{#if hasBids}}
+          <h3>Your bids</h3>
+
+          {{#each bid in bids}}
+          {{> components_bid bid=bid }}
+          {{/each}}
+
+        {{/if}}
     </div>
+</template>
+
+<template name="aside-reveal">
+    <h3> Time remaining until auction ends</h3>
+    <h1>{{timeRemaining}}</h1>
+    <p> {{registrationDate}} </p>
+    <h3>Current highest bidder</h3>
+    <span class="big-numeral">{{highestBid}}</span> <span class="unit">ether</span>
+
 </template>
 
 <template name="status-finalize">
-    <div>
-        <h1> This domain needs to be finalized </h1>
-        <p>
-            Anyone can do it..
-        </p>
-        {{> finalizeButton }}
-    </div>
-</template>
+   <h1 class="domain-name"><strong>{{name}}</strong> is owned</h1> 
 
-<template name="status-finalize-open">
-    <div>
-        <h1> This domain needs to be finalized </h1>
-        <p>
-            Anyone can do it.. Otherwise someone else can invalidate it
-        </p>
-        {{> finalizeButton }}
-    </div>
+    <p>
+        This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
+    </p>
+
+    <p>Owned by: <strong>{{> dapp_identicon identity=owner class="dapp-tiny"}}{{TemplateVar.get 'owner'}} {{owner}}</strong></p>
+    <p>Deed address: <strong>{{> dapp_identicon identity=(entry.deed.address) class="dapp-tiny"}} {{entry.deed.address}}</strong></p>
+    <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
+
+    <p> <strong> Before any changes can be done to the name, this name needs to be finalized. Doing this will refund {{refund}} ether to the owner.</strong></p>
+
+    {{> finalizeButton }}
+   
 </template>
 
 <template name="finalizeButton">

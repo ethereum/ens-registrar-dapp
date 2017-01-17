@@ -11,12 +11,12 @@
     </p>
 
     {{#if address}}
-      <p>Points to: <strong>{{> dapp_identicon identity=address class="dapp-tiny"}}{{address}}</strong></p>
+      <p>Points to: <strong>{{> dapp_identicon identity=address class="dapp-tiny"}} {{address}}</strong></p>
     {{else}}
       <p>The owner has not set a resolver for this address yet</p>
     {{/if}}
-    <p>Owned by: <strong>{{> dapp_identicon identity=owner class="dapp-tiny"}}{{TemplateVar.get 'owner'}}</strong></p>
-    <p>Deed address: <strong>{{> dapp_identicon identity=(entry.deed.address) class="dapp-tiny"}}{{entry.deed.address}}</strong></p>
+    <p>Owned by: <strong>{{> dapp_identicon identity=owner class="dapp-tiny"}} {{TemplateVar.get 'owner'}}</strong></p>
+    <p>Deed address: <strong>{{> dapp_identicon identity=(entry.deed.address) class="dapp-tiny"}} {{entry.deed.address}}</strong></p>
     <p>Content: <strong>{{content}}</strong></p>
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
 </template>

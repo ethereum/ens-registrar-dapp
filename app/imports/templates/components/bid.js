@@ -20,15 +20,22 @@ Template['components_bid'].onCreated(function() {
 Template['components_bid'].events({
   'click .reveal-bid': function() {
     let template = Template.instance();
-    let bid = template.data.bid;
-    MyBids.update({ _id: bid._id }, { $set: {revealing: true} })
+    let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
+    MyBids.update({ _id: bid._id }, { $set: {revealing: true} });
+
+    // Any account can reveal
+    let mainAccount = EthAccounts.find().fetch()[0].address;
+
     registrar.unsealBid(bid, {
-      from: bid.owner,//todo: check if account is bid owner
+      from: mainAccount, 
       gas: 300000
     }, Helpers.getTxHandler({
       onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} }),
       onSuccess: () => updateRevealedStatus(template, bid)
     }));
+    
+
+    
   }
 })
 

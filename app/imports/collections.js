@@ -5,3 +5,6 @@
 // A test persitent collection
 MyBids = new Mongo.Collection('ens-dapp-db', {connection: null});
 new PersistentMinimongo(MyBids);
+
+MyNames = new Mongo.Collection('ens-dapp-db', {connection: null});
+new PersistentMinimongo(MyNames);

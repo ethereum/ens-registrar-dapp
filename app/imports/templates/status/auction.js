@@ -124,6 +124,10 @@ Template['aside-auction'].onCreated(function() {
 
 
 Template['aside-auction'].helpers({ 
+  bids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name});
+  },
   revealDate() {
     var m = TemplateVar.get('revealDate');
 
@@ -132,10 +136,10 @@ Template['aside-auction'].helpers({
   timeRemaining() {
     var m = TemplateVar.get('revealDate');
 
-    if (m.diff(moment(), 'hours') > 24) {
+    if (m.diff(moment(), 'hours') > 48) {
       return Math.floor(m.diff(moment(), 'hours')/24) + ' days, ' + Math.floor(m.diff(moment(), 'hours')%24) + ' hours'
     } else {
-        return Math.floor(m.diff(moment(), 'minutes')/60) + ' hours, ' + Math.floor(m.diff(moment(), 'minutes')%60) + ' minutes'
+        return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ' + Math.floor(m.diff(moment(), 'minutes')%60) + 'm ' + Math.floor(m.diff(moment(), 'seconds')%60) + 's';
 
     }
   }

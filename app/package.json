@@ -9,10 +9,10 @@
   },
   "dependencies": {
     "babel-runtime": "^6.18.0",
-    "eth-registrar-ens": "0.5.4",
+    "eth-registrar-ens": "*",
     "ethereum-ens": "*",
     "node-stringprep": "^0.8.0",
-    "web3": "^0.17.0-beta"
+    "web3": "^0.18.2"
   },
   "devDependencies": {
     "tape": "^4.6.3"

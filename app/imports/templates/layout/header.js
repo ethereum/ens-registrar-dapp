@@ -24,6 +24,6 @@ Template['layout_header'].helpers({
     return name;
   },
   'disabled': function() {
-    return (Session.get('name').length > 0 && Session.get('name').length < 7) ? 'invalid-name' : '';
+    return (Session.get('name') && Session.get('name').length > 0 && Session.get('name').length < 7) ? 'invalid-name' : '';
   }
 });
