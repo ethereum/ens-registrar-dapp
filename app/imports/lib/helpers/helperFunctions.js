@@ -121,7 +121,7 @@ returns if the tx was successful or not.
 Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
   function whenMined(txid, cb) {
     function check() {
-      web3.eth.getTransaction(txid, (err, tx) => {
+      web3.eth.getTransaction(txid, function(err, tx) {
         if (err) {
           return cb(err)
         }
@@ -135,7 +135,7 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
     check();
   }
   
-  whenMined(txid, (err, tx) => {
+  whenMined(txid, function(err, tx) {
     if (err) {
       return callback(err)
     }
