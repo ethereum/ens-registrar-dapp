@@ -19,6 +19,9 @@ Template['components_nameStatus'].onCreated(function() {
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
           Session.set('name', entry.name);
+          if (entry.name) {
+            window.location.hash = entry.name;
+          }
         }
       });
     } catch(e) {
@@ -29,7 +32,6 @@ Template['components_nameStatus'].onCreated(function() {
   this.autorun(function() {
     var searched = Session.get('searched');
     TemplateVar.set(template, 'error', false);
-      //Look up name on 'searched' change.
     lookupName(searched);
   })
   
