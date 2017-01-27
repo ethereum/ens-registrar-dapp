@@ -2,8 +2,13 @@ var StringPrep = require('node-stringprep').StringPrep;
 var NamePrep = new StringPrep('nameprep');
 
 Template['layout_header'].events({
-  'keyup #search-input': function(event) {
+  'keyup #search-input': function(event, template) {
+    if (template.lookupTimeout) {
+      clearTimeout(template.lookupTimeout);
+    }
+    template.lookupTimeout = setTimeout(function() {
       Session.set('searched', NamePrep.prepare(event.target.value));
+    }, 400);
   }
 })
 
