@@ -1,5 +1,3 @@
-var StringPrep = require('node-stringprep').StringPrep;
-var NamePrep = new StringPrep('nameprep');
 
 Template['layout_header'].onRendered(function() {
   const name = Session.get('name');
@@ -14,7 +12,7 @@ Template['layout_header'].events({
       clearTimeout(template.lookupTimeout);
     }
     template.lookupTimeout = setTimeout(function() {
-      Session.set('searched', NamePrep.prepare(event.target.value));
+      Session.set('searched', event.target.value);
     }, 200);
   }
 })
