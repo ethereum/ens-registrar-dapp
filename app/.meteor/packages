@@ -15,7 +15,6 @@ reactive-var@1.0.11
 tracker@1.1.1
 
 standard-minifier-css
-standard-minifier-js
 # es5-shim ?
 ecmascript
 
@@ -43,3 +42,4 @@ yasinuslu:blaze-meta
 chuangbo:cookie
 numeral:numeral
 frozeman:global-notifications
+abernix:standard-minifier-js

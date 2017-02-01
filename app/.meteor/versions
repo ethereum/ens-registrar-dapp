@@ -1,4 +1,6 @@
 3stack:bignumber@2.0.7
+abernix:minifier-js@1.2.16
+abernix:standard-minifier-js@1.2.2
 aldeed:simple-schema@1.5.3
 alexvandesande:identicon@2.0.2
 allow-deny@1.0.5
