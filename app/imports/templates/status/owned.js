@@ -10,10 +10,19 @@ Template['status-owned'].onCreated(function() {
     }
   });
   ens.resolver(name, (err, res) => {
-    if (!err) {
-      TemplateVar.set(this, 'address', res.addr());
-      TemplateVar.set(this, 'content', res.content());
+    if (err) {
+      return;
     }
+    res.addr((err, address) => {
+      if (!err) {
+        TemplateVar.set(this, 'address', address);
+      }
+    });
+    res.content((err, content) => {
+      if (!err) {
+        TemplateVar.set(this, 'content', content);
+      }
+    })
   });
 
   console.log('entry', Template.instance().data.entry);
