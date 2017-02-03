@@ -4,7 +4,11 @@ Template['status-owned'].onCreated(function() {
   TemplateVar.set(this, 'entryData', Template.instance().data.entry);
 
   var name = Template.instance().data.name;
-  TemplateVar.set(this, 'owner', ens.owner(name))
+  ens.owner(name, (err, res) => {
+    if (!err) {
+      TemplateVar.set(this, 'owner', res);
+    }
+  });
   ens.resolver(name, (err, res) => {
     if (!err) {
       TemplateVar.set(this, 'address', res.addr());
