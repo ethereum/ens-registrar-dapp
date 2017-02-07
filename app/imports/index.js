@@ -1,5 +1,6 @@
-if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')
-    Meteor.disconnect();
+if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  Meteor.disconnect();
+}
 
 Meteor.startup(function() {
     // SET default language
@@ -29,7 +30,4 @@ Meteor.startup(function() {
             numeral.language(TAPi18n.getLanguage().substr(0,2));
         }
     });
-
-  // Set Meta Title
-  Meta.setTitle(TAPi18n.__("dapp.app.title"));
 });
