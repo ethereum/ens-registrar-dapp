@@ -26,7 +26,6 @@ import './templates/modals/backup.html';
 import './templates/modals/backup.js';
 import './templates/modals/restore.html';
 import './templates/modals/restore.js';
-import './templates/index.html';
 
 import './collections';
 import './meta.js';
