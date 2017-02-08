@@ -150,7 +150,7 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
   })
 }
 
-Helpers.getTxHandler = function({onDone, onSuccess, onError}) {
+Helpers.getTxHandler = function({onTxSent, onTxSuccess, onError, onDone}) {
   function reportError(err) {
     GlobalNotification.error({
         content: err.toString(),
@@ -165,12 +165,15 @@ Helpers.getTxHandler = function({onDone, onSuccess, onError}) {
       return reportError(err);
     } 
     console.log('Tx: ' +txid);
+    if (onTxSent) {
+      onTxSent(txid);
+    }
     Helpers.checkTxSuccess(txid, (err, receipt) => {
       if (err) {
         return reportError(err);
       }
       if (receipt) {
-        onSuccess(txid, receipt);
+        onTxSuccess(txid, receipt);
         onDone();
       } else {
         reportError('The transaction failed')

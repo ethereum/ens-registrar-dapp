@@ -19,8 +19,8 @@ Template['finalizeButton'].events({
       from: accounts[0].address,
       gas: 1000000
     }, Helpers.getTxHandler({
-      onDone: () => TemplateVar.set(template, 'finalizing', false),
-      onSuccess: () => Helpers.refreshStatus()
+      onTxSuccess: () => Helpers.refreshStatus(),
+      onDone: () => TemplateVar.set(template, 'finalizing', false)
     }));
   }
 })

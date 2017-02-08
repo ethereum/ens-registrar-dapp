@@ -30,12 +30,9 @@ Template['components_bid'].events({
       from: mainAccount, 
       gas: 300000
     }, Helpers.getTxHandler({
-      onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} }),
-      onSuccess: () => updateRevealedStatus(template, bid)
+      onTxSuccess: () => updateRevealedStatus(template, bid),
+      onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} })
     }));
-    
-
-    
   }
 })
 
@@ -45,5 +42,11 @@ Template['components_bid'].helpers({
   },
   revealing() {
     return MyBids.findOne({_id: this.bid._id}).revealing;
+  },
+  status() {
+    return MyBids.findOne({_id: this.bid._id}).status;
+  },
+  isPending() {
+    return MyBids.findOne({_id: this.bid._id}).status === 'pending';
   }
 })

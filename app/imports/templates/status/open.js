@@ -18,8 +18,8 @@ Template['status-open'].events({
         from: accounts[0].address,
         gas: 1000000
       }, Helpers.getTxHandler({
-        onDone: () => TemplateVar.set(template, 'opening', false),
-        onSuccess: () => Helpers.refreshStatus()
+        onTxSuccess: () => Helpers.refreshStatus(),
+        onDone: () => TemplateVar.set(template, 'opening', false)
       }));
     }
   }
