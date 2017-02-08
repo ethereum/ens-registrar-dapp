@@ -10,6 +10,7 @@
     </div>
     <aside class="col-md-4">
         {{> Template.dynamic template=(TemplateVar.get 'aside') data=(TemplateVar.get 'nameInfo')}}
+        {{>view_names}}
     </aside>    
   {{else}}
     <div class="col-md-8">
@@ -19,7 +20,7 @@
         </p>
     </div>
     <aside class="col-md-4">
-        {{>view_bids}}
+        {{>view_names}}
     </aside> 
   {{/if}}
 </template>
@@ -76,6 +77,8 @@
 </template>
 
 <template name="aside-reveal">
+    {{>components_watch name=name}}
+
     <h3> Time remaining until auction ends</h3>
     <h1>{{timeRemaining}}</h1>
     <p> {{registrationDate}} </p>
@@ -99,6 +102,11 @@
 
     {{> finalizeButton }}
    
+</template>
+
+
+<template name='aside-finalize'>
+      {{>components_watch name=name}}
 </template>
 
 <template name="finalizeButton">

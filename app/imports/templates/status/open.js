@@ -16,7 +16,10 @@ Template['status-open'].events({
         gas: 1000000
       }, Helpers.getTxHandler({
         onDone: () => TemplateVar.set(template, 'opening', false),
-        onSuccess: () => Helpers.refreshStatus()
+        onSuccess: () => {
+          Names.insert( {name: name, fullname: name + ".eth"});
+          Helpers.refreshStatus();
+        }
       }));
     }
   }
