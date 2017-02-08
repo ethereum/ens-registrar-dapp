@@ -150,12 +150,13 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
   })
 }
 
-Helpers.getTxHandler = function({onDone, onSuccess}) {
+Helpers.getTxHandler = function({onDone, onSuccess, onError}) {
   function reportError(err) {
     GlobalNotification.error({
         content: err.toString(),
         duration: 3
     });
+    onError(err);
     onDone();
   }
   
