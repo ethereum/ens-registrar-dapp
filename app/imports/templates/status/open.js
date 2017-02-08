@@ -8,7 +8,10 @@ Template['status-open'].events({
     let template = Template.instance();
     
     if (accounts.length == 0) {
-      alert('No accounts found');
+      GlobalNotification.error({
+          content: 'No accounts added to dapp',
+          duration: 3
+      });
     } else {
       TemplateVar.set(template, 'opening', true)
       registrar.openAuction(name, {

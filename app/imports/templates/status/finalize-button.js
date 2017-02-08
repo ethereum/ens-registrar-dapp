@@ -8,7 +8,10 @@ Template['finalizeButton'].events({
     let accounts = EthAccounts.find().fetch();
     
     if (accounts.length == 0) {
-      alert('No accounts added to dapp');
+      GlobalNotification.error({
+          content: 'No accounts added to dapp',
+          duration: 3
+      });
       return;
     }
     TemplateVar.set(template, 'finalizing', true);
