@@ -48,7 +48,7 @@ Template['status-auction'].events({
       TemplateVar.set(template, 'bidding', true)
       let owner = accounts[0].address;
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
-        if(err != undefined) throw err;
+        if(err) throw err;
 
         //todo: save bid here with pending status
         console.log('Bid: ', bid);
@@ -59,18 +59,13 @@ Template['status-auction'].events({
         }, Helpers.getTxHandler({
           onDone: () => TemplateVar.set(template, 'bidding', false),
           onSuccess: txid => {
-            MyBids.insert(
-              Object.assign(
-                {
-                  date: Date.now(),
-                  depositAmount,
-                  txid
-                },
-                bid
-              )
-            )
+            MyBids.insert(Object.assign({
+              date: Date.now(),
+              depositAmount,
+              txid
+            }, bid));
           }
-        }));        
+        }));
       });
     }
   },
