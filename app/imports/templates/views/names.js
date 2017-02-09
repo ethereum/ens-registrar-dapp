@@ -1,11 +1,14 @@
-Template['view_bids'].helpers({
+Template['view_names'].helpers({
   bids() {
     return MyBids.find();
+  },
+  names() {
+    return Names.find();
   }
 })
 
-Template['view_bids'].events({
-  'click .bids a': function(e) {
+Template['view_names'].events({
+  'click .names a': function(e) {
     Session.set('searched', e.target.name);
   },
   'click .export-bids': function(e) {

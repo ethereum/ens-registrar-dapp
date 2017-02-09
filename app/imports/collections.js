@@ -6,5 +6,5 @@
 MyBids = new Mongo.Collection('ens-dapp-db', {connection: null});
 new PersistentMinimongo(MyBids);
 
-MyNames = new Mongo.Collection('ens-dapp-db', {connection: null});
-new PersistentMinimongo(MyNames);
+Names = new Mongo.Collection('ens-dapp-db-names', {connection: null});
+new PersistentMinimongo(Names);
