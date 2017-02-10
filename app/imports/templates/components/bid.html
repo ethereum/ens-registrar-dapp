@@ -8,11 +8,12 @@
       {{#if isRevealed}}
         <span>This bid was revealed</span>
       {{else}}
-
-        {{#if revealing}}
-          <button class="dapp-block-button disabled" disabled>Revealing...</button>
-        {{else}}
-          <button class="dapp-block-button reveal-bid">Reveal</button>
+        {{#if canReveal}}
+          {{#if revealing}}
+            <button class="dapp-block-button disabled" disabled>Revealing...</button>
+          {{else}}
+            <button class="dapp-block-button reveal-bid">Reveal</button>
+          {{/if}}
         {{/if}}
       {{/if}}
     </p>

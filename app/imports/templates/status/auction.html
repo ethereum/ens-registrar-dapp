@@ -10,7 +10,7 @@
           <h3>Your bids</h3>
 
           {{#each bid in bids}}
-          {{> components_bid bid=bid }}
+          {{> components_bid bid=bid status='auction' }}
           {{/each}}
 
         {{else}}
