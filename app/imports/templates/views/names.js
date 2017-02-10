@@ -3,13 +3,14 @@ Template['view_names'].helpers({
     return MyBids.find();
   },
   names() {
-    return Names.find();
+    return Names.find({},{sort: {name: 1}});
   }
 })
 
 Template['view_names'].events({
   'click .names a': function(e) {
-    Session.set('searched', e.target.name);
+    Session.set('searched', e.target.hash.slice(1));
+    e.preventDefault();
   },
   'click .export-bids': function(e) {
     EthElements.Modal.show('modals_backup');

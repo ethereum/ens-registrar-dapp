@@ -22,6 +22,11 @@ Template['components_nameStatus'].onCreated(function() {
           if (entry.name) {
             window.location.hash = entry.name;
           }
+
+          if (Names.findOne({name: name}) !== undefined) {
+            Names.update({name: name}, {$set: {mode: entry.mode, registrationDate: entry.registrationDate}})
+          }
+
         }
       });
     } catch(e) {

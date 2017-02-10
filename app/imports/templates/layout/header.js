@@ -1,9 +1,14 @@
 
 Template['layout_header'].onRendered(function() {
-  const name = Session.get('name');
-  if (name) {
-    document.getElementById('search-input').value = Session.get('name');
-  }
+
+  Tracker.autorun(function(){
+    const name = Session.get('name');
+    if (name) {
+      document.getElementById('search-input').value = Session.get('name');
+    }
+  });
+
+ 
 })
 
 Template['layout_header'].events({

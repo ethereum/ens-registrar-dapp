@@ -22,7 +22,8 @@ Template['components_bid'].events({
     let template = Template.instance();
     let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
     MyBids.update({ _id: bid._id }, { $set: {revealing: true} });
-
+    
+    // Names.update({fullname: })
     // Any account can reveal
     let mainAccount = EthAccounts.find().fetch()[0].address;
 
@@ -32,10 +33,7 @@ Template['components_bid'].events({
     }, Helpers.getTxHandler({
       onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} }),
       onSuccess: () => updateRevealedStatus(template, bid)
-    }));
-    
-
-    
+    })); 
   }
 })
 
