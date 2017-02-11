@@ -45,6 +45,6 @@ Template['components_bid'].helpers({
     return MyBids.findOne({_id: this.bid._id}).revealing;
   },
   canReveal() {
-    return template.data.status == 'reveal';
+    return this.status == 'reveal';
   }
 })
