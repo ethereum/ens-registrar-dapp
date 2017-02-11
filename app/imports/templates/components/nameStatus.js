@@ -22,6 +22,11 @@ Template['components_nameStatus'].onCreated(function() {
           if (entry.name) {
             window.location.hash = entry.name;
           }
+
+          if (Names.findOne({name: name}) !== undefined) {
+            Names.update({name: name}, {$set: {mode: entry.mode, registrationDate: entry.registrationDate}})
+          }
+
         }
       });
     } catch(e) {
@@ -63,11 +68,11 @@ Template['aside-forbidden-can-invalidate'].helpers({
 
 Template['status-finalize'].helpers({
   owner() {
-    return Template.instance().data.entry.deed.owner();
+    return Template.instance().data.entry.deed.owner;
   },
   refund() {
-    var deed = Template.instance().data.entry.deed.balance;
-    var value = Template.instance().data.value || 10000000000000000;
+    var deed = new BigNumber(Template.instance().data.entry.deed.balance);
+    var value = new BigNumber(Template.instance().data.value || 10000000000000000);
     return web3.fromWei( deed.minus(value).toFixed(), 'ether');
   },
   registrationDate() {

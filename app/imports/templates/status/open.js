@@ -17,7 +17,7 @@ Template['status-open'].events({
       }, Helpers.getTxHandler({
         onDone: () => TemplateVar.set(template, 'opening', false),
         onSuccess: () => {
-          Names.insert( {name: name, fullname: name + ".eth"});
+          Names.insert( {name: name, fullname: name + ".eth", mode: 'open'});
           Helpers.refreshStatus();
         }
       }));

@@ -45,7 +45,7 @@ Template['status-auction'].events({
           duration: 3
       });
     } else {
-      TemplateVar.set(template, 'bidding', true)
+      TemplateVar.set(template, 'bidding-' + Session.get('searched'), true)
       let owner = accounts[0].address;
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
         if(err != undefined) throw err;
@@ -57,7 +57,7 @@ Template['status-auction'].events({
           from: owner,
           gas: 500000
         }, Helpers.getTxHandler({
-          onDone: () => TemplateVar.set(template, 'bidding', false),
+          onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
           onSuccess: txid => {
             MyBids.insert(
               Object.assign(
@@ -102,7 +102,7 @@ Template['status-auction'].helpers({
     return MyBids.find({name: name}).count() > 0 ;
   },
   bidding() {
-    return TemplateVar.get('bidding')
+    return TemplateVar.get('bidding-' + Session.get('searched'));
   },
   anonymizerAmount() {
     let mainAccount = EthAccounts.find().fetch()[0].address;

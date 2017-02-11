@@ -10,7 +10,7 @@
           <h3>Your bids</h3>
 
           {{#each bid in bids}}
-          {{> components_bid bid=bid }}
+          {{> components_bid bid=bid status='auction' }}
           {{/each}}
 
         {{else}}
@@ -56,6 +56,6 @@
     <p>{{revealDate}}</p>
 
     <p> 
-      <strong>Attention: You must reveal your bid within <em>24 hours</em> of the reveal phase, failing to do so will result in irreversible loss of funds</strong> 
+      <strong>Attention: You must reveal your bid within <em>48 hours</em> of the reveal phase, failing to do so will result in <em>irreversible</em> loss of funds</strong> 
     </p>    
 </template>
