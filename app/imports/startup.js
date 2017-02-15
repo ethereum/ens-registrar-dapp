@@ -10,6 +10,8 @@ import './templates/components/bid.html';
 import './templates/components/bid.js';
 import './templates/components/watch.html';
 import './templates/components/watch.js';
+import './templates/components/address.html';
+import './templates/components/address.js';
 import './templates/status/open.html';
 import './templates/status/open.js';
 import './templates/status/auction.html';
