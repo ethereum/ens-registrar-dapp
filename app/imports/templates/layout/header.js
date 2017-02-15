@@ -19,6 +19,10 @@ Template['layout_header'].events({
     template.lookupTimeout = setTimeout(function() {
       Session.set('searched', event.target.value);
     }, 200);
+  }, 
+  'click .main-title': function(event, template) {
+    Session.set('searched', '');
+    template.$('#search-input').val('');
   }
 })
 

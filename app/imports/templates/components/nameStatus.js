@@ -43,6 +43,12 @@ Template['components_nameStatus'].onCreated(function() {
   setInterval(() => lookupName(Session.get('searched')), 1000);
 });
 
+Template['components_nameStatus'].events({
+  'click .names a': function(e) {
+    Session.set('searched', e.target.hash.slice(1));
+    e.preventDefault();
+  }
+});
 
 Template['components_nameStatus'].helpers({
     searched() {
@@ -51,6 +57,21 @@ Template['components_nameStatus'].helpers({
     fullName() {
       //searched + .eth
       return TemplateVar.get('nameInfo').name
+    }, 
+    publicAuctions() {
+      return PublicAuctions.find({},{sort: {registrationDate: -1}, limit: 100});
+    }, 
+    publicAuctionsAboutToExpire() {
+      return PublicAuctions.find({},{sort: {registrationDate: 1}, limit: 100});
+    }, 
+    namesRegistered() {
+      return LocalStore.get('NamesRegistered') ;
+    }, 
+    averageValue() {
+      return Math.round(100 * LocalStore.get('AverageValue'))/100 ;
+    }, 
+    percentageDisputed() {
+      return Math.round(100 - (100 * LocalStore.get('DisputedNamesRegistered') / LocalStore.get('NamesRegistered'))) || 0;
     }
 });
 

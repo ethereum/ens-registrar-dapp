@@ -4,7 +4,6 @@ var template;
 
 Template['status-auction'].onCreated(function() {
   template = this;
-  TemplateVar.set(template, 'entryData', Template.instance().data.entry);
   TemplateVar.set(template, 'anonymizer', 0.5)
 });
 
@@ -121,8 +120,12 @@ Template['status-auction'].helpers({
 
 Template['aside-auction'].onCreated(function() {
   var template = this;
-  TemplateVar.set(template, 'entryData', Template.instance().data.entry);
-  TemplateVar.set(template, 'revealDate', moment(TemplateVar.get('entryData').registrationDate * 1000 - 24 *60*60*1000));
+  
+  setInterval(() => {  
+    TemplateVar.set(template, 'revealDate', moment(template.data.entry.registrationDate * 1000 - 48 *60*60*1000));
+
+  }, 500);
+
 });
 
 

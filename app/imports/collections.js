@@ -8,3 +8,6 @@ new PersistentMinimongo(MyBids);
 
 Names = new Mongo.Collection('ens-dapp-db-names', {connection: null});
 new PersistentMinimongo(Names);
+
+PublicAuctions = new Mongo.Collection('ens-dapp-db-public-auctions', {connection: null});
+new PersistentMinimongo(PublicAuctions);

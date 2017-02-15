@@ -10,12 +10,12 @@ Template['status-open'].events({
     if (accounts.length == 0) {
       alert('No accounts found');
     } else {
-      TemplateVar.set(template, 'opening', true)
+      TemplateVar.set(template, 'opening-' + name, true)
       registrar.openAuction(name, {
         from: accounts[0].address,
         gas: 1000000
       }, Helpers.getTxHandler({
-        onDone: () => TemplateVar.set(template, 'opening', false),
+        onDone: () => TemplateVar.set(template, 'opening-' + name, false),
         onSuccess: () => {
           Names.insert( {name: name, fullname: name + ".eth", mode: 'open'});
           Helpers.refreshStatus();
@@ -27,6 +27,6 @@ Template['status-open'].events({
 
 Template['status-open'].helpers({
   opening() {
-    return TemplateVar.get('opening');
+    return TemplateVar.get('opening-' + Session.get('searched'));
   }
 })

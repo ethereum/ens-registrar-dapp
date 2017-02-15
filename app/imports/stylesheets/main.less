@@ -49,6 +49,23 @@ header {
   }
 }
 
+.big-numerals {
+  list-style-type: none;
+  padding-left: 0;
+  padding-bottom: @gridHeight;
+  display: flex;
+
+  li {
+    flex: 1;
+    line-height: 1;
+    font-weight: 400;
+
+    .big-numeral {
+      font-size: 250%;
+    }
+  }
+}
+
 .big-numeral {
   font-size: 200%;
   font-weight: 100;
@@ -79,7 +96,10 @@ aside ul li {
     padding-bottom: 10px;
 }
 
-.names {
+ul.names {
+  list-style-type: none;
+  padding-left: 0;
+
   li {
     a { 
       font-weight: 400;
