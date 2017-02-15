@@ -1,5 +1,6 @@
 import { registrar } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
+import { updatePendingBids } from '/imports/lib/bids';
 var template;
 
 Template['status-auction'].onCreated(function() {
@@ -15,7 +16,7 @@ Template['status-auction'].events({
     const target = event.target;
     const bidAmount = EthTools.toWei(target.bidAmount.value, 'ether');
     const depositAmount = EthTools.toWei(Number(target.bidAmount.value) + Math.random() * TemplateVar.get('anonymizerAmount'), 'ether');
-    const name = Session.get('searched');
+    const name = Session.get('name');
     let secret;
     let accounts = EthAccounts.find().fetch();
     
@@ -50,27 +51,20 @@ Template['status-auction'].events({
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
         if(err != undefined) throw err;
 
-        //todo: save bid here with pending status
         console.log('Bid: ', bid);
+        PendingBids.insert(Object.assign({
+          date: Date.now(),
+          depositAmount
+        }, bid));
+          
         registrar.submitBid(bid, {
           value: depositAmount, 
           from: owner,
           gas: 500000
         }, Helpers.getTxHandler({
           onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-          onSuccess: txid => {
-            MyBids.insert(
-              Object.assign(
-                {
-                  date: Date.now(),
-                  depositAmount,
-                  txid
-                },
-                bid
-              )
-            )
-          }
-        }));        
+          onSuccess: () => updatePendingBids(name)
+        }));
       });
     }
   },

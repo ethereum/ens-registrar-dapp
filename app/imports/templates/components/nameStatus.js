@@ -1,4 +1,5 @@
 import { registrar } from '/imports/lib/ethereum';
+import { updatePendingBids } from '/imports/lib/bids';
 
 Template['components_nameStatus'].onCreated(function() {
   var template = this;
@@ -21,6 +22,9 @@ Template['components_nameStatus'].onCreated(function() {
           Session.set('name', entry.name);
           if (entry.name) {
             window.location.hash = entry.name;
+          }
+          if (entry.mode === 'auction') {
+            updatePendingBids(entry.name);
           }
 
           if (Names.findOne({name: name}) !== undefined) {
@@ -119,6 +123,3 @@ Template['aside-reveal'].helpers({
     return web3.fromWei(val, 'ether');
   }
 })
-
-
-
