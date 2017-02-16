@@ -1,31 +1,32 @@
 import { ens } from '/imports/lib/ethereum';
 
 Template['status-owned'].onCreated(function() {
-  TemplateVar.set(this, 'entryData', Template.instance().data.entry);
+  this.autorun(() => {
+    const {name, entry} = Template.currentData();
+    
+    TemplateVar.set(this, 'entryData', entry);
 
-  var name = Template.instance().data.name;
-  ens.owner(name, (err, res) => {
-    if (!err) {
-      TemplateVar.set(this, 'owner', res);
-    }
-  });
-  ens.resolver(name, (err, res) => {
-    if (err) {
-      return;
-    }
-    res.addr((err, address) => {
+    ens.owner(name, (err, res) => {
       if (!err) {
-        TemplateVar.set(this, 'address', address);
+        TemplateVar.set(this, 'owner', res);
       }
     });
-    res.content((err, content) => {
-      if (!err) {
-        TemplateVar.set(this, 'content', content);
+    ens.resolver(name, (err, res) => {
+      if (err) {
+        return;
       }
-    })
-  });
-
-  console.log('entry', Template.instance().data.entry);
+      res.addr((err, address) => {
+        if (!err) {
+          TemplateVar.set(this, 'address', address);
+        }
+      });
+      res.content((err, content) => {
+        if (!err) {
+          TemplateVar.set(this, 'content', content);
+        }
+      })
+    });
+  })
 });
 
 Template['status-owned'].helpers({
