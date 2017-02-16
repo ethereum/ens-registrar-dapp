@@ -33,8 +33,22 @@ Meteor.startup(function() {
 
     // make reactive
     Tracker.autorun(updateMistMenu);
-});
 
+    // add class to the header when scrolling
+    $(window).on('scroll', function() {
+        var scrollPosition = $(window).scrollTop();
+        
+        if( scrollPosition > 150 ) {
+            $('header').addClass('fixed');
+        } else if( scrollPosition > 90 ) {
+            $('header').addClass('about-to-be-fixed ');
+        } else {
+            $('header').removeClass('fixed');
+            $('header').removeClass('about-to-be-fixed ');
+        }
+    })
+
+});
 
 updateMistMenu = function() {
     var names = Names.find({mode: {$in: ['auction', 'reveal']}}, {sort: {registrationDate: 1}}).fetch();
@@ -61,5 +75,6 @@ updateMistMenu = function() {
         })
     })
 }
+
 
 

@@ -11,6 +11,7 @@ header {
     text-align: center;
     background-position: 50% 70%;    
     transition: background-image 0.2s ease-in-out, filter 3s ease-out;
+    z-index: 1;
     
     &.invalid-name {
       filter: grayscale(95%);
@@ -38,6 +39,32 @@ header {
         top: 1px;
         opacity: 0.4;
     }
+
+    & > div {
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+
+    &.about-to-be-fixed > div {
+        opacity: 0;
+    }    
+
+    &.fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0;
+      padding-bottom: 0;
+
+      & > div {
+        opacity: 0;
+      }
+    }
+}
+
+header.fixed + .container {
+  padding-top: @gridHeight * 14;
 }
 
 .status-owned {
