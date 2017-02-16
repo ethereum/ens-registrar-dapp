@@ -8,8 +8,8 @@ Template['status-auction'].onCreated(function() {
   this.autorun(() => {
     const {name, entry} = Template.currentData();
     TemplateVar.set(template, 'entryData', entry);
-    TemplateVar.set(template, 'anonymizer', 0.5);
   });
+  TemplateVar.set(template, 'anonymizer', 0.5);
 });
 
 Template['status-auction'].events({
