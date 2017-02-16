@@ -51,29 +51,33 @@ Meteor.startup(function() {
 });
 
 updateMistMenu = function() {
-    var names = Names.find({mode: {$in: ['auction', 'reveal']}}, {sort: {registrationDate: 1}}).fetch();
-    mist.menu.clear();
 
-    _.each(names, function(e,i){
-        if (e.mode == 'auction') {
-            var m =  moment(e.registrationDate * 1000 - 48*60*60*1000);
-            var badge = m.fromNow(true);
-        } else {
-            if ( MyBids.find({name: e.name, revealed: { $not: true }}).count() > 0) {
-                var badge = '🚨';
-                mist.menu.setBadge('🚨 Bids expire soon');
+    if (typeof mist !== 'undefined' && mist && mist.menu) {
+        var names = Names.find({mode: {$in: ['auction', 'reveal']}}, {sort: {registrationDate: 1}}).fetch();
+        mist.menu.clear();
+
+        _.each(names, function(e,i){
+            if (e.mode == 'auction') {
+                var m =  moment(e.registrationDate * 1000 - 48*60*60*1000);
+                var badge = m.fromNow(true);
+            } else {
+                if ( MyBids.find({name: e.name, revealed: { $not: true }}).count() > 0) {
+                    var badge = '🚨';
+                    mist.menu.setBadge('🚨 Bids expire soon');
+                }
             }
-        }
 
 
-        mist.menu.add(e._id, {
-            name: e.fullname,
-            badge: badge,
-            position: i
-        }, function(){
-            Session.set('searched', e.name);
+            mist.menu.add(e._id, {
+                name: e.fullname,
+                badge: badge,
+                position: i
+            }, function(){
+                Session.set('searched', e.name);
+            })
         })
-    })
+    }
+    
 }
 
 

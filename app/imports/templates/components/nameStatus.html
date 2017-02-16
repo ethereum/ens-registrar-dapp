@@ -17,6 +17,7 @@
 
         <h1> Register an Ethereum Name</h1>
 
+        {{#if namesRegistered}}
         <ul class="big-numerals">
             <li>
                 <span class="big-numeral">{{namesRegistered}}</span> <br> names registered
@@ -28,10 +29,13 @@
                 <span class="big-numeral">{{averageValue}}</span> <span class="unit">ether</span> <br> average price paid per disputed name
             </li>
         </ul>
+        {{/if}}
 
         <p>
             This app allows you to register a .eth domain name, for use in ethereum decentralized applications. 
         </p>        
+
+        {{#if namesRegistered}}
 
         <br>
         <h3> Public Auctions Started recently </h3>
@@ -52,6 +56,8 @@
               </li>
             {{/each}}
         </ul>
+
+        {{/if}}
 
     </div>
     <aside class="col-md-4">

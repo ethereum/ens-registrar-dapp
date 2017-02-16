@@ -3,7 +3,7 @@ Template['view_names'].helpers({
     return MyBids.find();
   },
   names() {
-    return Names.find({},{sort: {name: 1}});
+    return Names.find({watched:true},{sort: {name: 1}});
   }
 })
 

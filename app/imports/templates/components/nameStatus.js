@@ -63,10 +63,12 @@ Template['components_nameStatus'].helpers({
       return TemplateVar.get('nameInfo').name
     }, 
     publicAuctions() {
-      return PublicAuctions.find({},{sort: {registrationDate: -1}, limit: 100});
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
+      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, public: true},{sort: {registrationDate: -1}, limit: 100});
     }, 
     publicAuctionsAboutToExpire() {
-      return PublicAuctions.find({},{sort: {registrationDate: 1}, limit: 100});
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
+      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, public: true},{sort: {registrationDate: 1}, limit: 100});
     }, 
     namesRegistered() {
       return LocalStore.get('NamesRegistered') ;

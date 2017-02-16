@@ -128,35 +128,32 @@ export default ethereum = (function() {
   }
 
   window.binarySearchNames = function(searchElement) {
-   
-      var minIndex = 0;
-      var maxIndex = knownNames.length - 1;
-      var currentIndex;
-      var currentElement;
+    var minIndex = 0;
+    var maxIndex = knownNames.length - 1;
+    var currentIndex = (maxIndex + minIndex) / 2 | 0;
+    var currentElement;
 
-      if (searchElement.slice(0,2))
-        searchElement = searchElement.slice(2);
+    if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
+          searchElement = searchElement.slice(2);
+    } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
+          searchElement = '0x' + searchElement;
+    }
 
-      function hashIndex(el) {
-        return Number('0x'+el.slice(0,12));
-      }
-   
-      while (minIndex <= maxIndex) {
-          currentIndex = (minIndex + maxIndex) / 2 | 0;
-          currentElement = knownNames[currentIndex];
-   
-          if (hashIndex(web3.sha3(currentElement)) < hashIndex(searchElement)) {
-              minIndex = currentIndex + 1;
-          } else if (hashIndex(web3.sha3(currentElement)) > hashIndex(searchElement)) {
-              maxIndex = currentIndex - 1;
-          } else {
-              return currentIndex;
-          }
-      }
-   
-      return -1;
-  
-  };
+    while (minIndex <= maxIndex) {
+        currentIndex = (minIndex + maxIndex) / 2 | 0;
+        currentElement = knownNames[currentIndex];
+
+        if (web3.sha3(currentElement) < searchElement) {
+            minIndex = currentIndex + 1;
+        } else if (web3.sha3(currentElement) > searchElement) {
+            maxIndex = currentIndex - 1;
+        } else {
+            return knownNames[currentIndex];
+        }
+    }
+
+    return null;
+    }
 
   window.watchEvents = function watchEvents() {
       var lastBlockLooked = LocalStore.get('lastBlockLooked') - 1000 || 400000;
@@ -178,13 +175,16 @@ export default ethereum = (function() {
           if (!error) {            
               LocalStore.set('lastBlockLooked', result.blockNumber);
 
-              if(binarySearchNames(result.args.hash) > -1) {
-                var name = knownNames[binarySearchNames(result.args.hash)];
+              if(binarySearchNames(result.args.hash)) {
+                name = binarySearchNames(result.args.hash);
+                console.log('\n Known name auction started!', name, result.args.hash);
 
-                PublicAuctions.upsert({name: name}, 
+
+                Names.upsert({name: name}, 
                   { $set: { 
                     fullname: name + '.eth',
-                    registrationDate: result.args.auctionExpiryDate.toFixed()
+                    registrationDate: result.args.auctionExpiryDate.toFixed(),
+                    public: true
                   }})
               }    
           } 
@@ -210,10 +210,17 @@ export default ethereum = (function() {
 
               LocalStore.set('AverageValue', averageValue );
 
-              if(binarySearchNames(result.args.hash) > -1) {
-                var name = knownNames[binarySearchNames(result.args.hash)];
+              if(binarySearchNames(result.args.hash)) {
+                var name = binarySearchNames(result.args.hash);
 
                 console.log('\n Known name registered!', name, value);
+                Names.upsert({name: name}, 
+                  { $set: { 
+                    fullname: name + '.eth',
+                    registrationDate: result.args.now.toFixed(),
+                    value: value,
+                    public: true
+                  }})
               }    
           } 
         });      
