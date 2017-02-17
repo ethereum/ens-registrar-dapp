@@ -157,12 +157,9 @@ export default ethereum = (function() {
 
   window.watchEvents = function watchEvents() {
       var lastBlockLooked = LocalStore.get('lastBlockLooked') - 1000 || 400000;
-      console.log( 'lastBlockLooked', lastBlockLooked);
-
-      console.log(knownNames.length, 'Known Names', knownNames[Math.floor(Math.random()*knownNames.length)]);
+      console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
 
       return new Promise((resolve, reject) => {
-        console.log('watchEvents');
         var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: lastBlockLooked});
 
         // event HashRegistered(bytes32 indexed hash, address indexed owner, uint value, uint now);
@@ -176,7 +173,7 @@ export default ethereum = (function() {
 
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
-                console.log('\n watched name auction started!', name, result.args.hash);
+                console.log('\n Watched name auction started!', name, result.args.hash);
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
                 console.log('\n Known name auction started!', name, result.args.hash);
@@ -262,8 +259,6 @@ export default ethereum = (function() {
       })
       .then(initRegistrar)
       .then(initEthereumHelpers)
-      // .then(loadNames)
-      // .then(watchEvents)
       .then(() => {
         //set a global for easier debugging on the console
         g = {ens, registrar, network};

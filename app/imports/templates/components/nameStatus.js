@@ -85,11 +85,11 @@ Template['components_nameStatus'].helpers({
     }, 
     publicAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     publicAuctionsAboutToExpire() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
-      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, name:{$gt: ''}},{sort: {registrationDate: 1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{sort: {registrationDate: 1}, limit: 100});
     }, 
     knownNamesRegistered() {
       return Names.find({value: {$gt: 0}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
@@ -99,7 +99,7 @@ Template['components_nameStatus'].helpers({
     }, 
     hasAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
-      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, name:{$gt: ''}},{}).count() > 0;
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{}).count() > 0;
     },
     averageValue() {
       var average = _.reduce(
