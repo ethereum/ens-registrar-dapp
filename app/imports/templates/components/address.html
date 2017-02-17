@@ -1,4 +1,13 @@
 <template name="components_address">
-  <strong>{{> dapp_identicon identity=addr class="dapp-tiny"}} {{addr}}</strong>
+  <div class="components_address">
+    {{#if addr}}
+      {{> dapp_identicon identity=addr class="dapp-tiny"}}
+      {{#if mine}}
+        <i class="icon-user help" title="You own this address"></i>
+      {{/if}}
+      <strong class="address {{mine}}">{{addr}}</strong>
+    {{else}}
+      <span>(undefined address)</span>
+    {{/if}}
+  </div>
 </template>
-  
