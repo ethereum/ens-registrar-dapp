@@ -183,7 +183,7 @@ export default ethereum = (function() {
                 Names.upsert({name: name}, 
                   { $set: { 
                     fullname: name + '.eth',
-                    registrationDate: result.args.auctionExpiryDate.toFixed(),
+                    registrationDate: Number(result.args.auctionExpiryDate.toFixed()),
                     hash: hash,
                     public: true
                   }})
@@ -211,7 +211,7 @@ export default ethereum = (function() {
                 { $set: { 
                   name: name,
                   fullname: name ? name + '.eth' : null,
-                  registrationDate: result.args.now.toFixed(),
+                  registrationDate: Number(result.args.now.toFixed()),
                   value: value,
                   public: name && name.length > 0
                 }})                 
