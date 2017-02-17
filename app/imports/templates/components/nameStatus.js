@@ -4,6 +4,8 @@ import { updatePendingBids } from '/imports/lib/bids';
 Template['components_nameStatus'].onCreated(function() {
   var template = this;
   TemplateVar.set('error', false);
+  var timeout, timeoutName;
+
   function lookupName(name) {
     if (!name) {
       return;
@@ -27,9 +29,28 @@ Template['components_nameStatus'].onCreated(function() {
             updatePendingBids(entry.name);
           }
 
-          if (Names.findOne({name: name}) !== undefined) {
-            Names.update({name: name}, {$set: {mode: entry.mode, registrationDate: entry.registrationDate}})
-          }
+          // Since we grabbed this information, update the database
+          if (timeoutName !== name){
+            // To prevent too many writes, add a timer and only save to the database afger a few seconds
+            clearTimeout(timeout);
+            timeoutName = name;
+            console.log('update name', name, entry.registrationDate);
+
+            timeout = setTimeout(function() {
+              Names.upsert({name: name}, {$set: {
+                fullname: name + '.eth',
+                mode: entry.mode, 
+                registrationDate: entry.registrationDate, 
+                value: entry.deed.balance ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : entry.value, 
+                highestBid: entry.highestBid, 
+                hash: entry.hash.replace('0x','').slice(0,12)
+              }});
+
+            }, 3000);
+          };
+
+          
+            
 
         }
       });
@@ -64,20 +85,31 @@ Template['components_nameStatus'].helpers({
     }, 
     publicAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, public: true},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     publicAuctionsAboutToExpire() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
-      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, public: true},{sort: {registrationDate: 1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, name:{$gt: ''}},{sort: {registrationDate: 1}, limit: 100});
+    }, 
+    knownNamesRegistered() {
+      return Names.find({value: {$gt: 0}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     namesRegistered() {
-      return LocalStore.get('NamesRegistered') ;
+      return Names.find({value: {$gt:0}}).count();
     }, 
+    hasAuctions() {
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
+      return Names.find({registrationDate: {$gt: revealDeadline.toString()}, name:{$gt: ''}},{}).count() > 0;
+    },
     averageValue() {
-      return Math.round(100 * LocalStore.get('AverageValue'))/100 ;
+      var average = _.reduce(
+          Names.find({value: {$gt:0.01}}).fetch(), function(memo,num) { 
+            return memo + num.value; 
+          }, 0);
+      return Math.round(average*100)/100 ;
     }, 
     percentageDisputed() {
-      return Math.round(100 - (100 * LocalStore.get('DisputedNamesRegistered') / LocalStore.get('NamesRegistered'))) || 0;
+      return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
     }
 });
 

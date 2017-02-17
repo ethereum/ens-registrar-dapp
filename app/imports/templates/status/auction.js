@@ -45,7 +45,7 @@ Template['status-auction'].events({
           duration: 3
       });
     } else {
-      TemplateVar.set(template, 'bidding-' + Session.get('searched'), true)
+      TemplateVar.set(template, 'bidding-' + name, true)
       let owner = accounts[0].address;
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
         if(err != undefined) throw err;
@@ -55,6 +55,8 @@ Template['status-auction'].events({
           date: Date.now(),
           depositAmount
         }, bid));
+
+        Names.upsert({name: name}, {$set: { watched: true}});
           
         registrar.submitBid(bid, {
           value: depositAmount, 
@@ -131,16 +133,17 @@ Template['aside-auction'].helpers({
   revealDate() {
     var m = TemplateVar.get('revealDate');
 
-    return m.format('YYYY-MM-DD HH:mm');
+    return m ? m.format('YYYY-MM-DD HH:mm') : null;
   }, 
   timeRemaining() {
     var m = TemplateVar.get('revealDate');
 
-    if (m.diff(moment(), 'hours') > 48) {
+    if (m && m.diff(moment(), 'hours') > 48) {
       return Math.floor(m.diff(moment(), 'hours')/24) + ' days, ' + Math.floor(m.diff(moment(), 'hours')%24) + ' hours'
-    } else {
+    } else if (m) {
         return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ' + Math.floor(m.diff(moment(), 'minutes')%60) + 'm ' + Math.floor(m.diff(moment(), 'seconds')%60) + 's';
-
+    } else {
+      return false;
     }
   }
 })

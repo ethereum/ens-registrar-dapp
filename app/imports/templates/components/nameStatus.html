@@ -32,13 +32,20 @@
         {{/if}}
 
         <p>
-            This app allows you to register a .eth domain name, for use in ethereum decentralized applications. 
+          This app allows you to register a <strong>.eth</strong> domain name, for use in ethereum decentralized applications and compatible blockchain browsers. Names are not bought <em>from</em> any particular organization and there is no central entity receiving any funds for this, all ether spent on this app that isn't being used to pay transactions fees is either temporarily locked or burned.
         </p>        
+        <p>
+          To claim a name, you must be willing to lock some amount of ether for at least a year, after which you can get the ether back by releasing the name. The process takes a week and the name will go to the account that values the name the most and is willing to lock more for it (minimum of 0.01). After names are owned, they will be controlled only by their owners, which will be able to transfer or release them, until it needs to be renewed. The contract is expected to be upgraded in 2018 to create small renewal costs, to discourage long term squatting and gold-rushing.
+        </p>
 
-        {{#if namesRegistered}}
+        {{#if hasAuctions}}
 
         <br>
-        <h3> Public Auctions Started recently </h3>
+        <h3> Knowns Auctions Started recently </h3>
+
+        Auctions are semi private: they are only seen by those who know the name. Some popular domains are therefore identifiable, but secret names are kept private until the owner decides to become public.
+
+
         <ul class="names">
           {{#each auction in publicAuctions}}
               <li>
@@ -48,11 +55,27 @@
         </ul>
 
         <br>
-        <h3> Public Auctions about to expire </h3>
+        <h3> Knowns Auctions about to expire </h3>
+
+
         <ul class="names">
           {{#each auction in publicAuctionsAboutToExpire}}
               <li>
                   <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
+              </li>
+            {{/each}}
+        </ul>
+        <br>
+        {{/if}}
+
+        {{#if namesRegistered}}
+        <h3> Knowns names recently registered </h3>
+
+        Before a name is granted, all names go to a week long wait to see if anyone else wants the name. If no other candidate appears, then the name is granted by locking 0.01 ether.
+        <ul class="names">
+          {{#each auction in knownNamesRegistered}}
+              <li>
+                  <a href='#{{auction.name}}'>{{auction.fullname}}</a> {{auction.value}}
               </li>
             {{/each}}
         </ul>

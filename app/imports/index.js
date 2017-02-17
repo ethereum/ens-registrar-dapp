@@ -53,7 +53,7 @@ Meteor.startup(function() {
 updateMistMenu = function() {
 
     if (typeof mist !== 'undefined' && mist && mist.menu) {
-        var names = Names.find({mode: {$in: ['auction', 'reveal']}}, {sort: {registrationDate: 1}}).fetch();
+        var names = Names.find({mode: {$in: ['auction', 'reveal']}, watched: true}, {sort: {registrationDate: 1}}).fetch();
         mist.menu.clear();
 
         _.each(names, function(e,i){

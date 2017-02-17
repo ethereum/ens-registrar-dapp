@@ -5,7 +5,7 @@ html, body {
 }
 
 header {
-    padding: @gridHeight * 5 @gridWidth @gridHeight * 2;
+    padding: @gridHeight * 6 @gridWidth @gridHeight * 8;
     height: @gridHeight * 15;
     background-color: #A39C9C;
     text-align: center;
@@ -15,6 +15,7 @@ header {
     z-index: 1;
     
     &.invalid-name {
+      -webkit-filter: grayscale(95%);
       filter: grayscale(95%);
       transition: background-image 0.2s ease-in-out, filter 0.5s ease-out;
     }
@@ -139,4 +140,9 @@ ul.names {
 .dapp-block-button {
   text-align: center;
   line-height: 1.6em;
+}
+
+
+.container .col-md-8 {
+  padding-bottom: @gridHeight * 5;
 }

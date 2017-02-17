@@ -161,9 +161,6 @@ export default ethereum = (function() {
 
       console.log(knownNames.length, 'Known Names', knownNames[Math.floor(Math.random()*knownNames.length)]);
 
-      if (LocalStore.get('AverageValue') === 'undefined' || LocalStore.get('AverageValue') === 'NaN')
-          LocalStore.set('AverageValue', 1 );
-
       return new Promise((resolve, reject) => {
         console.log('watchEvents');
         var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: lastBlockLooked});
@@ -174,54 +171,53 @@ export default ethereum = (function() {
         AuctionStartedEvent.watch(function(error, result) {
           if (!error) {            
               LocalStore.set('lastBlockLooked', result.blockNumber);
+              var hash = result.args.hash.replace('0x','').slice(0,12);
+              var name;
 
-              if(binarySearchNames(result.args.hash)) {
+              if (Names.findOne({hash: hash})) {
+                name = Names.findOne({hash: hash}).name;
+                console.log('\n watched name auction started!', name, result.args.hash);
+              } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
                 console.log('\n Known name auction started!', name, result.args.hash);
+              }
 
-
+              if (name) {
                 Names.upsert({name: name}, 
                   { $set: { 
                     fullname: name + '.eth',
                     registrationDate: result.args.auctionExpiryDate.toFixed(),
+                    hash: hash,
                     public: true
                   }})
-              }    
+              }
           } 
         });
 
         HashRegisteredEvent.watch(function(error, result) {
           if (!error) {
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
+              var hash = result.args.hash.replace('0x','').slice(0,12);
+              var name;
               
               LocalStore.set('lastBlockLooked', result.blockNumber);
-              LocalStore.set('NamesRegistered', LocalStore.get('NamesRegistered') + 1 );
 
-              var averageValue = LocalStore.get('AverageValue') || value;
-
-              if (value > 0.01) {
-                var disputedNames = LocalStore.get('DisputedNamesRegistered') + 1;
-                LocalStore.set('DisputedNamesRegistered',  disputedNames);
-                averageValue = (averageValue * disputedNames + value) / (disputedNames + 1);
-                LocalStore.set('DisputedNamesRegistered', disputedNames);
+              if (Names.findOne({hash: hash})) {
+                name = Names.findOne({hash: hash}).name;
+                console.log('\n Watched name registered!', name, result.args.hash, result.args.now.toFixed());
+              } else if(binarySearchNames(result.args.hash)) {
+                name = binarySearchNames(result.args.hash);
+                console.log('\n Known name registered!', name, result.args.hash, result.args.now.toFixed());
               }
-
-              // console.log('HashRegistered', result.args.hash, value, 'ether', LocalStore.get('NamesRegistered'), LocalStore.get('DisputedNamesRegistered'), averageValue);
-
-              LocalStore.set('AverageValue', averageValue );
-
-              if(binarySearchNames(result.args.hash)) {
-                var name = binarySearchNames(result.args.hash);
-
-                console.log('\n Known name registered!', name, value);
-                Names.upsert({name: name}, 
-                  { $set: { 
-                    fullname: name + '.eth',
-                    registrationDate: result.args.now.toFixed(),
-                    value: value,
-                    public: true
-                  }})
-              }    
+        
+              Names.upsert({hash: hash}, 
+                { $set: { 
+                  name: name,
+                  fullname: name ? name + '.eth' : null,
+                  registrationDate: result.args.now.toFixed(),
+                  value: value,
+                  public: name && name.length > 0
+                }})                 
           } 
         });      
 

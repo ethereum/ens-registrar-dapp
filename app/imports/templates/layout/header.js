@@ -1,9 +1,12 @@
 
 Template['layout_header'].onRendered(function() {
   let name, searched;
-  var template = this;
+  const template = this;
 
   this.autorun(function() {
+    if (!Session.get('searched')) 
+      Session.set('searched', window.location.hash.replace('#',''));
+
     searched = Session.get('searched');
     name = Session.get('name');
 
@@ -18,14 +21,13 @@ Template['layout_header'].onRendered(function() {
       TemplateVar.set(template, 'header-bg', GeoPattern.generate(new Date().toISOString().substr(0,10)).toDataUrl());
     }
 
-    console.log('name-invalid', name, (name && name.length > 0 && name.length < 7));
-    TemplateVar.set(template, 'name-invalid', (name && name.length > 0 && name.length < 7));
+    TemplateVar.set('name-invalid', (searched && searched.length > 0 && searched.length < 7));
   })
 
 })
 
 Template['layout_header'].events({
-  'keyup #search-input': function(event, template) {
+  'input #search-input': function(event, template) {
     if (template.lookupTimeout) {
       clearTimeout(template.lookupTimeout);
     }
@@ -37,7 +39,6 @@ Template['layout_header'].events({
     Session.set('searched', '');
     Session.set('name', '');
     template.$('#search-input').val('');
-
     window.location.hash = '';
   }
 })
