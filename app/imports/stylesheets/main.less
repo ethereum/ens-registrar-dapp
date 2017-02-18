@@ -5,14 +5,17 @@ html, body {
 }
 
 header {
-    padding: @gridHeight * 5 @gridWidth @gridHeight * 2;
+    padding: @gridHeight * 6 @gridWidth @gridHeight * 8;
     height: @gridHeight * 15;
     background-color: #A39C9C;
     text-align: center;
-    background-position: 50% 70%;    
+    background-position: 50% 70%;   
+    background-attachment: fixed; 
     transition: background-image 0.2s ease-in-out, filter 3s ease-out;
+    z-index: 1;
     
     &.invalid-name {
+      -webkit-filter: grayscale(95%);
       filter: grayscale(95%);
       transition: background-image 0.2s ease-in-out, filter 0.5s ease-out;
     }
@@ -38,6 +41,32 @@ header {
         top: 1px;
         opacity: 0.4;
     }
+
+    & > div {
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+
+    &.about-to-be-fixed > div {
+        opacity: 0;
+    }    
+
+    &.fixed {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0;
+      padding-bottom: 0;
+
+      & > div {
+        opacity: 0;
+      }
+    }
+}
+
+header.fixed + .container {
+  padding-top: @gridHeight * 14;
 }
 
 .status-owned {
@@ -46,6 +75,23 @@ header {
   }
   h2 {
     margin-left: 20px;
+  }
+}
+
+.big-numerals {
+  list-style-type: none;
+  padding-left: 0;
+  padding-bottom: @gridHeight;
+  display: flex;
+
+  li {
+    flex: 1;
+    line-height: 1;
+    font-weight: 400;
+
+    .big-numeral {
+      font-size: 250%;
+    }
   }
 }
 
@@ -79,7 +125,10 @@ aside ul li {
     padding-bottom: 10px;
 }
 
-.names {
+ul.names {
+  list-style-type: none;
+  padding-left: 0;
+
   li {
     a { 
       font-weight: 400;
@@ -105,4 +154,8 @@ aside ul li {
   .address.true, .icon-user {
     color: #497b2b;
   }
+}
+
+.container .col-md-8 {
+  padding-bottom: @gridHeight * 5;
 }
