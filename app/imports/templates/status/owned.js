@@ -5,7 +5,10 @@ Template['status-owned'].onCreated(function() {
     const {name, entry} = Template.currentData();
     
     TemplateVar.set(this, 'entryData', entry);
-
+    TemplateVar.set(this, 'owner', null);
+    TemplateVar.set(this, 'address', null);
+    TemplateVar.set(this, 'content', null);
+    
     ens.owner(name, (err, res) => {
       if (!err) {
         TemplateVar.set(this, 'owner', res);
