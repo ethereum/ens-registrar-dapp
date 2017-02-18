@@ -16,14 +16,13 @@ Template['components_bid'].onCreated(function() {
   let template = Template.instance();
   let bid = template.data.bid;
   updateRevealedStatus(template, bid);
+  TemplateVar.set(template, 'revealing', false)
 })
 
 Template['components_bid'].events({
-  'click .reveal-bid': function() {
-    let template = Template.instance();
+  'click .reveal-bid': function(e, template) {
     let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
-    MyBids.update({ _id: bid._id }, { $set: {revealing: true} });
-    
+    TemplateVar.set(template, 'revealing', true);
     // Names.update({fullname: })
     // Any account can reveal
     let mainAccount = web3.eth.accounts[0];
@@ -32,7 +31,7 @@ Template['components_bid'].events({
       from: mainAccount, 
       gas: 300000
     }, Helpers.getTxHandler({
-      onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} }),
+      onDone: () => TemplateVar.set(template, 'revealing', false),
       onSuccess: () => updateRevealedStatus(template, bid)
     })); 
   }
@@ -43,7 +42,7 @@ Template['components_bid'].helpers({
     return TemplateVar.get('isRevealed');
   },
   revealing() {
-    return MyBids.findOne({_id: this.bid._id}).revealing;
+    return TemplateVar.get('revealing');
   },
   canReveal() {
     return this.status == 'reveal';
