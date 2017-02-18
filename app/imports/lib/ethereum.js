@@ -116,6 +116,112 @@ export default ethereum = (function() {
     })
   }
 
+  function loadNames() {
+    (function() {
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'preimages.js';
+        var x = document.getElementsByTagName('script')[0];
+        x.parentNode.insertBefore(s, x);
+    })();
+  }
+
+  window.binarySearchNames = function(searchElement) {
+    var minIndex = 0;
+    var maxIndex = knownNames.length - 1;
+    var currentIndex = (maxIndex + minIndex) / 2 | 0;
+    var currentElement;
+
+    if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
+          searchElement = searchElement.slice(2);
+    } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
+          searchElement = '0x' + searchElement;
+    }
+
+    while (minIndex <= maxIndex) {
+        currentIndex = (minIndex + maxIndex) / 2 | 0;
+        currentElement = knownNames[currentIndex];
+
+        if (web3.sha3(currentElement) < searchElement) {
+            minIndex = currentIndex + 1;
+        } else if (web3.sha3(currentElement) > searchElement) {
+            maxIndex = currentIndex - 1;
+        } else {
+            return knownNames[currentIndex];
+        }
+    }
+
+    return null;
+    }
+
+  window.watchEvents = function watchEvents() {
+      var lastBlockLooked = LocalStore.get('lastBlockLooked') - 1000 || 400000;
+      console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
+
+      return new Promise((resolve, reject) => {
+        var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: lastBlockLooked});
+
+        // event HashRegistered(bytes32 indexed hash, address indexed owner, uint value, uint now);
+        var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: lastBlockLooked});
+
+        AuctionStartedEvent.watch(function(error, result) {
+          if (!error) {            
+              LocalStore.set('lastBlockLooked', result.blockNumber);
+              var hash = result.args.hash.replace('0x','').slice(0,12);
+              var name;
+
+              if (Names.findOne({hash: hash})) {
+                name = Names.findOne({hash: hash}).name;
+                console.log('\n Watched name auction started!', name, result.args.hash);
+              } else if(binarySearchNames(result.args.hash)) {
+                name = binarySearchNames(result.args.hash);
+                console.log('\n Known name auction started!', name, result.args.hash);
+              }
+
+              if (name) {
+                Names.upsert({name: name}, 
+                  { $set: { 
+                    fullname: name + '.eth',
+                    registrationDate: Number(result.args.auctionExpiryDate.toFixed()),
+                    hash: hash,
+                    public: true
+                  }})
+              }
+          } 
+        });
+
+        HashRegisteredEvent.watch(function(error, result) {
+          if (!error) {
+              var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
+              var hash = result.args.hash.replace('0x','').slice(0,12);
+              var name;
+              
+              LocalStore.set('lastBlockLooked', result.blockNumber);
+
+              if (Names.findOne({hash: hash})) {
+                name = Names.findOne({hash: hash}).name;
+                console.log('\n Watched name registered!', name, result.args.hash, result.args.now.toFixed());
+              } else if(binarySearchNames(result.args.hash)) {
+                name = binarySearchNames(result.args.hash);
+                console.log('\n Known name registered!', name, result.args.hash, result.args.now.toFixed());
+              }
+        
+              Names.upsert({hash: hash}, 
+                { $set: { 
+                  name: name,
+                  fullname: name ? name + '.eth' : null,
+                  registrationDate: Number(result.args.now.toFixed()),
+                  value: value,
+                  public: name && name.length > 0
+                }})                 
+          } 
+        });      
+
+        resolve(); 
+      })
+    }  
+
   function reportStatus(description, isReady, theresAnError) {
     console.log(description);
     subscribers.forEach((subscriber) => subscriber({
@@ -156,7 +262,8 @@ export default ethereum = (function() {
       .then(() => {
         //set a global for easier debugging on the console
         g = {ens, registrar, network};
-        reportStatus('Ready', true);
+        loadNames();
+        reportStatus('Ready!', true);
       })
       .catch(err => {
         console.error(err);

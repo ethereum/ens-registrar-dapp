@@ -4,6 +4,8 @@ import { updatePendingBids } from '/imports/lib/bids';
 Template['components_nameStatus'].onCreated(function() {
   var template = this;
   TemplateVar.set('error', false);
+  var timeout, timeoutName;
+
   function lookupName(name) {
     if (!name) {
       return;
@@ -27,9 +29,28 @@ Template['components_nameStatus'].onCreated(function() {
             updatePendingBids(entry.name);
           }
 
-          if (Names.findOne({name: name}) !== undefined) {
-            Names.update({name: name}, {$set: {mode: entry.mode, registrationDate: entry.registrationDate}})
-          }
+          // Since we grabbed this information, update the database
+          if (timeoutName !== name){
+            // To prevent too many writes, add a timer and only save to the database afger a few seconds
+            clearTimeout(timeout);
+            timeoutName = name;
+            console.log('update name', name, entry.registrationDate);
+
+            timeout = setTimeout(function() {
+              Names.upsert({name: name}, {$set: {
+                fullname: name + '.eth',
+                mode: entry.mode, 
+                registrationDate: entry.registrationDate, 
+                value: entry.deed.balance ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : entry.value, 
+                highestBid: entry.highestBid, 
+                hash: entry.hash.replace('0x','').slice(0,12)
+              }});
+
+            }, 3000);
+          };
+
+          
+            
 
         }
       });
@@ -47,6 +68,12 @@ Template['components_nameStatus'].onCreated(function() {
   setInterval(() => lookupName(Session.get('searched')), 1000);
 });
 
+Template['components_nameStatus'].events({
+  'click .names a': function(e) {
+    Session.set('searched', e.target.hash.slice(1));
+    e.preventDefault();
+  }
+});
 
 Template['components_nameStatus'].helpers({
     searched() {
@@ -55,6 +82,34 @@ Template['components_nameStatus'].helpers({
     fullName() {
       //searched + .eth
       return TemplateVar.get('nameInfo').name
+    }, 
+    publicAuctions() {
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+    }, 
+    publicAuctionsAboutToExpire() {
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{sort: {registrationDate: 1}, limit: 100});
+    }, 
+    knownNamesRegistered() {
+      return Names.find({value: {$gt: 0}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+    }, 
+    namesRegistered() {
+      return Names.find({value: {$gt:0}}).count();
+    }, 
+    hasAuctions() {
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{}).count() > 0;
+    },
+    averageValue() {
+      var average = _.reduce(
+          Names.find({value: {$gt:0.01}}).fetch(), function(memo,num) { 
+            return memo + num.value; 
+          }, 0);
+      return Math.round(average*100)/100 ;
+    }, 
+    percentageDisputed() {
+      return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
     }
 });
 

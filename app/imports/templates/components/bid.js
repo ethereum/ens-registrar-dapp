@@ -8,6 +8,7 @@ function updateRevealedStatus(template, bid) {
       return;
     }
     TemplateVar.set(template, 'isRevealed', isRevealed);
+    MyBids.update({ _id: bid._id }, { $set: {revealed: isRevealed} });
   })
 }
 

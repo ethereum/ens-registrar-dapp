@@ -1,18 +1,20 @@
 
 Template['components_watch'].events({
   'click .watch': function() {
-      var name = Template.instance().data.name;
-      Names.insert({name: name.replace('.eth',''), fullname: name});
+      var fullname = Template.instance().data.name;
+      var n = Names.findOne({fullname: fullname});
+      Names.upsert({fullname: fullname}, { $set: {name: fullname.replace('.eth',''), watched: true}});
   },
   'click .unwatch': function() {
-      var name = Template.instance().data.name;
-      Names.remove( {fullname: name});
+      var fullname = Template.instance().data.name;
+      Names.upsert({fullname: fullname}, { $set: {name: fullname.replace('.eth',''), watched: false}});
   }
 })
 
 Template['components_watch'].helpers({
   isWatched() {
-    var name = Template.instance().data.name;
-    return Names.findOne({fullname: name}) === undefined 
+    var fullname = Template.instance().data.name;
+    var n = Names.findOne({fullname: fullname})
+    return n && n.watched;
   }
 })
