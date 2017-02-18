@@ -26,7 +26,7 @@ Template['components_bid'].events({
     
     // Names.update({fullname: })
     // Any account can reveal
-    let mainAccount = EthAccounts.find().fetch()[0].address;
+    let mainAccount = web3.eth.accounts[0];
 
     registrar.unsealBid(bid, {
       from: mainAccount, 

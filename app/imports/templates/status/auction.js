@@ -17,7 +17,6 @@ Template['status-auction'].events({
     const depositAmount = EthTools.toWei(Number(target.bidAmount.value) + Math.random() * TemplateVar.get('anonymizerAmount'), 'ether');
     const name = Session.get('name');
     let secret;
-    let accounts = EthAccounts.find().fetch();
     
     if (window.crypto && window.crypto.getRandomValues) {
       secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
@@ -34,7 +33,7 @@ Template['status-auction'].events({
     }
     console.log('secret', secret);
 
-    if (accounts.length == 0) {
+    if (web3.eth.accounts.length == 0) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',
           duration: 3
@@ -46,7 +45,7 @@ Template['status-auction'].events({
       });
     } else {
       TemplateVar.set(template, 'bidding-' + name, true)
-      let owner = accounts[0].address;
+      let owner = web3.eth.accounts[0];
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
         if(err != undefined) throw err;
 
@@ -100,7 +99,7 @@ Template['status-auction'].helpers({
     return TemplateVar.get('bidding-' + Session.get('searched'));
   },
   anonymizerAmount() {
-    let mainAccount = EthAccounts.find().fetch()[0].address;
+    let mainAccount = web3.eth.accounts[0];
     web3.eth.getBalance(mainAccount, function(e, balance) { 
         TemplateVar.set(template, 'maxAmount', web3.fromWei(balance, 'ether').toFixed());
     });

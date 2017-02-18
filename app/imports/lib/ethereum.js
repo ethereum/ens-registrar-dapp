@@ -106,13 +106,6 @@ export default ethereum = (function() {
       }
     });
   }
-  
-  function initEthereumHelpers() {
-    return new Promise((resolve, reject) => {
-      EthAccounts.init();
-      resolve();
-    })
-  }
 
   function loadNames() {
     (function() {
@@ -255,7 +248,6 @@ export default ethereum = (function() {
         }
       })
       .then(initRegistrar)
-      .then(initEthereumHelpers)
       .then(() => {
         //set a global for easier debugging on the console
         g = {ens, registrar, network};
