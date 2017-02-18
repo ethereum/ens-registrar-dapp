@@ -21,14 +21,18 @@ Template['components_bid'].onCreated(function() {
 
 Template['components_bid'].events({
   'click .reveal-bid': function(e, template) {
+    if (web3.eth.accounts.length == 0) {
+      GlobalNotification.error({
+          content: 'No accounts added to dapp',
+          duration: 3
+      });
+      return;
+    }
     let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
     TemplateVar.set(template, 'revealing', true);
     // Names.update({fullname: })
-    // Any account can reveal
-    let mainAccount = web3.eth.accounts[0];
-
     registrar.unsealBid(bid, {
-      from: mainAccount, 
+      from: web3.eth.accounts[0], // Any account can reveal
       gas: 300000
     }, Helpers.getTxHandler({
       onDone: () => TemplateVar.set(template, 'revealing', false),
