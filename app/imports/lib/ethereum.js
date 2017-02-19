@@ -156,7 +156,9 @@ export default ethereum = (function() {
     }
 
   window.watchEvents = function watchEvents() {
-      var lastBlockLooked = LocalStore.get('lastBlockLooked') - 1000 || 400000;
+      var lastBlockLooked = LocalStore.get('lastBlockLooked') || 400000;
+      lastBlockLooked -= 1000;
+
       console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
 
       return new Promise((resolve, reject) => {
