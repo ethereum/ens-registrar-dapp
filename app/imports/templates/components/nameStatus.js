@@ -41,7 +41,7 @@ Template['components_nameStatus'].onCreated(function() {
                 fullname: name + '.eth',
                 mode: entry.mode, 
                 registrationDate: entry.registrationDate, 
-                value: entry.deed.balance ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : entry.value, 
+                value: entry.mode == 'auction' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
                 highestBid: entry.highestBid, 
                 hash: entry.hash.replace('0x','').slice(0,12)
               }});
@@ -106,7 +106,7 @@ Template['components_nameStatus'].helpers({
           Names.find({value: {$gt:0.01}}).fetch(), function(memo,num) { 
             return memo + num.value; 
           }, 0);
-      return Math.round(average*100)/100 ;
+      return Math.round(average*100/Names.find({value: {$gt:0.01}}).count())/100 ;
     }, 
     percentageDisputed() {
       return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
