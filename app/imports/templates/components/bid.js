@@ -16,7 +16,6 @@ Template['components_bid'].onCreated(function() {
   let template = Template.instance();
   let bid = template.data.bid;
   updateRevealedStatus(template, bid);
-  TemplateVar.set(template, 'revealing', false)
 })
 
 Template['components_bid'].events({
@@ -29,13 +28,13 @@ Template['components_bid'].events({
       return;
     }
     let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
-    TemplateVar.set(template, 'revealing', true);
+    TemplateVar.set(template, `revealing-${bid.name}`, true);
     // Names.update({fullname: })
     registrar.unsealBid(bid, {
       from: web3.eth.accounts[0], // Any account can reveal
       gas: 300000
     }, Helpers.getTxHandler({
-      onDone: () => TemplateVar.set(template, 'revealing', false),
+      onDone: () => TemplateVar.set(template, `revealing-${bid.name}`, false),
       onSuccess: () => updateRevealedStatus(template, bid)
     })); 
   }
@@ -46,7 +45,7 @@ Template['components_bid'].helpers({
     return TemplateVar.get('isRevealed');
   },
   revealing() {
-    return TemplateVar.get('revealing');
+    return TemplateVar.get(`revealing-${this.bid.name}`);
   },
   canReveal() {
     return this.status == 'reveal';
