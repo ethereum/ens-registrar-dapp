@@ -28,6 +28,7 @@ Template['layout_header'].onRendered(function() {
 
 Template['layout_header'].events({
   'input #search-input': function(event, template) {
+    event.target.value = event.target.value.replace(/[^a-z0-9\-\_]*/g,'');
     if (template.lookupTimeout) {
       clearTimeout(template.lookupTimeout);
     }
@@ -35,7 +36,10 @@ Template['layout_header'].events({
       Session.set('searched', event.target.value);
     }, 200);
   }, 
-  'click .main-title': function(event, template) {
+  'click #search-input': function(event, template) {
+    e.preventDefault();
+  }, 
+  'click header': function(event, template) {
     Session.set('searched', '');
     Session.set('name', '');
     template.$('#search-input').val('');

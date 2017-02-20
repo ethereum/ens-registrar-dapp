@@ -34,14 +34,14 @@ Template['components_nameStatus'].onCreated(function() {
             // To prevent too many writes, add a timer and only save to the database afger a few seconds
             clearTimeout(timeout);
             timeoutName = name;
-            console.log('update name', name, entry.registrationDate);
+            console.log('update name', name, entry);
 
             timeout = setTimeout(function() {
               Names.upsert({name: name}, {$set: {
                 fullname: name + '.eth',
                 mode: entry.mode, 
                 registrationDate: entry.registrationDate, 
-                value: entry.mode == 'auction' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
                 highestBid: entry.highestBid, 
                 hash: entry.hash.replace('0x','').slice(0,12)
               }});

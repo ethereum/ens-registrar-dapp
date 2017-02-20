@@ -1,11 +1,26 @@
 <template name="components_bid">
   <div class="components_bid">
+
     {{#if isRevealed}}
       <p>
         You were willing to pay at most: <strong>{{dapp_formatBalance bid.value "0,0.00"}} ether</strong>. This bid was revealed, <strong>{{dapp_formatBalance bid.depositAmount "0,0.00"}} ether</strong> were refunded to the depositor.
       </p>       
       <p><span></span></p>
     {{else}}
+
+
+      {{#if expired}}
+      <p>
+        You were willing to pay at most <strong>{{dapp_formatBalance bid.value "0,0.00"}} ether</strong> and deposited <strong>{{dapp_formatBalance bid.depositAmount "0,0.00"}} ether</strong>. 
+      </p>       
+        {{#if revealing}}
+          <button class="dapp-block-button disabled" disabled>Revealing...</button>
+        {{else}}
+          <button class="dapp-block-button reveal-bid">Recover {{recoverAfterBurn}} Ether</button>
+        {{/if}}
+      
+      {{else}}
+
       <p>
         You are willing to pay at most: <strong>{{dapp_formatBalance bid.value "0,0.00"}} ether</strong> <br>
         Deposit (will be partially refunded when you reveal your bid): <strong>{{dapp_formatBalance bid.depositAmount "0,0.00"}} ether</strong>
@@ -16,6 +31,8 @@
         {{else}}
           <button class="dapp-block-button reveal-bid">Reveal</button>
         {{/if}}
+      {{/if}}
+
       {{/if}}
     {{/if}}
   </div>

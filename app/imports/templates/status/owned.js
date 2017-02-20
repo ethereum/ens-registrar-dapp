@@ -58,6 +58,14 @@ Template['status-owned'].helpers({
   },
   content() {
     return TemplateVar.get('content') == '0x' ? 'not set' : TemplateVar.get('content') ;
+  },
+  bids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name, revealed: false});
+  },
+  hasBids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name, revealed: false}).count() > 0 ;
   }
 })
 
