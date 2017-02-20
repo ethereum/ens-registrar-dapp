@@ -5,15 +5,14 @@ Template['finalizeButton'].events({
   'click .finalize': function() {
     const name = Session.get('searched');
     const template = Template.instance();
-    let accounts = EthAccounts.find().fetch();
     
-    if (accounts.length == 0) {
+    if (web3.eth.accounts.length == 0) {
       alert('No accounts added to dapp');
       return;
     }
     TemplateVar.set(template, 'finalizing', true);
     registrar.finalizeAuction(name, {
-      from: accounts[0].address,
+      from: web3.eth.accounts[0],
       gas: 1000000
     }, Helpers.getTxHandler({
       onDone: () => TemplateVar.set(template, 'finalizing', false),

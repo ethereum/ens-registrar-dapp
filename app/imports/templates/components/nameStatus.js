@@ -13,6 +13,13 @@ Template['components_nameStatus'].onCreated(function() {
     try {
       registrar.getEntry(name, (err, entry) => {
         if(!err && entry) {
+          let prevInfo = TemplateVar.get(template, 'nameInfo');
+          if (prevInfo &&
+            prevInfo.name === entry.name + '.eth' &&
+            prevInfo.entry.mode === entry.mode) {
+              //don't update unless name and status changed
+              return;
+          }
           TemplateVar.set(template, 'nameInfo', {
             name: entry.name + '.eth',
             entry
