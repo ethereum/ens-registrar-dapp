@@ -158,7 +158,7 @@
         This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
     </p>
 
-    <p>Owned by: <strong>{{> dapp_identicon identity=owner class="dapp-tiny"}}{{TemplateVar.get 'owner'}} {{owner}}</strong></p>
+    <p>Owned by: {{> components_address addr=owner}}</p>
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
 
     <p> <strong> Before any changes can be done to the name, this name needs to be finalized by the owner which will send them a refund {{refund}} ether to the owner.</strong></p>

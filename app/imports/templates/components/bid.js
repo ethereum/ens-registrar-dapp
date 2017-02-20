@@ -19,20 +19,22 @@ Template['components_bid'].onCreated(function() {
 })
 
 Template['components_bid'].events({
-  'click .reveal-bid': function() {
-    let template = Template.instance();
+  'click .reveal-bid': function(e, template) {
+    if (web3.eth.accounts.length == 0) {
+      GlobalNotification.error({
+          content: 'No accounts added to dapp',
+          duration: 3
+      });
+      return;
+    }
     let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
-    MyBids.update({ _id: bid._id }, { $set: {revealing: true} });
-    
+    TemplateVar.set(template, `revealing-${bid.name}`, true);
     // Names.update({fullname: })
-    // Any account can reveal
-    let mainAccount = EthAccounts.find().fetch()[0].address;
-
     registrar.unsealBid(bid, {
-      from: mainAccount, 
+      from: web3.eth.accounts[0], // Any account can reveal
       gas: 300000
     }, Helpers.getTxHandler({
-      onDone: () => MyBids.update({ _id: bid._id }, { $set: {revealing: false} }),
+      onDone: () => TemplateVar.set(template, `revealing-${bid.name}`, false),
       onSuccess: () => updateRevealedStatus(template, bid)
     })); 
   }
@@ -43,7 +45,7 @@ Template['components_bid'].helpers({
     return TemplateVar.get('isRevealed');
   },
   revealing() {
-    return MyBids.findOne({_id: this.bid._id}).revealing;
+    return TemplateVar.get(`revealing-${this.bid.name}`);
   },
   canReveal() {
     return this.status == 'reveal';

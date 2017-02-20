@@ -4,15 +4,14 @@ import Helpers from '/imports/lib/helpers/helperFunctions';
 Template['status-open'].events({
   'click .open-auction': function openAuction() {
     let name = Session.get('searched');
-    let accounts = EthAccounts.find().fetch();
     let template = Template.instance();
     
-    if (accounts.length == 0) {
+    if (web3.eth.accounts.length == 0) {
       alert('No accounts found');
     } else {
       TemplateVar.set(template, 'opening-' + name, true)
       registrar.openAuction(name, {
-        from: accounts[0].address,
+        from: web3.eth.accounts[0],
         gas: 1000000
       }, Helpers.getTxHandler({
         onDone: () => TemplateVar.set(template, 'opening-' + name, false),

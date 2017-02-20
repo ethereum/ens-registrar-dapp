@@ -11,11 +11,11 @@
     </p>
 
     {{#if address}}
-      <p>Points to: <strong>{{> dapp_identicon identity=address class="dapp-tiny"}} {{address}}</strong></p>
+      <p>Points to: {{> components_address addr=address}}</p>
     {{else}}
       <p>The owner has not set a resolver for this address yet</p>
     {{/if}}
-    <p>Owned by: <strong> {{> dapp_identicon identity=owner class="dapp-tiny"}} {{TemplateVar.get 'owner'}}</strong></p>
+    <p>Owned by: {{> components_address addr=owner}} </p>
     <p>Content: <strong>{{content}}</strong></p>
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
 </template>
