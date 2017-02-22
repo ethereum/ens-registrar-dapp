@@ -1,4 +1,5 @@
-import { ens } from '/imports/lib/ethereum';
+import { ens, registrar } from '/imports/lib/ethereum';
+import Helpers from '/imports/lib/helpers/helperFunctions';
 
 Template['status-owned'].onCreated(function() {
   this.autorun(() => {
@@ -39,6 +40,10 @@ Template['status-owned'].helpers({
   owner() {
     return TemplateVar.get('owner')
   },
+  isMine() {
+    const owner = TemplateVar.get('owner');
+    return web3.eth.accounts.filter((acc) => acc == owner).length > 0;
+  },
   registrationDate() {
     var date = new Date(TemplateVar.get('entryData').registrationDate * 1000);
     return date.toLocaleString();
@@ -62,9 +67,36 @@ Template['status-owned'].helpers({
   },
   content() {
     return TemplateVar.get('content') == '0x' ? 'not set' : TemplateVar.get('content') ;
+  },
+  transferring() {
+    return TemplateVar.get('transferring');
   }
 })
 
+Template['status-owned'].events({
+  'click .transfer': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const newOwner = TemplateVar.getFrom('.transfer-section .dapp-address-input', 'value');
+    const name = template.data.entry.name;
+    if (!newOwner) {
+      GlobalNotification.error({
+          content: 'No address chosen',
+          duration: 3
+      });
+      return;
+    }
+    TemplateVar.set(template, 'transferring', true);
+    registrar.transfer(name, newOwner, { from: owner, gas: 300000 },
+      Helpers.getTxHandler({
+        onSuccess: () => EthElements.Modal.question({
+          text: `Name ${name} successfully transferred to ${newOwner}.`,
+          ok: true
+        }),
+        onDone: () => TemplateVar.set(template, 'transferring', false)
+      })
+    );
+  }
+});
 
 Template['aside-owned'].helpers({
   deedValue() {
@@ -72,3 +104,4 @@ Template['aside-owned'].helpers({
     return web3.fromWei(val.toFixed(), 'ether');
   }
 })
+

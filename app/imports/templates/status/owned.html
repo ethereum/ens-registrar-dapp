@@ -1,23 +1,43 @@
 <template name="status-owned">
+  {{#if isMine}}
+    <h1 class="domain-name">You own <strong>{{name}}</strong></h1> 
+  {{else}}
     <h1 class="domain-name"><strong>{{name}}</strong> is owned</h1> 
+  {{/if}}
 
-    <p>
-        This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
-    {{#if deedValueIsMin}} 
-        No other bid was above the minimum of <em>0.01 ether</em>.
-    {{else}} 
-        Second highest bid was <em>{{deedValue}} ether</em>.
-    {{/if}}
-    </p>
+  <p>
+      This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
+  {{#if deedValueIsMin}} 
+      No other bid was above the minimum of <em>0.01 ether</em>.
+  {{else}} 
+      Second highest bid was <em>{{deedValue}} ether</em>.
+  {{/if}}
+  </p>
 
-    {{#if address}}
-      <p>Points to: {{> components_address addr=address}}</p>
-    {{else}}
-      <p>The owner has not set a resolver for this address yet</p>
-    {{/if}}
-    <p>Owned by: {{> components_address addr=owner}} </p>
-    <p>Content: <strong>{{content}}</strong></p>
-    <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
+  {{#if address}}
+    <p>Points to: {{> components_address addr=address}}</p>
+  {{else}}
+    <p>The owner has not set a resolver for this address yet</p>
+  {{/if}}
+  <p>Owned by: {{> components_address addr=owner}} </p>
+  <p>Content: <strong>{{content}}</strong></p>
+  <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
+  
+  {{#if isMine}}
+    <div class="transfer-section">
+      <h3>Transfer</h3>
+      <p>Transfer ownership of {{name}} to another account <br></p>
+      <p>
+        Account to transfer the name to:
+        {{> dapp_addressInput }}
+      </p>
+      {{#if transferring}}
+        <button class="dapp-block-button disabled" disabled>Transferring...</button>
+      {{else}}
+        <button class="dapp-block-button transfer">Transfer</button>
+      {{/if}}
+    </div>
+  {{/if}}
 </template>
 
 <template name="aside-owned">
