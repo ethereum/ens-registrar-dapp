@@ -8,10 +8,6 @@ Template['view_names'].helpers({
 })
 
 Template['view_names'].events({
-  'click .names a': function(e) {
-    Session.set('searched', e.target.hash.slice(1));
-    e.preventDefault();
-  },
   'click .export-bids': function(e) {
     EthElements.Modal.show('modals_backup');
     e.preventDefault();

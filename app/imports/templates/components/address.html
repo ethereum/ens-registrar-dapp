@@ -3,11 +3,13 @@
     {{#if addr}}
       {{> dapp_identicon identity=addr class="dapp-tiny"}}
       {{#if mine}}
-        <i class="icon-user help" title="Account yours"></i>
+        <i class="icon-user help" title="Account is yours"></i>
       {{/if}}
-      <strong class="address {{mine}}">{{addr}}</strong>
       {{#if name}}
-        {{name}}
+        {{ > components_nameLink fullname=name }}
+        (<span class="address {{mine}}">{{addr}}</span>)
+      {{else}}
+        <strong class="address {{mine}}">{{addr}}</strong>
       {{/if}}
     {{else}}
       <span>(undefined address)</span>
