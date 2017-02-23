@@ -75,7 +75,10 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a> {{auction.value}} {{auction.name.length}} 
+                  <a href='#{{auction.name}}'>{{auction.fullname}}</a>  
+                    {{#if canBeInvalidated auction.name }}
+                    <icon class="icon-ban"></icon> 
+                    {{/if}}
               </li>
             {{/each}}
         </ul>

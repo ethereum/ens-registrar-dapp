@@ -79,7 +79,7 @@ export default ethereum = (function() {
     return new Promise((resolve, reject) => {
       try {
         ens = new ENS(web3, customEnsAddress || '0x112234455c3a32fd11230c42e7bccd4a84e02010');
-        registrar = new Registrar(web3, ens, 'eth', 7, (err, result) => {
+        registrar = new Registrar(web3, ens, 'eth', 1, (err, result) => {
           if (err) {
               return reject(err);
           } else {
