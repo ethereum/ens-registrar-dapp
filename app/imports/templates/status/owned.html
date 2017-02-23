@@ -18,6 +18,18 @@
     <p>Owned by: {{> components_address addr=owner}} </p>
     <p>Content: <strong>{{content}}</strong></p>
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
+
+    {{#if hasBids}}
+    <div class="unused-bids">
+        <h3>Expired bids</h3>
+
+        You have bid, but did not reveal in time. Expired bids are burned, and you can only be refunded 0.1%.
+
+        {{#each bid in bids}}
+        {{> components_bid bid=bid status='owned' }}
+        {{/each}}
+    </div>
+    {{/if}}
 </template>
 
 <template name="aside-owned">

@@ -27,5 +27,13 @@ Template['status-open'].events({
 Template['status-open'].helpers({
   opening() {
     return TemplateVar.get('opening-' + Session.get('searched'));
+  },
+  bids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name});
+  },
+  hasBids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name}).count() > 0 ;
   }
 })

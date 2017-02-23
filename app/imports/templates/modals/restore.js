@@ -61,7 +61,10 @@ Template['modals_restore'].events({
         if (!MyBids.findOne({ "_id": bid._id })) {
           MyBids.insert(bid);
           insertCount++;
-        }
+        };
+        console.log('bid inserted', bid)
+        Names.upsert({name: bid.name}, { $set: {fullname: bid.name + '.eth', watched: true}});
+
       })
       alert(`${insertCount} bids successfully imported.`);
       

@@ -14,7 +14,20 @@
             Open auction
           {{/if}}
         </button>
-    </div>
+      </div>
+
+      {{#if hasBids}}
+      <div class="unused-bids">
+          <h3>Unused bids</h3>
+
+          You open bids that you didn't reveal, but no one else did either, so these can be used again. Open the auction to retrieve your old bids.
+
+          {{#each bid in bids}}
+          {{> components_bid bid=bid status='open' }}
+          {{/each}}
+      </div>
+      {{/if}}
+
 </template>
 
 <template name='aside-open'>
