@@ -12,6 +12,8 @@ import './templates/components/watch.html';
 import './templates/components/watch.js';
 import './templates/components/address.html';
 import './templates/components/address.js';
+import './templates/components/nameLink.html';
+import './templates/components/nameLink.js';
 import './templates/status/open.html';
 import './templates/status/open.js';
 import './templates/status/auction.html';
