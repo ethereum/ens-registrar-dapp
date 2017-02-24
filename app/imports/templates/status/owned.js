@@ -16,7 +16,6 @@ Template['status-owned'].onCreated(function() {
       }
     });
     ens.resolver(name, (err, res) => {
-      console.log('resolver', res)
       if (err) {
         return;
       }
@@ -125,7 +124,6 @@ Template['status-owned'].events({
     );
   },
   'click .release': function(e, template) {
-    console.log('release');
     const owner = TemplateVar.get('owner');
     const name = template.data.entry.name;
 
