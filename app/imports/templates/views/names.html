@@ -4,7 +4,7 @@
         <ul class="names">
             {{#each name in names}}
               <li>
-                  <a href='#{{name.name}}'>{{name.fullname}}</a> 
+                  {{ > components_nameLink fullname=(name.fullname) }}
               </li>
             {{/each}}
         </ul>
