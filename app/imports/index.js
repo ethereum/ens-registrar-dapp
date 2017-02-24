@@ -1,3 +1,5 @@
+import { registrar } from '/imports/lib/ethereum';
+
 if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
   Meteor.disconnect();
 }
@@ -48,13 +50,35 @@ Meteor.startup(function() {
         }
     })
 
+    // add an interval to check on auctions every so ofter
+    setInterval(updateRevealNames, 60000);
+
 });
+
+updateRevealNames = function() {
+    var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
+    var names = Names.find({$or:[{registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, watched: true},{mode: {$in: ['auction', 'reveal']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}}]}).fetch();
+
+    console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));
+
+    _.each(names, function(e, i) {
+        registrar.getEntry(e.name, (err, entry) => {
+        if(!err && entry) {
+            Names.upsert({name: e.name}, {$set: {
+                mode: entry.mode, 
+                value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                highestBid: entry.highestBid
+              }});            
+        }})        
+    })
+}
 
 updateMistMenu = function() {
 
     if (typeof mist !== 'undefined' && mist && mist.menu) {
         var names = Names.find({mode: {$in: ['auction', 'reveal']}, watched: true}, {sort: {registrationDate: 1}}).fetch();
         mist.menu.clear();
+        mist.menu.setBadge('');
 
         _.each(names, function(e,i){
             if (e.mode == 'auction') {

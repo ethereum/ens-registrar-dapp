@@ -16,6 +16,7 @@ Template['status-owned'].onCreated(function() {
       }
     });
     ens.resolver(name, (err, res) => {
+      console.log('resolver', res)
       if (err) {
         return;
       }
@@ -46,7 +47,16 @@ Template['status-owned'].helpers({
   },
   registrationDate() {
     var date = new Date(TemplateVar.get('entryData').registrationDate * 1000);
-    return date.toLocaleString();
+    return date.toISOString().slice(0,10);
+  },
+  releaseDate() {
+    var releaseDate = new Date((TemplateVar.get('entryData').registrationDate + 365 * 24 * 60 * 60) * 1000);
+    return releaseDate.toISOString().slice(0,10);
+  },
+  canRelease() {
+    var releaseDate = new Date((TemplateVar.get('entryData').registrationDate + 365 * 24 * 60 * 60) * 1000);
+
+    return Date.now() > releaseDate;
   },
   deedValue() {
     var val = TemplateVar.get('entryData').deed.balance;
@@ -59,7 +69,7 @@ Template['status-owned'].helpers({
   renewalDate() {
     var years = 365 * 24 * 60 * 60 * 1000;
     var date = new Date(TemplateVar.get('entryData').registrationDate * 1000 + 2 * years);
-    return date.toLocaleDateString();
+    return date.toISOString().slice(0,10);
   },
   highestBid() {
     var val = TemplateVar.get('entryData').highestBid;
@@ -70,6 +80,17 @@ Template['status-owned'].helpers({
   },
   transferring() {
     return TemplateVar.get('transferring');
+  },
+  releasing() {
+    return TemplateVar.get('releasing');
+  },
+  bids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name, revealed: false});
+  },
+  hasBids() {
+    const name = Session.get('searched');
+    return MyBids.find({name: name, revealed: false}).count() > 0 ;
   }
 })
 
@@ -88,14 +109,44 @@ Template['status-owned'].events({
     TemplateVar.set(template, 'transferring', true);
     registrar.transfer(name, newOwner, { from: owner, gas: 300000 },
       Helpers.getTxHandler({
-        onSuccess: () => EthElements.Modal.question({
-          text: `Name ${name} successfully transferred to ${newOwner}.`,
-          ok: true
-        }),
-        onDone: () => TemplateVar.set(template, 'transferring', false)
+        onSuccess: () => GlobalNotification.warning({
+          content: 'Transfer completed',
+          duration: 5
+      }),
+        onDone: () => TemplateVar.set(template, 'transferring', false),
+        onError: () => {
+          GlobalNotification.error({
+            content: 'Could not transfer name',
+            duration: 5
+          });
+          TemplateVar.set(template, 'releasing', false);
+      }
       })
     );
-  }
+  },
+  'click .release': function(e, template) {
+    console.log('release');
+    const owner = TemplateVar.get('owner');
+    const name = template.data.entry.name;
+
+    TemplateVar.set(template, 'releasing', true);
+    registrar.releaseDeed(name, { from: owner, gas: 300000 },
+      Helpers.getTxHandler({
+        onSuccess: () => GlobalNotification.warning({
+          content: 'Name released',
+          duration: 5
+      }),
+        onDone: () => TemplateVar.set(template, 'releasing', false),
+        onError: () => {
+          GlobalNotification.error({
+            content: 'Could not release name',
+            duration: 5
+          });
+          TemplateVar.set(template, 'releasing', false);
+      }
+    })
+    );
+  }  
 });
 
 Template['aside-owned'].helpers({

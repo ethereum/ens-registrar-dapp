@@ -38,17 +38,17 @@ Template['components_nameStatus'].onCreated(function() {
 
           // Since we grabbed this information, update the database
           if (timeoutName !== name){
-            // To prevent too many writes, add a timer and only save to the database afger a few seconds
+            // To prevent too many writes, add a timer and only save to the database after a few seconds
             clearTimeout(timeout);
             timeoutName = name;
-            console.log('update name', name, entry.registrationDate);
+            console.log('update name', name, entry);
 
             timeout = setTimeout(function() {
               Names.upsert({name: name}, {$set: {
                 fullname: name + '.eth',
                 mode: entry.mode, 
                 registrationDate: entry.registrationDate, 
-                value: entry.mode == 'auction' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
                 highestBid: entry.highestBid, 
                 hash: entry.hash.replace('0x','').slice(0,12)
               }});
@@ -92,14 +92,14 @@ Template['components_nameStatus'].helpers({
     }, 
     publicAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$exists:true, $regex: /^.{6,}$/}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     publicAuctionsAboutToExpire() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{sort: {registrationDate: 1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$exists:true, $regex: /^.{6,}$/}},{sort: {registrationDate: 1}, limit: 100});
     }, 
     knownNamesRegistered() {
-      return Names.find({value: {$gt: 0}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({value: {$gt: 0}, name:{$exists: true}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     namesRegistered() {
       return Names.find({value: {$gt:0}}).count();
@@ -117,6 +117,9 @@ Template['components_nameStatus'].helpers({
     }, 
     percentageDisputed() {
       return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
+    },
+    canBeInvalidated(name) {
+      return name.length < 7;
     }
 });
 

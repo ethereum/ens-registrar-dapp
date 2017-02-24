@@ -25,19 +25,46 @@
   
   {{#if isMine}}
     <div class="transfer-section">
-      <h3>Transfer</h3>
-      <p>Transfer ownership of {{name}} to another account <br></p>
-      <p>
+        <h3>Transfer or Release</h3>
+        <p>Transfer ownership of {{name}} to another account <br></p>
+        <p>
         Account to transfer the name to:
         {{> dapp_addressInput }}
-      </p>
-      {{#if transferring}}
-        <button class="dapp-block-button disabled" disabled>Transferring...</button>
-      {{else}}
-        <button class="dapp-block-button transfer">Transfer</button>
-      {{/if}}
+        </p>
+        {{#if transferring}}
+        <button class="dapp-block-button disabled dapp-small" disabled>Transferring...</button>
+        {{else}}
+        <button class="dapp-block-button transfer dapp-small">Transfer</button>
+        {{/if}}
+        <br>
+        {{#if canRelease}}
+         <p>If you don't want to hold this name anymore, you can release it and get <strong>{{deedValue}} ether</strong> back. <br></p>
+
+        {{#if releasing}}
+        <button class="dapp-block-button disabled dapp-small" disabled>Releasing...</button>
+        {{else}}
+        <button class="dapp-block-button release dapp-small">Release</button>
+        {{/if}}
+
+
+        {{else}}
+         <p>If you don't want to hold this name anymore, you'll be able to release it in <strong> {{releaseDate}}</strong> and get <strong>{{deedValue}} ether</strong> back.</p>
+        {{/if}}
+        
     </div>
   {{/if}}
+
+    {{#if hasBids}}
+    <div class="unused-bids">
+        <h3>Expired bids</h3>
+
+        You have bid, but did not reveal in time. Expired bids are burned, and you can only be refunded 0.1%.
+
+        {{#each bid in bids}}
+        {{> components_bid bid=bid status='owned' }}
+        {{/each}}
+    </div>
+    {{/if}}  
 </template>
 
 <template name="aside-owned">

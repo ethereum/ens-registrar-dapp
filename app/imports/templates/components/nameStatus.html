@@ -20,7 +20,7 @@
         {{#if namesRegistered}}
         <ul class="big-numerals">
             <li>
-                <span class="big-numeral">{{namesRegistered}}</span> <br> names registered
+                <span class="big-numeral">{{namesRegistered}}</span> <br> registrations detected
             </li>
             <li>
                 <span class="big-numeral">{{percentageDisputed}}</span> <span class="unit">%</span> <br> names registered for minimum amount
@@ -75,7 +75,10 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a> {{auction.value}}
+                  <a href='#{{auction.name}}'>{{auction.fullname}}</a>  
+                    {{#if canBeInvalidated auction.name }}
+                    <icon class="icon-ban"></icon> 
+                    {{/if}}
               </li>
             {{/each}}
         </ul>
