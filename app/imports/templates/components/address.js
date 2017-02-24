@@ -2,15 +2,23 @@ import { ens } from '/imports/lib/ethereum';
 
 Template['components_address'].onCreated(function() {
   const template = Template.instance();
-  const addr = template.data.addr;
-  if (!template.data.addr) {
-    return;
-  }
-  ens.reverse(template.data.addr, (err, resolver) =>{
-    if (!err && resolver.name) {
-      TemplateVar.set(template, 'name', resolver.name());
+  template.autorun(() => {
+    const addr = Template.currentData().addr;
+    TemplateVar.set(template, 'name', null);
+    if (!addr) {
+      return;
     }
+    ens.reverse(addr, (err, resolver) =>{
+      if (!err && resolver.name) {
+        resolver.name((err, name) => {
+          if (!err) {
+            TemplateVar.set(template, 'name', name);
+          }
+        });
+      }
+    })
   })
+  
 })
 
 Template['components_address'].helpers({
