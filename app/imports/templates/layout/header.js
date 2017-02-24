@@ -37,7 +37,7 @@ Template['layout_header'].events({
     }, 200);
   }, 
   'click #search-input': function(event, template) {
-    event.preventDefault();
+    event.stopPropagation();
   }, 
   'click header': function(event, template) {
     Session.set('searched', '');
