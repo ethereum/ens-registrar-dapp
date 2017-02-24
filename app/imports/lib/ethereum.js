@@ -1,5 +1,6 @@
 import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
+import initCollections from './collections';
 
 //These get assigned at init() below
 export let ens;
@@ -10,6 +11,8 @@ export let errors = {
   invalidNetwork: new Error('Sorry, ENS is only available on the Ropsten testnet' +
     ' network at the moment.')
 }
+
+let networkId;
 
 export default ethereum = (function() {
   let subscribers = [];
@@ -53,6 +56,7 @@ export default ethereum = (function() {
         if (e) {
           return reject(e)
         }
+        networkId = res.hash.slice(2,8);
         switch(res.hash) {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
             network='ropsten';
@@ -253,6 +257,7 @@ export default ethereum = (function() {
       .then(() => {
         //set a global for easier debugging on the console
         g = {ens, registrar, network};
+        initCollections(networkId);
         loadNames();
         reportStatus('Ready!', true);
       })
