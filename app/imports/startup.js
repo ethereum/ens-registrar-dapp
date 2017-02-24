@@ -31,5 +31,5 @@ import './templates/modals/backup.js';
 import './templates/modals/restore.html';
 import './templates/modals/restore.js';
 
-import './collections';
+import './lib/collections';
 import './index.js';
