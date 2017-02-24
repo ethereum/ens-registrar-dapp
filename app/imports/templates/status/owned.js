@@ -1,4 +1,5 @@
-import { ens } from '/imports/lib/ethereum';
+import { ens, registrar } from '/imports/lib/ethereum';
+import Helpers from '/imports/lib/helpers/helperFunctions';
 
 Template['status-owned'].onCreated(function() {
   this.autorun(() => {
@@ -39,9 +40,22 @@ Template['status-owned'].helpers({
   owner() {
     return TemplateVar.get('owner')
   },
+  isMine() {
+    const owner = TemplateVar.get('owner');
+    return web3.eth.accounts.filter((acc) => acc == owner).length > 0;
+  },
   registrationDate() {
     var date = new Date(TemplateVar.get('entryData').registrationDate * 1000);
-    return date.toLocaleString();
+    return date.toISOString().slice(0,10);
+  },
+  releaseDate() {
+    var releaseDate = new Date((TemplateVar.get('entryData').registrationDate + 365 * 24 * 60 * 60) * 1000);
+    return releaseDate.toISOString().slice(0,10);
+  },
+  canRelease() {
+    var releaseDate = new Date((TemplateVar.get('entryData').registrationDate + 365 * 24 * 60 * 60) * 1000);
+
+    return Date.now() > releaseDate;
   },
   deedValue() {
     var val = TemplateVar.get('entryData').deed.balance;
@@ -54,7 +68,7 @@ Template['status-owned'].helpers({
   renewalDate() {
     var years = 365 * 24 * 60 * 60 * 1000;
     var date = new Date(TemplateVar.get('entryData').registrationDate * 1000 + 2 * years);
-    return date.toLocaleDateString();
+    return date.toISOString().slice(0,10);
   },
   highestBid() {
     var val = TemplateVar.get('entryData').highestBid;
@@ -62,6 +76,12 @@ Template['status-owned'].helpers({
   },
   content() {
     return TemplateVar.get('content') == '0x' ? 'not set' : TemplateVar.get('content') ;
+  },
+  transferring() {
+    return TemplateVar.get('transferring');
+  },
+  releasing() {
+    return TemplateVar.get('releasing');
   },
   bids() {
     const name = Session.get('searched');
@@ -73,6 +93,59 @@ Template['status-owned'].helpers({
   }
 })
 
+Template['status-owned'].events({
+  'click .transfer': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const newOwner = TemplateVar.getFrom('.transfer-section .dapp-address-input', 'value');
+    const name = template.data.entry.name;
+    if (!newOwner) {
+      GlobalNotification.error({
+          content: 'No address chosen',
+          duration: 3
+      });
+      return;
+    }
+    TemplateVar.set(template, 'transferring', true);
+    registrar.transfer(name, newOwner, { from: owner, gas: 300000 },
+      Helpers.getTxHandler({
+        onSuccess: () => GlobalNotification.warning({
+          content: 'Transfer completed',
+          duration: 5
+      }),
+        onDone: () => TemplateVar.set(template, 'transferring', false),
+        onError: () => {
+          GlobalNotification.error({
+            content: 'Could not transfer name',
+            duration: 5
+          });
+          TemplateVar.set(template, 'releasing', false);
+      }
+      })
+    );
+  },
+  'click .release': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const name = template.data.entry.name;
+
+    TemplateVar.set(template, 'releasing', true);
+    registrar.releaseDeed(name, { from: owner, gas: 300000 },
+      Helpers.getTxHandler({
+        onSuccess: () => GlobalNotification.warning({
+          content: 'Name released',
+          duration: 5
+      }),
+        onDone: () => TemplateVar.set(template, 'releasing', false),
+        onError: () => {
+          GlobalNotification.error({
+            content: 'Could not release name',
+            duration: 5
+          });
+          TemplateVar.set(template, 'releasing', false);
+      }
+    })
+    );
+  }  
+});
 
 Template['aside-owned'].helpers({
   deedValue() {
@@ -80,3 +153,4 @@ Template['aside-owned'].helpers({
     return web3.fromWei(val.toFixed(), 'ether');
   }
 })
+
