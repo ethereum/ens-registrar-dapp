@@ -56,15 +56,14 @@ Meteor.startup(function() {
 });
 
 updateRevealNames = function() {
-    console.log('updateRevealNames');
     var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
-    var names = Names.find({registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, watched: true}).fetch();
+    var names = Names.find({$or:[{registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, watched: true},{mode: {$in: ['auction', 'reveal']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}}]}).fetch();
+
+    console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));
 
     _.each(names, function(e, i) {
-        // console.log(e, i, e.name);
         registrar.getEntry(e.name, (err, entry) => {
         if(!err && entry) {
-            console.log('updating status: ', entry.name);
             Names.upsert({name: e.name}, {$set: {
                 mode: entry.mode, 
                 value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
