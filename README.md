@@ -2,7 +2,9 @@
 
 This app allows you to register a .eth domain name, for use in ethereum decentralized applications and compatible blockchain browsers.
 
-Check http://ens.domains/ for more information about the ENS.
+Check [ens.domains](http://ens.domains/) for more information about the ENS.
+
+Try the app: [registrar.ens.domains](http://registrar.ens.domains/)
 
 ### How to run it
 
