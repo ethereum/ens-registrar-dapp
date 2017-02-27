@@ -68,6 +68,21 @@ header {
 
 header.fixed + .container {
   padding-top: @gridHeight * 14;
+
+  .col-md-8 h1 {
+    position: fixed;
+    top: 100px;
+    background: @colorWhite;
+    font-size: 1.8em;
+    padding-right: @gridWidth/4;
+  }
+}
+
+.container {
+  h1 {
+    top: 0;
+    transition: top 1s ease-in-out;
+  }
 }
 
 .status-owned {
@@ -136,6 +151,10 @@ ul.names {
       font-size: 125%;
     }
   }
+}
+
+.col-md-8 .names {
+  column-count: 3;
 }
 
 .dapp-block-button {
