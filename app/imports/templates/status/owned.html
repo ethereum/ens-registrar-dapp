@@ -14,14 +14,35 @@
   {{/if}}
   </p>
 
-  {{#if address}}
-    <p>Points to: {{> components_address addr=address}}</p>
-  {{else}}
-    <p>The owner has not set a resolver for this address yet</p>
-  {{/if}}
   <p>Owned by: {{> components_address addr=owner}} </p>
-  <p>Content: <strong>{{content}}</strong></p>
   <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
+  
+  <div class="records-section">
+    <h3>Records</h3>
+    {{#if (TemplateVar.get 'hasSetResolver')}}
+      <p>
+        <strong>addr:</strong>
+        {{#if (TemplateVar.get 'address')}}
+          {{> components_address addr=(TemplateVar.get 'address')}}
+        {{else}}
+          <span>not set</span>
+        {{/if}}
+      </p>
+      <p>
+        <strong>content:</strong>
+        {{#if (TemplateVar.get 'content')}}
+          <strong>{{TemplateVar.get 'content'}}</strong>
+        {{else}}
+          <span>not set</span>
+        {{/if}}
+      </p>
+    {{else}}
+      <p>
+        Records are not enabled for this name (no resolver found).
+      </p>
+    {{/if}}
+  </div>
+
   
   {{#if isMine}}
     <div class="transfer-section">

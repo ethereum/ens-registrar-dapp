@@ -9,7 +9,7 @@ Template['status-owned'].onCreated(function() {
     TemplateVar.set(this, 'owner', null);
     TemplateVar.set(this, 'address', null);
     TemplateVar.set(this, 'content', null);
-    
+    TemplateVar.set(this, 'hasSetResolver', false);
     ens.owner(name, (err, res) => {
       if (!err) {
         TemplateVar.set(this, 'owner', res);
@@ -19,6 +19,7 @@ Template['status-owned'].onCreated(function() {
       if (err) {
         return;
       }
+      TemplateVar.set(this, 'hasSetResolver', true);
       res.addr((err, address) => {
         if (!err) {
           TemplateVar.set(this, 'address', address);
@@ -153,4 +154,3 @@ Template['aside-owned'].helpers({
     return web3.fromWei(val.toFixed(), 'ether');
   }
 })
-
