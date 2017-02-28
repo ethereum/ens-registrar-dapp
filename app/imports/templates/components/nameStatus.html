@@ -54,20 +54,22 @@
             {{/each}}
         </ul>
 
-        <br>
-        <h3> Knowns Auctions about to expire </h3>
+          {{#if showExpiring}}
+          <br>
+          <h3> Knowns Auctions about to expire </h3>
 
 
-        <ul class="names">
-          {{#each auction in publicAuctionsAboutToExpire}}
-              <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
-              </li>
-            {{/each}}
-        </ul>
-        <br>
+          <ul class="names">
+            {{#each auction in publicAuctionsAboutToExpire}}
+                <li>
+                    <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
+                </li>
+              {{/each}}
+          </ul>
+          {{/if}}
         {{/if}}
 
+        <br>
         {{#if namesRegistered}}
         <h3> Knowns names recently registered </h3>
 
