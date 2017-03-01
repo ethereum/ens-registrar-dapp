@@ -81,7 +81,18 @@ Template['status-auction'].events({
   */
   'change input[name="anonymizer"], input input[name="anonymizer"]': function(e){
       TemplateVar.set('anonymizer', Number(e.currentTarget.value));
-  } 
+  },
+  'click .explainer': function (e) {
+    e.preventDefault();
+    EthElements.Modal.show('modals_explainer', {
+        class: 'explainer-modal'
+      });
+  },
+  'change #agreement': function(e) {
+    let template = Template.instance();
+
+    TemplateVar.set(template, 'agree', e.currentTarget.checked ? true : false);
+  }
 })
 
 

@@ -79,6 +79,11 @@ Template['components_nameStatus'].events({
   'click .names a': function(e) {
     Session.set('searched', e.target.hash.slice(1));
     e.preventDefault();
+  },
+  'click .explainer': function(e) {
+      EthElements.Modal.show('modals_explainer', {
+        class: 'explainer-modal'
+      });
   }
 });
 

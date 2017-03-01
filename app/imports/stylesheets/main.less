@@ -78,6 +78,11 @@ header.fixed + .container {
   }
 }
 
+input[type='checkbox'] + label {
+  position: relative;
+  top: -6px;
+}
+
 .container {
   h1 {
     top: 0;
@@ -185,4 +190,26 @@ ul.names {
   padding: @gridHeight * 0.5 @gridWidth @gridHeight * 1.5;
   margin-top: @gridHeight;
   margin-left: @gridWidth * -1;
+}
+
+.explainer-modal {
+  min-width: @gridWidth * 14;
+  width: 80vw;
+  text-align: left;
+
+  h2 {
+    color: @colorGrayDark;
+    background: transparent;
+    margin-bottom: 0;
+    padding: @gridHeight 0 @gridHeight/2;
+  }
+
+  p {
+    margin: 0 0 @gridHeight;
+    font-size: 1em;
+  }
+}
+
+.dapp-modal-overlay {
+  background: rgba(255,255,255,0.75);
 }

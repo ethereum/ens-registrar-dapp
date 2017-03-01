@@ -31,14 +31,19 @@
             <span>Private</span>
           </div>
           <br>
+          <p class="clear"><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
           <p class="clear">
+          {{#if TemplateVar.get 'agree'}}
           <button type="submit" class="dapp-block-button" disabled="{{bidding}}">
             {{#if bidding}}
               Bidding...
             {{else}}
               Bid
             {{/if}}
-          </button>            
+          </button>  
+          {{else}}
+          <button type="submit" class="dapp-block-button" disabled="true"> Bid </button>
+          {{/if}}          
           </p>
         </form>
 
