@@ -1,4 +1,4 @@
-import { ens, registrar } from '/imports/lib/ethereum';
+import { ens, registrar, network } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
 Template['status-owned'].onCreated(function() {
@@ -145,7 +145,33 @@ Template['status-owned'].events({
       }
     })
     );
-  }  
+  },
+  /*
+    This would point the name to a public resolver,
+    which supports the addr record type.
+  */
+  'click .set-resolver': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const fullname = template.data.name;
+    let publicResolver;
+    switch(network) {
+      case 'ropsten': publicResolver = '0x4c641fb9bad9b60ef180c31f56051ce826d21a9a'; break;
+      default: {
+        GlobalNotification.error({
+          content: 'Feature only available on Ropsten network',
+          duration: 5
+        });
+        return;
+      }
+    }
+    TemplateVar.set('settingResolver', true);
+    ens.setResolver(fullname, publicResolver, {from: owner},
+      Helpers.getTxHandler({
+        onSuccess: () => Helpers.refreshStatus(),
+        onDone: () => TemplateVar.set('settingResolver', false)
+      })
+    );
+  }
 });
 
 Template['aside-owned'].helpers({

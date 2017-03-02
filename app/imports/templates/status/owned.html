@@ -40,6 +40,17 @@
       <p>
         Records are not enabled for this name (no resolver found).
       </p>
+      {{#if isMine}}
+        <p>
+          You can point your name to a basic resolver which has the <strong>addr</strong>
+          record, which is the one you need for your name to point to an account.
+        </p>
+        {{#if (TemplateVar.get 'settingResolver')}}
+          <button class="dapp-block-button disabled dapp-small" disabled>Setting resolver...</button>
+        {{else}}
+          <button class="dapp-block-button set-resolver dapp-small">Set resolver</button>
+        {{/if}}
+      {{/if}}
     {{/if}}
   </div>
 
