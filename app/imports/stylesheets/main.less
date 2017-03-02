@@ -161,10 +161,35 @@ ul.names {
       &.can-invalidate {
         color: @colorError;
         font-weight: 500;
-        text-decoration: line-through;
       }
     }
   }
+
+    icon.icon-alert {
+        font-weight: 600;
+        width: 18px;
+        display: inline-block;
+        text-align: center;
+        color: #bf891e;
+        border-radius: 9px;
+        height: 18px;
+        font-size: 12px;
+        position: relative;
+        top: -2px;
+
+        &:before {
+            content: " ";
+            position: absolute;
+            top: -1px;
+            left: 1px;
+            height: 0;
+            border-bottom:15px solid #ffd60c;
+            border-left:8px solid transparent;
+            border-right:8px solid transparent;
+            z-index: -1;
+        }
+    }
+
 }
 
 .col-md-8 .names {

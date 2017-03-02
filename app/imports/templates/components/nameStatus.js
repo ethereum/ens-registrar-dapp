@@ -116,7 +116,7 @@ Template['components_nameStatus'].helpers({
       return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 100});
     }, 
     knownNamesRegistered() {
-      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$not: 'open'}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     namesRegistered() {
       return Names.find({value: {$gt:0}}).count();
