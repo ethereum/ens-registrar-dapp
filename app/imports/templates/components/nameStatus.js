@@ -44,14 +44,18 @@ Template['components_nameStatus'].onCreated(function() {
             console.log('update name', name, entry);
 
             timeout = setTimeout(function() {
-              Names.upsert({name: name}, {$set: {
-                fullname: name + '.eth',
-                mode: entry.mode, 
-                registrationDate: entry.registrationDate, 
-                value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
-                highestBid: entry.highestBid, 
-                hash: entry.hash.replace('0x','').slice(0,12)
-              }});
+              if (name === Session.get('searched')) {
+                history.pushState(null, name + '.eth', '#'+name);
+
+                Names.upsert({name: name}, {$set: {
+                  fullname: name + '.eth',
+                  mode: entry.mode, 
+                  registrationDate: entry.registrationDate, 
+                  value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                  highestBid: entry.highestBid, 
+                  hash: entry.hash.replace('0x','').slice(0,12)
+                }});
+              }
 
             }, 3000);
           };

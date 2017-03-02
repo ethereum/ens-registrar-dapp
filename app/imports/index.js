@@ -47,6 +47,18 @@ Meteor.startup(function() {
         }
     })
 
+    // activates when back button is pressed 
+    window.onpopstate = function(event) {
+        var name = event.currentTarget.location.hash.slice(1)
+
+        if (name !== Session.get('searched')) {
+            Session.set('searched', name);
+            Session.set('name', name);
+            $('#search-input').val(name);
+            window.location.hash = '#' + name;    
+        }
+        
+    }
 });
 
 
