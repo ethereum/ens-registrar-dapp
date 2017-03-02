@@ -20,18 +20,31 @@
   <div class="records-section">
     <h3>Records</h3>
     {{#if (TemplateVar.get 'hasSetResolver')}}
-      <p>
+      <p class="addr-record">
         <strong>addr:</strong>
-        {{#if (TemplateVar.get 'address')}}
-          {{> components_address addr=(TemplateVar.get 'address')}}
+        {{#if (TemplateVar.get 'editingAddr')}}
+          {{> dapp_addressInput }}
+          {{#if (TemplateVar.get 'settingAddr')}}
+            <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
+          {{else}}
+            <button class="dapp-block-button set-addr dapp-small">Apply</button>
+          {{/if}}
+          <button class="dapp-block-button cancel-edit-addr dapp-small">Cancel</button>
         {{else}}
-          <span>not set</span>
+          {{#if records.addr}}
+            {{> components_address addr=records.addr }}
+            {{#if isMine}}
+              <button class="dapp-block-button edit-addr dapp-small">Edit</button>
+            {{/if}}
+          {{else}}
+            <span>not set</span>
+          {{/if}}
         {{/if}}
       </p>
       <p>
         <strong>content:</strong>
-        {{#if (TemplateVar.get 'content')}}
-          <strong>{{TemplateVar.get 'content'}}</strong>
+        {{#if records.content}}
+          <strong>{{records.content}}</strong>
         {{else}}
           <span>not set</span>
         {{/if}}
@@ -43,7 +56,7 @@
       {{#if isMine}}
         <p>
           You can point your name to a basic resolver which has the <strong>addr</strong>
-          record, which is the one you need for your name to point to an account.
+          record, which is the one you need for your name to point to an address.
         </p>
         {{#if (TemplateVar.get 'settingResolver')}}
           <button class="dapp-block-button disabled dapp-small" disabled>Setting resolver...</button>

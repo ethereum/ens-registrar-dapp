@@ -1,6 +1,30 @@
 import { ens, registrar, network } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
+function getPublicAddrResolver() {
+  let address;
+  switch(network) {
+    case 'ropsten': address = '0x4c641fb9bad9b60ef180c31f56051ce826d21a9a'; break;
+    default: return null;
+  }
+  return web3.eth.contract([{"constant":true,"inputs":[{"name":"node","type":"bytes32"},
+    {"name":"contentType","type":"uint256"}],"name":"ABI","outputs":[{"name":"","type":"uint256"},
+    {"name":"","type":"bytes"}],"payable":false,"type":"function"},{"constant":true,"inputs":
+    [{"name":"node","type":"bytes32"}],"name":"addr","outputs":[{"name":"ret","type":"address"}],
+    "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
+    {"name":"kind","type":"bytes32"}],"name":"has","outputs":[{"name":"","type":"bool"}],
+    "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
+    {"name":"contentType","type":"uint256"},{"name":"data","type":"bytes"}],"name":"setABI","outputs":[],"payable":false,"type":"function"},
+    {"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"name","outputs":[{"name":"ret","type":"string"}],
+    "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"name","type":"string"}],
+    "name":"setName","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
+    {"name":"addr","type":"address"}],"name":"setAddr","outputs":[],"payable":false,"type":"function"},
+    {"inputs":[{"name":"ensAddr","type":"address"}],"payable":false,"type":"constructor"},{"payable":false,"type":"fallback"},
+    {"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"a","type":"address"}],
+    "name":"AddrChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},
+    {"indexed":false,"name":"name","type":"string"}],"name":"NameChanged","type":"event"}]).at(address);
+}
+
 Template['status-owned'].onCreated(function() {
   this.autorun(() => {
     const {name, entry} = Template.currentData();
@@ -35,8 +59,11 @@ Template['status-owned'].onCreated(function() {
 });
 
 Template['status-owned'].helpers({
-  address() {
-    return TemplateVar.get('address')
+  records() {
+    return {
+      addr: TemplateVar.get('address'),
+      content: TemplateVar.get('content')
+    };
   },
   owner() {
     return TemplateVar.get('owner')
@@ -153,24 +180,48 @@ Template['status-owned'].events({
   'click .set-resolver': function(e, template) {
     const owner = TemplateVar.get('owner');
     const fullname = template.data.name;
-    let publicResolver;
-    switch(network) {
-      case 'ropsten': publicResolver = '0x4c641fb9bad9b60ef180c31f56051ce826d21a9a'; break;
-      default: {
-        GlobalNotification.error({
-          content: 'Feature only available on Ropsten network',
-          duration: 5
-        });
-        return;
-      }
+    const publicResolver = getPublicAddrResolver();
+    const newOwner = TemplateVar.getFrom('.transfer-section .dapp-address-input', 'value');
+    if (!publicResolver) {
+      GlobalNotification.error({
+        content: `Public resolver not found on ${network} network.`,
+        duration: 5
+      });
+      return;
     }
     TemplateVar.set('settingResolver', true);
-    ens.setResolver(fullname, publicResolver, {from: owner},
+    ens.setResolver(fullname, publicResolver.address, {from: owner, gas: 300000},
       Helpers.getTxHandler({
         onSuccess: () => Helpers.refreshStatus(),
         onDone: () => TemplateVar.set('settingResolver', false)
       })
     );
+  },
+  'click .edit-addr': function(e, template) {
+    TemplateVar.set('editingAddr', true);
+  },
+  'click .cancel-edit-addr': function(e, template) {
+    TemplateVar.set('editingAddr', false);
+  },
+  'click .set-addr': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const fullname = template.data.name;
+    const newAddr = TemplateVar.getFrom('.addr-record .dapp-address-input', 'value');
+    const publicResolver = getPublicAddrResolver();
+    if (!publicResolver) {
+      GlobalNotification.error({
+        content: `Public resolver not found on ${network} network.`,
+        duration: 5
+      });
+      return;
+    }
+    TemplateVar.set('settingAddr', true)
+    publicResolver.setAddr(ens.namehash(fullname), newAddr, {from: owner, gas: 300000}, 
+      Helpers.getTxHandler({
+        onSuccess: () => Helpers.refreshStatus(),
+        onDone: () => TemplateVar.set('settingResolver', false)
+      })
+    )
   }
 });
 
