@@ -28,6 +28,7 @@ import './templates/layout/header.js';
 import './templates/layout/main.html';
 import './templates/views/names.html';
 import './templates/views/names.js';
+import './templates/modals/explainer.html';
 import './templates/modals/backup.html';
 import './templates/modals/backup.js';
 import './templates/modals/restore.html';

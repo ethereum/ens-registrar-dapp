@@ -1,4 +1,5 @@
 import { registrar } from '/imports/lib/ethereum';
+import ethereum from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
 function updateRevealedStatus(template, bid) {
@@ -11,6 +12,10 @@ function updateRevealedStatus(template, bid) {
     }
     TemplateVar.set(template, 'isRevealed', isRevealed);
     MyBids.update({ _id: bid._id }, { $set: {revealed: isRevealed} });
+    
+    // If you can, update the menu
+    if (ethereum && ethereum.updateMistMenu)
+      ethereum.updateMistMenu();
   });
 
   setTimeout(function() {

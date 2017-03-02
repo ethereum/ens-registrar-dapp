@@ -206,12 +206,12 @@ export default ethereum = (function() {
         
               Names.upsert({hash: hash}, 
                 { $set: { 
-                  name: name,
+                  name: name ? name : null,
                   fullname: name ? name + '.eth' : null,
                   registrationDate: Number(result.args.now.toFixed()),
                   value: value,
                   public: name && name.length > 0
-                }})                 
+                }});
           } 
         });      
 
@@ -259,6 +259,11 @@ export default ethereum = (function() {
         g = {ens, registrar, network};
         initCollections(networkId);
         loadNames();
+        updateRevealNames();
+
+        // add an interval to check on auctions every so ofter
+        setInterval(updateRevealNames, 60000);        
+
         reportStatus('Ready!', true);
       })
       .catch(err => {
@@ -267,8 +272,61 @@ export default ethereum = (function() {
       })
   }
 
+
+  function updateMistMenu() {
+
+    if (typeof mist !== 'undefined' && mist && mist.menu) {
+        var names = Names.find({mode: {$in: ['auction', 'reveal']}, watched: true}, {sort: {registrationDate: 1}}).fetch();
+        mist.menu.clear();
+        mist.menu.setBadge('');
+
+        _.each(names, function(e,i){
+            if (e.mode == 'auction') {
+                var m =  moment(e.registrationDate * 1000 - 48*60*60*1000);
+                var badge = m.fromNow(true);
+            } else {
+                if ( MyBids.find({name: e.name, revealed: { $not: true }}).count() > 0) {
+                    var badge = '🚨';
+                    mist.menu.setBadge('🚨 Bids expire soon');
+                }
+            }
+
+            mist.menu.add(e._id, {
+                name: e.fullname,
+                badge: badge,
+                position: i
+            }, function(){
+                // console.log('click menu', e);
+                Session.set('searched', e.name);
+            })
+        })
+    }  
+  }
+
+  function updateRevealNames() {
+      var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
+      var names = Names.find({$or:[{registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},{mode: {$nin: ['open', 'owned']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}}]}).fetch();
+
+      console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));
+
+      _.each(names, function(e, i) {
+          registrar.getEntry(e.name, (err, entry) => {
+          if(!err && entry) {
+              Names.upsert({name: e.name}, {$set: {
+                  mode: entry.mode, 
+                  value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                  highestBid: entry.highestBid
+                }});            
+          }})        
+      })
+
+      updateMistMenu();
+  }  
+
   return {
     init: initEthereum,
+    updateMistMenu,
+    updateRevealNames,
     onStatusChange(callback) {
       subscribers.push(callback);
     },
@@ -277,3 +335,5 @@ export default ethereum = (function() {
     }
   };
 }());
+
+

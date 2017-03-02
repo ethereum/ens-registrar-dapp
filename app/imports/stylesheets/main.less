@@ -68,6 +68,26 @@ header {
 
 header.fixed + .container {
   padding-top: @gridHeight * 14;
+
+  .col-md-8 h1 {
+    position: fixed;
+    top: 100px;
+    background: @colorWhite;
+    font-size: 1.8em;
+    padding-right: @gridWidth/4;
+  }
+}
+
+input[type='checkbox'] + label {
+  position: relative;
+  top: -6px;
+}
+
+.container {
+  h1 {
+    top: 0;
+    transition: top 1s ease-in-out;
+  }
 }
 
 .status-owned {
@@ -138,6 +158,10 @@ ul.names {
   }
 }
 
+.col-md-8 .names {
+  column-count: 3;
+}
+
 .dapp-block-button {
   text-align: center;
   line-height: 1.6em;
@@ -166,4 +190,26 @@ ul.names {
   padding: @gridHeight * 0.5 @gridWidth @gridHeight * 1.5;
   margin-top: @gridHeight;
   margin-left: @gridWidth * -1;
+}
+
+.explainer-modal {
+  min-width: @gridWidth * 14;
+  width: 80vw;
+  text-align: left;
+
+  h2 {
+    color: @colorGrayDark;
+    background: transparent;
+    margin-bottom: 0;
+    padding: @gridHeight 0 @gridHeight/2;
+  }
+
+  p {
+    margin: 0 0 @gridHeight;
+    font-size: 1em;
+  }
+}
+
+.dapp-modal-overlay {
+  background: rgba(255,255,255,0.75);
 }
