@@ -30,7 +30,13 @@ Template['components_nameStatus'].onCreated(function() {
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
           Session.set('name', entry.name);
           if (entry.name) {
+            // if the name has changed, add it to the history
+            if (window.location.hash !== '#' + name) {
+              history.pushState(null, entry.name + '.eth', '#'+entry.name);
+            }
+            // add to the location bar
             window.location.hash = entry.name;
+
           }
           if (entry.mode === 'auction') {
             updatePendingBids(entry.name);
@@ -45,8 +51,6 @@ Template['components_nameStatus'].onCreated(function() {
 
             timeout = setTimeout(function() {
               if (name === Session.get('searched')) {
-                history.pushState(null, name + '.eth', '#'+name);
-
                 Names.upsert({name: name}, {$set: {
                   fullname: name + '.eth',
                   mode: entry.mode, 

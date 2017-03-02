@@ -79,10 +79,7 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a>  
-                    {{#if canBeInvalidated auction.name }}
-                    <icon class="icon-ban"></icon> 
-                    {{/if}}
+                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}}'>{{auction.fullname}}</a>  
               </li>
             {{/each}}
         </ul>
