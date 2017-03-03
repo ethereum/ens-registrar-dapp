@@ -1,6 +1,6 @@
 <template name="components_nameStatus">
   {{#if searched}}
-    <div class="col-md-8">
+    <div class="main-content col-md-8 {{#if TemplateVar.get 'loading'}}loading{{/if}}">
       {{#if (TemplateVar.get 'error')}}
         <h1>Error getting entry</h1>
         <p>{{TemplateVar.get 'error'}}</p>
@@ -79,9 +79,9 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a>  
+                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}}'>{{auction.fullname}}</a>  
                     {{#if canBeInvalidated auction.name }}
-                    <icon class="icon-ban"></icon> 
+                    <icon class="icon-alert">!</icon> 
                     {{/if}}
               </li>
             {{/each}}
