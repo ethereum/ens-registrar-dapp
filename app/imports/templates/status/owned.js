@@ -1,28 +1,33 @@
 import { ens, registrar, network } from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
+let publicAddrResolver;
+
 function getPublicAddrResolver() {
   let address;
   switch(network) {
     case 'ropsten': address = '0x4c641fb9bad9b60ef180c31f56051ce826d21a9a'; break;
     default: return null;
   }
-  return web3.eth.contract([{"constant":true,"inputs":[{"name":"node","type":"bytes32"},
-    {"name":"contentType","type":"uint256"}],"name":"ABI","outputs":[{"name":"","type":"uint256"},
-    {"name":"","type":"bytes"}],"payable":false,"type":"function"},{"constant":true,"inputs":
-    [{"name":"node","type":"bytes32"}],"name":"addr","outputs":[{"name":"ret","type":"address"}],
-    "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
-    {"name":"kind","type":"bytes32"}],"name":"has","outputs":[{"name":"","type":"bool"}],
-    "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
-    {"name":"contentType","type":"uint256"},{"name":"data","type":"bytes"}],"name":"setABI","outputs":[],"payable":false,"type":"function"},
-    {"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"name","outputs":[{"name":"ret","type":"string"}],
-    "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"name","type":"string"}],
-    "name":"setName","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
-    {"name":"addr","type":"address"}],"name":"setAddr","outputs":[],"payable":false,"type":"function"},
-    {"inputs":[{"name":"ensAddr","type":"address"}],"payable":false,"type":"constructor"},{"payable":false,"type":"fallback"},
-    {"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"a","type":"address"}],
-    "name":"AddrChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},
-    {"indexed":false,"name":"name","type":"string"}],"name":"NameChanged","type":"event"}]).at(address);
+  if (!publicAddrResolver) {
+    publicAddrResolver = web3.eth.contract([{"constant":true,"inputs":[{"name":"node","type":"bytes32"},
+      {"name":"contentType","type":"uint256"}],"name":"ABI","outputs":[{"name":"","type":"uint256"},
+      {"name":"","type":"bytes"}],"payable":false,"type":"function"},{"constant":true,"inputs":
+      [{"name":"node","type":"bytes32"}],"name":"addr","outputs":[{"name":"ret","type":"address"}],
+      "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
+      {"name":"kind","type":"bytes32"}],"name":"has","outputs":[{"name":"","type":"bool"}],
+      "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
+      {"name":"contentType","type":"uint256"},{"name":"data","type":"bytes"}],"name":"setABI","outputs":[],"payable":false,"type":"function"},
+      {"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"name","outputs":[{"name":"ret","type":"string"}],
+      "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"name","type":"string"}],
+      "name":"setName","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
+      {"name":"addr","type":"address"}],"name":"setAddr","outputs":[],"payable":false,"type":"function"},
+      {"inputs":[{"name":"ensAddr","type":"address"}],"payable":false,"type":"constructor"},{"payable":false,"type":"fallback"},
+      {"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"a","type":"address"}],
+      "name":"AddrChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},
+      {"indexed":false,"name":"name","type":"string"}],"name":"NameChanged","type":"event"}]).at(address);
+  }
+  return publicAddrResolver;
 }
 
 Template['status-owned'].onCreated(function() {
