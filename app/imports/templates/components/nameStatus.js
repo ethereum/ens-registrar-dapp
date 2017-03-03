@@ -28,9 +28,19 @@ Template['components_nameStatus'].onCreated(function() {
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
+          TemplateVar.set(template, 'loading', false);
+          console.timeEnd('lookupName');
+
+
           Session.set('name', entry.name);
           if (entry.name) {
+            // if the name has changed, add it to the history
+            if (window.location.hash !== '#' + name) {
+              history.pushState(null, entry.name + '.eth', '#'+entry.name);
+            }
+            // add to the location bar
             window.location.hash = entry.name;
+
           }
           if (entry.mode === 'auction') {
             updatePendingBids(entry.name);
@@ -44,14 +54,16 @@ Template['components_nameStatus'].onCreated(function() {
             console.log('update name', name, entry);
 
             timeout = setTimeout(function() {
-              Names.upsert({name: name}, {$set: {
-                fullname: name + '.eth',
-                mode: entry.mode, 
-                registrationDate: entry.registrationDate, 
-                value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
-                highestBid: entry.highestBid, 
-                hash: entry.hash.replace('0x','').slice(0,12)
-              }});
+              if (name === Session.get('searched')) {
+                Names.upsert({name: name}, {$set: {
+                  fullname: name + '.eth',
+                  mode: entry.mode, 
+                  registrationDate: entry.registrationDate, 
+                  value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                  highestBid: entry.highestBid, 
+                  hash: entry.hash.replace('0x','').slice(0,12)
+                }});
+              }
 
             }, 3000);
           };
@@ -69,6 +81,13 @@ Template['components_nameStatus'].onCreated(function() {
   this.autorun(function() {
     var searched = Session.get('searched');
     TemplateVar.set(template, 'error', false);
+    TemplateVar.set(template, 'loading', true);
+    console.time('lookupName');
+    setTimeout(function() {
+      console.log('timeout')
+      TemplateVar.set(template, 'loading', false);
+      console.timeEnd('lookupName');
+    }, 10000);
     lookupName(searched);
   })
   
@@ -108,7 +127,7 @@ Template['components_nameStatus'].helpers({
       return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 100});
     }, 
     knownNamesRegistered() {
-      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$not: 'open'}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
     }, 
     namesRegistered() {
       return Names.find({value: {$gt:0}}).count();

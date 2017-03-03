@@ -38,6 +38,9 @@ Template['components_address'].onCreated(function() {
 })
 
 Template['components_address'].helpers({
+  hasName() {
+    return TemplateVar.get('name') && TemplateVar.get('name').length > 0 ? 'has-name' : '';
+  },
   mine() {
     return web3.eth.accounts.filter(
       (acc) => acc === Template.instance().data.addr
@@ -45,5 +48,34 @@ Template['components_address'].helpers({
   },
   name() {
     return TemplateVar.get('name');
+  },
+  addrHead() {
+    return Template.instance().data.addr.slice(2,-8)
+  },
+  addrTail() {
+    return Template.instance().data.addr.slice(-8)
   }
 })
+
+
+Template['components_address'].events({
+  'click .address': function(el, template) {
+
+    if (window.getSelection && document.createRange) {
+          var sel = window.getSelection();
+          var range = document.createRange();
+          range.selectNodeContents(el.currentTarget);
+          sel.removeAllRanges();
+          sel.addRange(range);
+      } else if (document.selection && document.body.createTextRange) {
+          var textRange = document.body.createTextRange();
+          textRange.moveToElementText(el.currentTarget);
+          textRange.select();
+      }    
+  
+  }
+});
+/*
+
+
+    */

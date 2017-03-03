@@ -1,4 +1,5 @@
 @import '{ethereum:dapp-styles}/dapp-styles.less';
+@import 'components.less';
 
 html, body {
     height: 100%;
@@ -59,6 +60,7 @@ header {
       right: 0;
       height: 0;
       padding-bottom: 0;
+      z-index: 20;
 
       & > div {
         opacity: 0;
@@ -75,6 +77,7 @@ header.fixed + .container {
     background: @colorWhite;
     font-size: 1.8em;
     padding-right: @gridWidth/4;
+    z-index: 10;
   }
 }
 
@@ -154,12 +157,52 @@ ul.names {
     a { 
       font-weight: 400;
       font-size: 125%;
+
+      &.can-invalidate {
+        color: @colorError;
+        font-weight: 500;
+      }
     }
   }
+
+    icon.icon-alert {
+        font-weight: 600;
+        width: 18px;
+        display: inline-block;
+        text-align: center;
+        color: #bf891e;
+        border-radius: 9px;
+        height: 18px;
+        font-size: 12px;
+        position: relative;
+        top: -2px;
+
+        &:before {
+            content: " ";
+            position: absolute;
+            top: -1px;
+            left: 1px;
+            height: 0;
+            border-bottom:15px solid #ffd60c;
+            border-left:8px solid transparent;
+            border-right:8px solid transparent;
+            z-index: -1;
+        }
+    }
+
 }
 
-.col-md-8 .names {
-  column-count: 3;
+.main-content {
+    padding-bottom: @gridHeight * 5;
+    transition: opacity 0.25s;
+
+    &.loading {
+        opacity: 0.5;
+    }
+
+    .names {
+        column-count: 3;
+    }
 }
 
 .dapp-block-button {
@@ -179,10 +222,6 @@ ul.names {
   .address.true, .icon-user {
     color: #497b2b;
   }
-}
-
-.container .col-md-8 {
-  padding-bottom: @gridHeight * 5;
 }
 
 .unused-bids {
