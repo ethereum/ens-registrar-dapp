@@ -26,10 +26,12 @@
           {{> dapp_addressInput }}
           {{#if (TemplateVar.get 'settingAddr')}}
             <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
+            <button class="dapp-block-button disabled dapp-small" disabled>Cancel</button>
           {{else}}
             <button class="dapp-block-button set-addr dapp-small">Apply</button>
+            <button class="dapp-block-button cancel-edit-addr dapp-small">Cancel</button>
           {{/if}}
-          <button class="dapp-block-button cancel-edit-addr dapp-small">Cancel</button>
+          
         {{else}}
           {{#if records.addr}}
             {{> components_address addr=records.addr }}
