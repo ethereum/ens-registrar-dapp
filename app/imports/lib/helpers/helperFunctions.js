@@ -125,7 +125,7 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
         if (err) {
           return cb(err)
         }
-        if (tx.blockNumber) {
+        if (tx && tx.blockNumber) {
           cb(null, tx)
         } else {
           setTimeout(check, 500)

@@ -193,7 +193,7 @@ Template['status-owned'].events({
     ens.setResolver(fullname, publicResolver.address, {from: owner, gas: 300000},
       Helpers.getTxHandler({
         onSuccess: () => Helpers.refreshStatus(),
-        onDone: () => TemplateVar.set('settingResolver', false)
+        onDone: () => TemplateVar.set(template, 'settingResolver', false)
       })
     );
   },
@@ -219,7 +219,7 @@ Template['status-owned'].events({
     publicResolver.setAddr(ens.namehash(fullname), newAddr, {from: owner, gas: 300000}, 
       Helpers.getTxHandler({
         onSuccess: () => Helpers.refreshStatus(),
-        onDone: () => TemplateVar.set('settingResolver', false)
+        onDone: () => TemplateVar.set(template, 'settingAddr', false)
       })
     )
   }
