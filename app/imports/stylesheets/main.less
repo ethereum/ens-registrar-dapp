@@ -192,8 +192,17 @@ ul.names {
 
 }
 
-.col-md-8 .names {
-  column-count: 3;
+.main-content {
+    padding-bottom: @gridHeight * 5;
+    transition: opacity 0.25s;
+
+    &.loading {
+        opacity: 0.5;
+    }
+
+    .names {
+        column-count: 3;
+    }
 }
 
 .dapp-block-button {
@@ -213,10 +222,6 @@ ul.names {
   .address.true, .icon-user {
     color: #497b2b;
   }
-}
-
-.container .col-md-8 {
-  padding-bottom: @gridHeight * 5;
 }
 
 .unused-bids {

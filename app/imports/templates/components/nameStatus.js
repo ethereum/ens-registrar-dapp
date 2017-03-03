@@ -28,6 +28,10 @@ Template['components_nameStatus'].onCreated(function() {
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
+          TemplateVar.set(template, 'loading', false);
+          console.timeEnd('lookupName');
+
+
           Session.set('name', entry.name);
           if (entry.name) {
             // if the name has changed, add it to the history
@@ -77,6 +81,13 @@ Template['components_nameStatus'].onCreated(function() {
   this.autorun(function() {
     var searched = Session.get('searched');
     TemplateVar.set(template, 'error', false);
+    TemplateVar.set(template, 'loading', true);
+    console.time('lookupName');
+    setTimeout(function() {
+      console.log('timeout')
+      TemplateVar.set(template, 'loading', false);
+      console.timeEnd('lookupName');
+    }, 10000);
     lookupName(searched);
   })
   
