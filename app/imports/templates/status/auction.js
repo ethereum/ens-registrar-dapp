@@ -120,6 +120,9 @@ Template['status-auction'].helpers({
     let amount = Math.floor(10 * (maxAmount * Math.pow(TemplateVar.get('anonymizer'), 3)))/10;
     TemplateVar.set('anonymizerAmount', amount);
     return amount;
+  },
+  hasNode() {
+    return LocalStore.get('hasNode');
   }
 })
 

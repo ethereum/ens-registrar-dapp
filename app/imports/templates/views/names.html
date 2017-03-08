@@ -1,5 +1,5 @@
 <template name="view_names">
-    {{#if names}}
+    {{#if watchesNames}}
         <h3> Watched Names </h3>
         <ul class="names">
             {{#each name in names}}
@@ -10,7 +10,7 @@
         </ul>
     {{/if}}
 
-    {{#if bids}}
+    {{#if hasBids}}
     <h3>More Options</h3>
     <ul>
         <li><a href="" class="export-bids">Export Bids </a></li>

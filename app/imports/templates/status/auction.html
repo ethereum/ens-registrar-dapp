@@ -14,7 +14,10 @@
           {{/each}}
 
         {{else}}
-        <form class="new-bid">
+
+        {{#if hasNode}}
+  
+          <form class="new-bid">
 
           <br><h3>How much you value this name?</h3>          
           <p>
@@ -46,7 +49,9 @@
           {{/if}}          
           </p>
         </form>
-
+        {{else}}
+        {{> components_noNode}}
+        {{/if}}
 
         {{/if}}
           
