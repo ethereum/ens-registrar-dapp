@@ -23,7 +23,7 @@
       <p class="addr-record">
         <strong>addr:</strong>
         {{#if (TemplateVar.get 'editingAddr')}}
-          {{> dapp_addressInput }}
+          {{> dapp_addressInput }} <br>
           {{#if (TemplateVar.get 'settingAddr')}}
             <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
             <button class="dapp-block-button disabled dapp-small" disabled>Cancel</button>
@@ -34,7 +34,7 @@
           
         {{else}}
           {{#if records.addr}}
-            {{> components_address addr=records.addr }}
+            {{> components_address addr=records.addr }} <br><br>
             {{#if isMine}}
               <button class="dapp-block-button edit-addr dapp-small">Edit</button>
             {{/if}}

@@ -14,6 +14,8 @@ Template['components_nameStatus'].onCreated(function() {
       registrar.getEntry(name, (err, entry) => {
         if(!err && entry) {
           let prevInfo = TemplateVar.get(template, 'nameInfo');
+          TemplateVar.set(template, 'loading', false);
+          
           if (prevInfo &&
             prevInfo.name === entry.name + '.eth' &&
             prevInfo.entry.mode === entry.mode) {
@@ -28,7 +30,6 @@ Template['components_nameStatus'].onCreated(function() {
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
-          TemplateVar.set(template, 'loading', false);
           console.timeEnd('lookupName');
 
 
@@ -102,7 +103,7 @@ Template['components_nameStatus'].events({
   'click .explainer': function(e) {
       EthElements.Modal.show('modals_explainer', {
         class: 'explainer-modal'
-      });
+      });  
   }
 });
 
