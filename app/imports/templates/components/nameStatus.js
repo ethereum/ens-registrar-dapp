@@ -99,11 +99,6 @@ Template['components_nameStatus'].events({
   'click .names a': function(e) {
     Session.set('searched', e.target.hash.slice(1));
     e.preventDefault();
-  },
-  'click .explainer': function(e) {
-      EthElements.Modal.show('modals_explainer', {
-        class: 'explainer-modal'
-      });  
   }
 });
 
@@ -142,13 +137,19 @@ Template['components_nameStatus'].helpers({
           Names.find({value: {$gt:0.01}}).fetch(), function(memo,num) { 
             return memo + num.value; 
           }, 0);
-      return Math.round(average*100/Names.find({value: {$gt:0.01}}).count())/100 ;
+      return Math.round(average*100/Names.find({value: {$gt:0.01}}).count())/100 || '--';
     }, 
     percentageDisputed() {
       return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
     },
     canBeInvalidated(name) {
       return name.length < 7;
+    },
+    hasNode() {
+      return LocalStore.get('hasNode');
+    },
+    showStats() {
+      return Names.find({value: {$gt:0}}).count() > 50;
     }
 });
 
@@ -160,6 +161,9 @@ Template['aside-forbidden-can-invalidate'].helpers({
   invalidatorFee() {
     var val = Template.instance().data.entry.deed.balance;
     return web3.fromWei(val ? val.toFixed()/2 : 0, 'ether');
+  },
+  hasNode() {
+    return LocalStore.get('hasNode');
   }
 })
 
@@ -185,6 +189,9 @@ Template['status-finalize'].helpers({
   highestBid() {
     var val = Template.instance().data.entry.highestBid;
     return web3.fromWei(val, 'ether');
+  },
+  hasNode() {
+    return LocalStore.get('hasNode');
   }
 })
 
@@ -196,6 +203,9 @@ Template['status-reveal'].helpers({
   hasBids() {
     const name = Session.get('searched');
     return MyBids.find({name: name}).count() > 0 ;
+  },
+  hasNode() {
+    return LocalStore.get('hasNode');
   }  
 })
 

@@ -1,4 +1,3 @@
-
 import './lib/helpers/helperFunctions.js';
 import './lib/helpers/templateHelpers.js';
 
@@ -14,6 +13,9 @@ import './templates/components/address.html';
 import './templates/components/address.js';
 import './templates/components/nameLink.html';
 import './templates/components/nameLink.js';
+import './templates/components/explainerBody.html';
+import './templates/components/explainerBody.js';
+import './templates/components/noNode.html';
 import './templates/status/open.html';
 import './templates/status/open.js';
 import './templates/status/auction.html';
@@ -35,3 +37,5 @@ import './templates/modals/restore.html';
 import './templates/modals/restore.js';
 
 import './index.js';
+
+

@@ -46,5 +46,8 @@ Template['status-open'].helpers({
   hasBids() {
     const name = Session.get('searched');
     return MyBids.find({name: name}).count() > 0 ;
+  },
+  hasNode() {
+    return LocalStore.get('hasNode');
   }
 })

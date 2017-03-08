@@ -7,18 +7,26 @@
         <p>
           After at minimum a year, the owner can release the name back to the market and therefore recover their funds. When the permanent registrar is deployed, owners will have the right to choose to move their names to the new registrar or get their ether back. The permanent registrar will most probably include rules that might require further locking of ether, in order to make sitting on an inactive domain unprofitable.
         </p>
-        <p><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
-        {{#if TemplateVar.get 'agree'}}
-        <button type="submit" class="dapp-block-button open-auction" disabled={{opening}}> 
-          {{#if opening}}
-            Opening...
+
+        {{#if hasNode}}
+  
+          <p><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
+          {{#if TemplateVar.get 'agree'}}
+          <button type="submit" class="dapp-block-button open-auction" disabled={{opening}}> 
+            {{#if opening}}
+              Opening...
+            {{else}}
+              Open auction
+            {{/if}}
+          </button>
           {{else}}
-            Open auction
+              <button type="submit" class="dapp-block-button open-auction" disabled='true'> Open Auction </button> 
           {{/if}}
-        </button>
+
         {{else}}
-            <button type="submit" class="dapp-block-button open-auction" disabled='true'> Open Auction </button> 
+        {{> components_noNode}}
         {{/if}}
+        
       </div>
 
       {{#if hasBids}}

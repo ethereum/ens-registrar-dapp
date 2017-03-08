@@ -22,10 +22,14 @@ export default ethereum = (function() {
     return new Promise((resolve, reject) => {
       if(typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider);
-      }
-      else {
+        LocalStore.set('hasNode', true);        
+      } else {
+
         let Web3 = require('web3');
-        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        // Activate to main net
+        // web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
+        web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/NEefAs8cNxYfiJsYCQjc"));
+        LocalStore.set('hasNode', false);
       }
       resolve();
     })
@@ -42,6 +46,7 @@ export default ethereum = (function() {
           clearInterval(checkInterval)
           resolve(web3);
         } else if (attempts <= 0) {
+          console.log('checking..');
           reportStatus('Ethereum network is disconnected. Awaiting connection...');
         }
       }
