@@ -14,14 +14,61 @@
   {{/if}}
   </p>
 
-  {{#if address}}
-    <p>Points to: {{> components_address addr=address}}</p>
-  {{else}}
-    <p>The owner has not set a resolver for this address yet</p>
-  {{/if}}
   <p>Owned by: {{> components_address addr=owner}} </p>
-  <p>Content: <strong>{{content}}</strong></p>
   <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
+  
+  <div class="records-section">
+    <h3>Records</h3>
+    {{#if (TemplateVar.get 'hasSetResolver')}}
+      <p class="addr-record">
+        <strong>addr:</strong>
+        {{#if (TemplateVar.get 'editingAddr')}}
+          {{> dapp_addressInput }} <br>
+          {{#if (TemplateVar.get 'settingAddr')}}
+            <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
+            <button class="dapp-block-button disabled dapp-small" disabled>Cancel</button>
+          {{else}}
+            <button class="dapp-block-button set-addr dapp-small">Apply</button>
+            <button class="dapp-block-button cancel-edit-addr dapp-small">Cancel</button>
+          {{/if}}
+          
+        {{else}}
+          {{#if records.addr}}
+            {{> components_address addr=records.addr }} <br><br>
+            {{#if isMine}}
+              <button class="dapp-block-button edit-addr dapp-small">Edit</button>
+            {{/if}}
+          {{else}}
+            <span>not set</span>
+          {{/if}}
+        {{/if}}
+      </p>
+      <p>
+        <strong>content:</strong>
+        {{#if records.content}}
+          <strong>{{records.content}}</strong>
+        {{else}}
+          <span>not set</span>
+        {{/if}}
+      </p>
+    {{else}}
+      <p>
+        Records are not enabled for this name (no resolver found).
+      </p>
+      {{#if isMine}}
+        <p>
+          You can point your name to a basic resolver which has the <strong>addr</strong>
+          record, which is the one you need for your name to point to an address.
+        </p>
+        {{#if (TemplateVar.get 'settingResolver')}}
+          <button class="dapp-block-button disabled dapp-small" disabled>Setting resolver...</button>
+        {{else}}
+          <button class="dapp-block-button set-resolver dapp-small">Set resolver</button>
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  </div>
+
   
   {{#if isMine}}
     <div class="transfer-section">

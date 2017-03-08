@@ -110,8 +110,13 @@ Refreshes the status of the currently searched name
 **/
 Helpers.refreshStatus = function refreshStatus() {
   const name = Session.get('searched');
+  window.location.hash = '';
   Session.set('searched', '');
-  Session.set('searched', name);
+  Session.set('name', '');
+  setTimeout(function() {
+    Session.set('searched', name);
+    window.location.hash = name;
+  }, 0);
 }
 
 /**
@@ -125,7 +130,7 @@ Helpers.checkTxSuccess = function checkTxSuccess(txid, callback) {
         if (err) {
           return cb(err)
         }
-        if (tx.blockNumber) {
+        if (tx && tx.blockNumber) {
           cb(null, tx)
         } else {
           setTimeout(check, 500)
