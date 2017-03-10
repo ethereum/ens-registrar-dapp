@@ -93,7 +93,6 @@ export default ethereum = (function() {
           if (err) {
               return reject(err);
           } else {
-            
             if (!customEnsAddress) {
               //Check correct Ropsten ENS contract
               registrar.ens.owner('eth', (err, owner) => {
@@ -107,10 +106,11 @@ export default ethereum = (function() {
                   resolve();
                 }
               })
+            } else {
+              resolve();
             }
           }
         });
-
       } catch(e) {
         reject('Error initialiting ENS registrar: ' + e);
       }
@@ -252,9 +252,6 @@ export default ethereum = (function() {
     reportStatus('Connecting to Ethereum network...');
     return initWeb3()
       .then(checkConnection)
-      .catch(err => {
-        
-      })
       .then(watchDisconnect)
       .then(checkNetwork)
       .catch(err => {
