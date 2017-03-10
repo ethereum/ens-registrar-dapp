@@ -8,8 +8,7 @@ export let registrar;
 export let network;
 
 export let errors = {
-  invalidNetwork: new Error('Sorry, ENS is only available on the Ropsten testnet' +
-    ' network at the moment.')
+  invalidNetwork: new Error('Sorry, ENS is not available on this network at the moment.');
 }
 
 let networkId;
