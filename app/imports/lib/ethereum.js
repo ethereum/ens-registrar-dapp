@@ -22,9 +22,14 @@ export default ethereum = (function() {
     return new Promise((resolve, reject) => {
       if(typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider);
+        LocalStore.set('hasNode', true);        
       } else {
         let Web3 = require('web3');
-        web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        // web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        // web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/NEefAs8cNxYfiJsYCQjc"));
+        web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
+        LocalStore.set('hasNode', false);
+
       }
       resolve();
     })
@@ -32,26 +37,21 @@ export default ethereum = (function() {
 
   function checkConnection() {
     reportStatus('Checking connection...')
-    let attempts = 1,
-      checkInterval,
-      hasNode = true;
+    let attempts = 4,
+      checkInterval;
+
     return new Promise((resolve, reject) => {
       function check() {
         attempts--;
         if(web3.isConnected()) {
           clearInterval(checkInterval)
-          LocalStore.set('hasNode', hasNode);
           resolve(web3);
         } else if (attempts <= 0) {
-          //Failed to connect to node, connect to INFURA.
-          let Web3 = require('web3');
-          // Activate to main net
-          // web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
-          web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/NEefAs8cNxYfiJsYCQjc"));
-          hasNode = false;
+          console.log('checking..');
+          reportStatus('Ethereum network is disconnected. Awaiting connection...');
         }
       }
-      checkInterval = setInterval(check, 500);
+      checkInterval = setInterval(check, 800);
       check();
     });
   }
@@ -62,6 +62,7 @@ export default ethereum = (function() {
         if (e) {
           return reject(e)
         }
+        console.log('checkNetwork', res.hash)
         networkId = res.hash.slice(2,8);
         switch(res.hash) {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
