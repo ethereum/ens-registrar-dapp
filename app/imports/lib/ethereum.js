@@ -8,7 +8,7 @@ export let registrar;
 export let network;
 
 export let errors = {
-  invalidNetwork: new Error('Sorry, ENS is not available on this network at the moment.');
+  invalidNetwork: new Error('Sorry, ENS is not available on this network at the moment.')
 }
 
 let networkId;
@@ -16,6 +16,7 @@ let networkId;
 export default ethereum = (function() {
   let subscribers = [];
   let customEnsAddress;
+  let ensAddress;
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -65,6 +66,7 @@ export default ethereum = (function() {
         switch(res.hash) {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
             network='ropsten';
+            ensAddress='0x112234455c3a32fd11230c42e7bccd4a84e02010';
             resolve();
             break;
           case '0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303':
@@ -73,7 +75,8 @@ export default ethereum = (function() {
             break;
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
-            reject(errors.invalidNetwork);
+            ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
+            resolve();
             break;
           default:
             network='private';
@@ -83,32 +86,19 @@ export default ethereum = (function() {
     })
   }
 
+  
+  
   function initRegistrar() {
     reportStatus('Initializing ENS registrar...');
     return new Promise((resolve, reject) => {
       try {
-        ens = new ENS(web3, customEnsAddress || '0x112234455c3a32fd11230c42e7bccd4a84e02010');
+        ens = new ENS(web3, customEnsAddress || ensAddress);
         registrar = new Registrar(web3, ens, 'eth', 7, (err, result) => {
           if (err) {
-              return reject(err);
-          } else {
-            if (!customEnsAddress) {
-              //Check correct Ropsten ENS contract
-              registrar.ens.owner('eth', (err, owner) => {
-                if (err) {
-                  return reject(err);
-                }
-                if(owner !== '0xc68de5b43c3d980b0c110a77a5f78d3c4c4d63b4') {
-                  reject('Could not find ENS contract. Make sure your node' +
-                    ' is synced to at least block 25409.');
-                } else {
-                  resolve();
-                }
-              })
-            } else {
-              resolve();
-            }
+            return reject(err);
           }
+          //TODO: Check that the registrar is correctly instanciated
+          resolve();
         });
       } catch(e) {
         reject('Error initialiting ENS registrar: ' + e);
