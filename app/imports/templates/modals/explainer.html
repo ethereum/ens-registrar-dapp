@@ -3,41 +3,45 @@
 
     <h2> What is it and what it's not </h2>
     <p>
-        This is a system to create more human friendly shortcuts to long addresses, like ethereum addresses or swarm hashes, that are often used in the ethereum ecossytem.
+        This is a system to create more human friendly shortcuts to long addresses, like ethereum addresses or swarm hashes, that are often used in the ethereum ecosystem.
     </p>
     <p>
         <strong>ENS is not a domain system:</strong> In the sense of internet domains, as managed by ICANN, ENS is not a domain system. While it can be used in a similar fashion on apps that replicate browser functionality, like Mist or Metamask, there is no claim on the ".eth" top level domain system, which can only be managed by ICANN
     </p><p>
-        <strong>ENS is not a trademark or any sort of claim on ownership:</strong> owning a ENS name is a fully automated process and does not indicate ownership of any given trademark, copyright, brand name or any other sort of intellectual property
+        <strong>ENS is not a trademark or any sort of claim on ownership:</strong> owning a ENS name is a fully automated process and does not indicate ownership of any given trademowning a ENS name is a fully automated process and does not indicate ownership of any given trademark, copyright, brand name or any other sort of intellectual property
+
     </p><p>
-        <strong>Names are not sold:</strong> ENS names are not sold or leased by Ethereum foundation or any other entity. While the process of claiming a name involves locking or burning funds, these were created to disincentive spamming and try to make so that names are only claimed by users who will make use of that. All ether spent on the process is either given back to the bidder after some time, sent to a burn address or sent to miner
+        <strong>Names are not sold:</strong> ENS names are not sold or leased by Ethereum Foundation or any other entity. While the process of claiming a name involves locking or burning funds, these were created to disincentive spamming and try to make so that names are only claimed by users who will make use of that. All ether spent on the process is either given back to the bidder after some time, sent to a burn address or sent to miner
+
     </p>
 
     <h2> How the process works </h2>
     <p>
         <strong>The process of claiming a name takes 5 days and requires multiple transactions that are time sensitive and often irreversible, so if you don't understand it fully you might irreversibly lose ether. </strong> 
     </p> <p> 
-        Users start the process by opening a public auction of the name they want, which will send an alert that can be seen to anyone watching the blockchain for that specific name. During the next five days after that auction was opened, anyone who knows how to spell that name can bid for it, by making a transaction with the maximum amount they are willing to pay for the name. Bids are accepted until 120 hours after the initial auction was opened and after that the <strong>reveal phase</strong> starts. During 48 hours anyone who bid <strong>must reveal their bids</strong> (failing to do so might result in irreversible loss of funds). 
+        Users start the process by opening a public auction of the name they want, which will send an alert that can be seen to anyone watching the blockchain for that specific name. During the next five days after that auction was opened, anyone who knows how to spell that name can bid for it, by making a transaction with the maximum amount they are willing to pay for the name. Bids are accepted until 120 hours after the initial auction was opened and after that the reveal phase starts. During 48 hours anyone who bid <strong>must reveal their bids (failing to do so might result in irreversible loss of funds)</strong>.
     </p> <p>
-        The bidder <strong>which was willing to pay the most for the name</strong> will be the owner, but they will <strong>only pay an amount equal to the amount the second largest bidder wanted</strong>. Only one bid is required, therefore bid your theoretical maximum on the desired name. 
+        The bidder which was willing to pay the most for the name will be the owner, but they will only <strong>pay an amount equal to the amount the second largest bidder wanted</strong>. Only one bid is required, therefore bid your theoretical maximum on the desired name.  
     </p> <p>
         Once an auction is finished, the user needs to finalize their name, to finish the auction, and at that point they will be able to transfer ownership to someone else, add a subregistrar (subdomain.foobarz.eth) or add record types associated with the name (ethereum address, bitcoin address, swarm content, etc). 
     </p> <p>
-        <strong>After one year</strong> the owner can release the name back to the market and get back the ether they deposited on it, if they so wish. <strong>After two years</strong> it is expected that an updated version of the registrar will be deployed which might require some sort of recurring fee, deposit or some other way to encourage unused names to be released back in the market.
+        After one year the owner can release the name back to the market and get back the ether they deposited on it, if they so wish. After two years it is expected that an updated version of the registrar will be deployed which might require some sort of recurring fee, deposit or some other way to encourage unused names to be released back in the market. <strong>After 4 years this contract will no longer be accepting new names and any deed still active must be either released or transfered to the updated contract. After 8 years any deeds left will become unretrievable</strong>.
+
     </p>
 
     <h2> What names are valid? </h2>
 
     <p>
-        As names are hashed during the auction process to increase privacy, any name, string or file could, in theory be owned via this process. <strong>Names that are shorter than 7 characters are considered reserved until the system is more mature </strong> and if registered, they can be invalidated, which will result in irreversible loss of funds by the claimer. <br>
+        As names are hashed during the auction process to increase privacy, any name, string or file could, in theory be owned via this process. <strong>Names that are shorter than 7 characters are considered reserved until the system is more mature and if registered, they can be invalidated, which will result in irreversible loss of funds by the claimer.</strong> <br>
 
         Names that use any character beyond alphanumeric (and hyphen and underscore), while valid, are not guaranteed to be resolved by client as it's up to each implementation, so it is discouraged to register names with accented characters, non-latin characters, emojis or any other type of non-word hash.
+
     </p>
 
     <h2> How much it costs </h2>
 
     <p>
-        Besides usual transaction costs, these are the costs of each type of tr
+        Besides usual transaction costs, these are the costs of each type of transaction
 
         <ul>
             <li>

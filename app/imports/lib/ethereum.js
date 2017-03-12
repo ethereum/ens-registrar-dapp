@@ -8,8 +8,7 @@ export let registrar;
 export let network;
 
 export let errors = {
-  invalidNetwork: new Error('Sorry, ENS is only available on the Ropsten testnet' +
-    ' network at the moment.')
+  invalidNetwork: new Error('Sorry, ENS is not available on this network at the moment.')
 }
 
 let networkId;
@@ -17,6 +16,7 @@ let networkId;
 export default ethereum = (function() {
   let subscribers = [];
   let customEnsAddress;
+  let ensAddress;
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -24,12 +24,12 @@ export default ethereum = (function() {
         web3 = new Web3(web3.currentProvider);
         LocalStore.set('hasNode', true);        
       } else {
-
         let Web3 = require('web3');
-        // Activate to main net
-        // web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
-        web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/NEefAs8cNxYfiJsYCQjc"));
+        // web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        // web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/NEefAs8cNxYfiJsYCQjc"));
+        web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/NEefAs8cNxYfiJsYCQjc"));
         LocalStore.set('hasNode', false);
+
       }
       resolve();
     })
@@ -37,8 +37,9 @@ export default ethereum = (function() {
 
   function checkConnection() {
     reportStatus('Checking connection...')
-    var attempts = 4,
+    let attempts = 4,
       checkInterval;
+
     return new Promise((resolve, reject) => {
       function check() {
         attempts--;
@@ -61,10 +62,12 @@ export default ethereum = (function() {
         if (e) {
           return reject(e)
         }
+        console.log('checkNetwork', res.hash)
         networkId = res.hash.slice(2,8);
         switch(res.hash) {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
             network='ropsten';
+            ensAddress='0x112234455c3a32fd11230c42e7bccd4a84e02010';
             resolve();
             break;
           case '0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303':
@@ -73,7 +76,8 @@ export default ethereum = (function() {
             break;
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
-            reject(errors.invalidNetwork);
+            ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
+            resolve();
             break;
           default:
             network='private';
@@ -83,33 +87,20 @@ export default ethereum = (function() {
     })
   }
 
+  
+  
   function initRegistrar() {
     reportStatus('Initializing ENS registrar...');
     return new Promise((resolve, reject) => {
       try {
-        ens = new ENS(web3, customEnsAddress || '0x112234455c3a32fd11230c42e7bccd4a84e02010');
+        ens = new ENS(web3, customEnsAddress || ensAddress);
         registrar = new Registrar(web3, ens, 'eth', 7, (err, result) => {
           if (err) {
-              return reject(err);
-          } else {
-            
-            if (!customEnsAddress) {
-              //Check correct Ropsten ENS contract
-              registrar.ens.owner('eth', (err, owner) => {
-                if (err) {
-                  return reject(err);
-                }
-                if(owner !== '0xc68de5b43c3d980b0c110a77a5f78d3c4c4d63b4') {
-                  reject('Could not find ENS contract. Make sure your node' +
-                    ' is synced to at least block 25409.');
-                } else {
-                  resolve();
-                }
-              })
-            }
+            return reject(err);
           }
+          //TODO: Check that the registrar is correctly instanciated
+          resolve();
         });
-
       } catch(e) {
         reject('Error initialiting ENS registrar: ' + e);
       }
@@ -260,6 +251,14 @@ export default ethereum = (function() {
       })
       .then(initRegistrar)
       .then(() => {
+        
+        if (network == 'main' && Date.now() < 1489431415000) {
+          
+          EthElements.Modal.question({
+              text: "<h3> The ENS is not yet open </h3> Check back in " + Math.ceil((1489431415000  - Date.now()) / (60*60*1000)) + " hours"
+          });
+        } 
+
         //set a global for easier debugging on the console
         g = {ens, registrar, network};
         initCollections(networkId);
@@ -267,7 +266,8 @@ export default ethereum = (function() {
         updateRevealNames();
 
         // add an interval to check on auctions every so ofter
-        setInterval(updateRevealNames, 60000);        
+        setInterval(updateRevealNames, 60000);
+             
 
         reportStatus('Ready!', true);
       })
