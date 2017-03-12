@@ -251,6 +251,14 @@ export default ethereum = (function() {
       })
       .then(initRegistrar)
       .then(() => {
+        
+        if (network == 'main' && Date.now() < 1489431415000) {
+          
+          EthElements.Modal.question({
+              text: "<h3> The ENS is not yet open </h3> Check back in " + Math.ceil((1489431415000  - Date.now()) / (60*60*1000)) + " hours"
+          });
+        } 
+
         //set a global for easier debugging on the console
         g = {ens, registrar, network};
         initCollections(networkId);
@@ -258,7 +266,8 @@ export default ethereum = (function() {
         updateRevealNames();
 
         // add an interval to check on auctions every so ofter
-        setInterval(updateRevealNames, 60000);        
+        setInterval(updateRevealNames, 60000);
+             
 
         reportStatus('Ready!', true);
       })
