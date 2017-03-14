@@ -251,11 +251,11 @@ export default ethereum = (function() {
       })
       .then(initRegistrar)
       .then(() => {
-        
-        if (network == 'main' && Date.now() < 1489431415000) {
+        var registryStarted = 1489535999000
+        if (network == 'main' && Date.now() < registryStarted) {
           
           EthElements.Modal.question({
-              text: "<h3> The ENS is not yet open </h3> Check back in " + Math.ceil((1489431415000  - Date.now()) / (60*60*1000)) + " hours"
+              text: "<h3> The ENS is not yet open </h3> Check back in " + Math.ceil((registryStarted  - Date.now()) / (60*60*1000)) + " hours"
           });
         } 
 
