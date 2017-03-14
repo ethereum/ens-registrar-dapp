@@ -1,78 +1,66 @@
 <template name="modals_explainer">
-    <h1> Ethereum Name System</h1>
+    <h1> Ethereum Name System (ENS)</h1>
 
-    <h2> What is it and what it's not </h2>
+    <h2> What is it and what it isn't </h2>
     <p>
-        The ENS is a system that was created to provide shorter, more human-friendly names in place of long addresses, such as ethereum addresses or swarm hashes that are often used in the ethereum ecosystem.    </p>
+        The ENS is a system that was created to provide shorter, more human-friendly names in place of long addresses, such as ethereum addresses or Swarm hashes that are often used in the ethereum ecosystem.</p>
     <p>
         <strong>ENS is not a domain system:</strong> In the sense of internet domains, as managed by ICANN, ENS is not a domain system. While it can be used in a similar fashion on apps that replicate browser functionality, like Mist or Metamask, there is no claim on the ".eth" top level domain system, which can only be managed by ICANN.
     </p><p>
-        <strong>ENS is not a trademark or any sort of claim on ownership:</strong> owning a ENS name is a fully automated process and does not indicate ownership of any given trademowning an ENS name is a fully automated process and does not indicate ownership of any given trademark, copyright, brand name or any other kind of intellectual property.
+        <strong>ENS does not grant a trademark or any sort of claim on ownership:</strong> registering an ENS name is a fully automated process and does not indicate ownership of any given trademark, copyright, brand name or any other kind of intellectual property.
 
     </p><p>
-        <strong>Names are not sold:</strong> ENS names are not sold or leased by any party or entity. While the process of claiming a name involves locking or burning funds, these processes were created to disincentive spamming and try to it make so that names are only claimed by users who will make use of them. All ether spent on the process is either given back to the bidder after some time, sent to a burn address or sent to a miner.
-
-
+        <strong>This process is not a sale:</strong> ENS names are not sold or leased by any party or entity. While the process of claiming a name involves locking or burning funds, these processes were created to disincentive spamming and try to it make so that names are only claimed by users who will make use of them. All ether spent on the process is either given back to the bidder after some time, sent to a burn address or sent to a miner.
     </p>
 
     <h2> How the process works </h2>
     <p>
-        <strong>The process of claiming a name takes 5 days and requires multiple transactions that are time sensitive and often irreversible, so it will be important for you to fully understand the process to ensure you do not irreversibly lose your ether. </strong> 
+        <strong>The process of claiming a name takes five (5) days and requires multiple transactions that are time sensitive and often irreversible, so it will be important for you to fully understand the process  to ensure you do not irreversibly lose your ether. </strong>
     </p> <p> 
-        Users start the process by opening a public auction for the name they want, which will send an alert that can be seen to anyone watching the blockchain for that specific name. After the auction is opened anyone who knows how to spell that name can bid for it in the next five days, by sending a transaction with the maximum amount they are willing to pay for the name. Bids are accepted until 120 hours after the initial auction was opened, and after that time, the reveal phase starts. <strong> During the next 48 hours, anyone who bids must reveal their bids (failing to do so will result in irreversible loss of funds)</strong>.
+        Users start the process by opening a public auction for the name they want, which will send an alert that can be seen to anyone watching the blockchain for that specific name. After the auction is opened anyone who knows how to spell that name can bid on it in the next five days, by sending a transaction with the maximum amount they are willing to pay for the name. Bids are accepted until 120 hours after the initial auction opens. After that time, a 48 hour reveal phase starts <strong> during which, anyone who bids must reveal their bids (failing to do so will result in irreversible loss of funds)</strong>.
     </p> <p>
-        The bidder who was willing to pay the most for the name will be the owner, but they will only pay an amount equal to the amount the second largest bidder wanted. Only one bid is required, therefore bid your theoretical maximum on the desired name. 
- 
+        The bidder who was willing to pay the most for the name will be the registrant, but they will only pay an amount equal to the amount of the second highest bid. 
     </p> <p>
-        Once an auction is finished, the user needs to finalize their name, to finish the auction, and at that point they will be able to transfer ownership to someone else, add a subregistrar (subdomain.foobarz.eth) or add record types associated with the name (ethereum address, bitcoin address, swarm content, etc). 
+        Once the auction process is finished, the user needs to finalize their name to complete the auction, after which they will be able to transfer rights of use to someone else, add a subregistrar (subdomain.foobarz.eth) or add record types associated with the name (ethereum address, bitcoin address, swarm content, etc). 
 
     </p> <p>
-        After one year the owner can release the name back to the market and get back the ether they deposited on it, if they so wish. After two years it is expected that an updated version of the registrar will be deployed which might require some sort of recurring fee, deposit or some other way to encourage unused names to be released back in the market.
+        After one year, the registrant can release the name back to the market and retrieve the ether they deposited to the contract, if they so wish. After two years, it is expected that an updated version of the registrar will be deployed, which might require some sort of recurring fee, deposit or some other way to encourage unused names to be released back in the market.
 
     </p>
 
     <h2> What names are valid? </h2>
 
     <p>
-        As names are hashed during the auction process to increase privacy, any name, string or file could, in theory be owned via this process. Names that are shorter than 7 characters are considered reserved until the system is more mature and if registered, they can be invalidated, which will result in irreversible loss of funds by the claimer. 
-    </p>
-    <p>
-        Names that use any character beyond alphanumeric (and hyphen and underscore), while valid, are not guaranteed to be resolved by the client as it's up to each implementation, so it is discouraged to register names with accented characters, non-latin characters, emojis or any other type of non-word hash.
+        As names are hashed during the auction process to increase privacy, any name, string or file could, in theory be owned via this process. At this time, names that are shorter than seven (7) characters are reserved until the system is more mature. If a user proceeds to registered, the name can be invalidated, which would result in irreversible loss of funds by the registrant. 
     </p>
 
-    <h2> How much it costs </h2>
+    <h2>What names are discouraged?</h2>
 
     <p>
-        Besides usual transaction costs, these are the costs of each type of transaction:
+        Names that use any character outside of alphanumeric, hyphen and underscore, while valid, are not guaranteed to be resolved by the wallet or client software. Users are discouraged from registering names with accented characters, non-latin characters, emojis or other type special symbols, etc.
+    </p>
+
+    <h2> How much ether is needed </h2>
+
+    <p>
+
+        The minimum amount required for a bid is 0.01 ether. When bids are revealed, any extra ether that was sent to mask the bid value will be returned in full. The auction registrar will apply some fees that are proportional to the bid value, in order to discourage spamming. See the following fees below:
 
         <ul>
             <li>
-                Opening an auction costs about 575k gas. This is a more expensive step because it actually opens 9 dummy auctions besides the one you want, in random order, to discourage an automated bidder to bid on every open auction.
+                Non-winning bid: 0.1% is burned, 99.9% is returned.
             </li>
             <li>
-                Putting up a secret bid costs 325k gas, plus all the ether required to cover your bid, and some extra ether to add anonymity on the exact value of your bid. The minimum amount required for a bid is 0.01 ether.
-            </li>
-        </ul>
-
-        When bids are revealed, any extra ether sent to add anonymity will be returned in full. Some fees will occur on proportional to the value of your bid, to discourage spamming. These fees are the following:
-
-        <ul>
-            <li>
-                Bids that are below the value that the current winner is willing to pay, and bids that are below the overall minimum: 0.5% is burned, 99.5% is returned.
-
+                Once the auction is over, the winning bid is locked for at least one year:.%100 remains in the contract until released.
             </li>
             <li>
-                Bids that are above the current winner will be locked. If any new bid displaces it, then the same 0.5% burn will be applied and the remainder 99.5% will be returned. Once the auction is over, the winning bid is locked for at least one year.            
+                Bids that are not revealed during the 48-hour reveal period will be completely and irreversibly burned. Only the extra ether sent to the contract in addition to the bid amount, such as ether sent to mask the bid value, will be returned.
             </li>
             <li>
-                Bids that are not revealed on time are 99.5% burned. The extra ether beyond the given value will be returned, but the amount bid will be 100% destroyed.
-
+                Bids not revealed for more than 4 weeks are by definition invalid and can be cleared by anyone, even if the bid is still anonymous. In this case, the user doing the clearing will get 0.5% of the full deposit of the bid, and the remainder will be burned.
             </li>
             <li>
-                Bids not revealed for more than 4 weeks are by definition invalid and can be cleared by anyone, even if they are still anonymous. In this case, the user doing the clearing will get 0.5% of the full deposit of the bid, but the remainder will be burnt.
-            </li>
-            <li>
-                Names that are discovered to be invalidated will lose half of their current deposit. Anyone can invalidate a name: 50% of the deposit will go the user doing the invalidation, and the remained be returned to the owner of the invalidated name.
+                Note that anyone can invalidate a name. If a name gets invalidated, 50% of the deposit will go to the user doing the invalidation, and the remaining amount will be returned to bidder.
             </li>
         </ul>
 
@@ -84,22 +72,50 @@
     <ul>
         
     </ul>
-        <li> <strong>You are responsible for your own computer security and usage.</strong> Any consequence of the misuse of this code is your sole responsibility. No other party, nor any other entity can be held responsible for any undesirable consequence, loss of funds, illegal activity or any other issue that results from  bad usage of the code, including bugs in the current implementation. The full code can be inspected <a href="https://github.com/ethereum/ens"> on this code repository </a> but the deployment and usage of this piece of code is your own responsability.  </li>
-
+        <li> <strong>You are responsible for your own computer security and usage.</strong> Any consequence of the misuse of this code is your sole responsibility. No other party, nor any other entity can be held liable for any unintended consequence, loss of funds, illegal activity or any other issue that results from misuse of the code, use of the code for any purpose other than the intended purpose and any other "bad" usage of the code, including bugs in the current implementation. The full code can be inspected <a href="https://github.com/ethereum/ens">on this code repository</a> but the deployment and usage of this piece of code is your own responsibility.</li>
 
         <li> <strong>You are responsible for your own actions.</strong> If you mess something up or break any laws while using this software, it's your fault, and your fault only. </li>
 
         <li> <strong> You are responsible for your own karma.</strong> Don't be a jerk and respect others.  </li>
+    
+        <p>
+            For the avoidance of  doubt, ENS is not responsible for any losses, damages or claims arising from, but not limited to:
+        </p>
+
+        <ol>
+            <li>
+                Mistakes made by the user of the code e.g., payments sent to wrong address, bidding of the wrong name, failure to reveal bids within time limits.
+            </li>
+            <li>
+                Software problems, e.g., incorrectly constructed transactions, defective code, temporary disruption of service, malware affecting the ENS registrar and/or any related software or service.
+            </li>
+            <li>
+                Security problems experienced by the user, e.g., unauthorized bid reveals.
+            </li>
+            <li>
+                Actions or inactions of third parties and/or events experienced by third parties, e.g., information security attacks, and fraud conducted by third parties.            
+            </li>
+        </ol>
+        
+
+        <p><strong> Risk of Loss </strong></p>
+
+        <p>
+            Bidding in the auction can lead to loss of value as described above.  In addition, you can lose the right to a name if you do not take the correct steps to claim a winning bid or if there are intervening factors that impair you from claiming a winning a bid.  
+        </p>
+
     </p>
 
-    <h2>Disclaimer of Liabilities and Warranties </h2>
+    <h2>Disclaimer; Liabilities and Warranties </h2>
 
     <p>
         The user expressly knows and agrees that the user is using ENS at the user’s sole risk. The user represents that the user has an adequate understanding of the risks, usage and intricacies of cryptographic tokens,open source software, ethereum platform and ether. <br>
         
-        THE USER EXPRESSLY AGREES THE NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM) WILL BE LIABLE UNDER ANY CAUSE OF ACTION OR THEORY OF LIABILITY, EVEN IF SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND THE USER SHALL HOLD ALL OTHER PARTIES HARMLESS, FOR ANY (A) INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES, (B) LOSS OF PROFITS, REVENUES, OPPORTUNITIES, OR GOODWILL, (C) UNAVAILABILITY OF ANY OR ALL OF THE ENS, (D) INVESTMENTS, EXPENDITURES OR COMMITMENTS BY USER RELATED TO USE OF OR ACCESS TO THE ENS, (E) COST OF PROCUREMENT OF SUBSTITUTE GOODS OR SUBSTITUTE SERVICES, (F) UNAUTHORIZED ACCESS TO USER CONTENT, OR ANY COMPROMISE, ALTERATION OR LOSS OF USER CONTENT, (G) COST OF REPLACEMENT OR RESTORATION OF ANY LOST OR ALTERED USER CONTENT, (H) ACTS OR OMISSIONS ATTRIBUTABLE TO ANY THIRD-PARTY, (I) LOST ETHER OR INABILITY TO SECURE DESIRED NAMES. <br>
+        THE USER EXPRESSLY AGREES THE NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM) WILL BE LIABLE UNDER ANY CAUSE OF ACTION OR THEORY OF LIABILITY, EVEN IF SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, AND THE USER SHALL HOLD ALL OTHER PARTIES HARMLESS, FOR ANY (A) INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR EXEMPLARY DAMAGES, (B) LOSS OF PROFITS, REVENUES, OPPORTUNITIES, OR GOODWILL, (C) UNAVAILABILITY OF ANY OR ALL OF THE ENS, (D) INVESTMENTS, EXPENDITURES OR COMMITMENTS BY USER RELATED TO USE OF OR ACCESS TO THE ENS, (E) COST OF PROCUREMENT OF SUBSTITUTE GOODS OR SUBSTITUTE SERVICES, (F) UNAUTHORIZED ACCESS TO USER CONTENT, OR ANY COMPROMISE, ALTERATION OR LOSS OF USER CONTENT, (G) COST OF REPLACEMENT OR RESTORATION OF ANY LOST OR ALTERED USER CONTENT, (H) ACTS OR OMISSIONS ATTRIBUTABLE TO ANY THIRD-PARTY, (I) LOST ETHER OR INABILITY TO SECURE DESIRED NAMES, (J) DEFECTIVE CODE OR (K) THE EXECUTION OF THE CODE. <br>
 
-        USER ACKNOWLEDGES AND AGREES THAT NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM) IS ACTUALLY RESPONSIBLE FOR OPERATION OF THE ENS AND THAT LIKE ANY OTHER COMPUTER PROGRAM, THE ENS’ OPERATIONS ARE LIMITED TO HOW COMPUTATION LOGIC INTERPRETS THE OPENLY DISCLOSED SOURCE CODE AND THAT NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM)  CAN GUARANTEE THAT THE ENS WILL WORK AS INTENDED (OR EVEN WORK IN A MANNER THAT IS CONSISTENT WITH THIS DOCUMENT). USER IS AWARE THAT SOLE RELIANCE ON A COMPUTER PROGRAM’S COMPUTATIONAL LOGIC CARRIES SIGNIFICANT RISK OF UNINTENDED RISKS OR RESULTS AND THAT IN THE EVENT OF AN ERROR, NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM) IS OBLIGATED TO FIX OR REMEDIATE ANY PROBLEM. USER FURTHER ACKNOWLEDGES AND AGREES THAT  NO OTHER REPRESENTATIONS OR WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, REGARDING THE ENS, AND USER HERBY DISCLAIMS ALL OTHER WARRANTIES, INCLUDING ANY IMPLIED OR EXPRESS WARRANTIES: (A) OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR QUIET ENJOYMENT; (B) ARISING OUT OF ANY COURSE OF DEALING OR USAGE OF TRADE; (C) THAT THE ENS WILL BE UNINTERRUPTED, ERROR FREE, OR FREE OF HARMFUL COMPONENTS; (D) THAT THE ENS OR ANY CONTENT, INCLUDING USER CONTENT OR THIRD-PARTY CONTENT, WILL BE SECURE OR NOT OTHERWISE LOST OR DAMAGED; AND (D) THE ENS WILL HAVE ANY FUNCTIONALITY THAT IS NOT A NATURAL RESULT OF HOW THE SOURCE CODE SHOULD BE INTERPRETED.<br>
+        USER ACKNOWLEDGES AND AGREES THAT NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM) IS ACTUALLY RESPONSIBLE FOR OPERATION OF THE ENS AND THAT LIKE ANY OTHER COMPUTER PROGRAM, THE ENS’ OPERATIONS ARE LIMITED TO HOW COMPUTATION LOGIC INTERPRETS THE OPENLY DISCLOSED SOURCE CODE AND THAT NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM)  CAN GUARANTEE THAT THE ENS WILL WORK AS INTENDED (OR EVEN WORK IN A MANNER THAT IS CONSISTENT WITH THIS DOCUMENT). USER IS AWARE THAT SOLE RELIANCE ON A COMPUTER PROGRAM’S COMPUTATIONAL LOGIC CARRIES SIGNIFICANT RISK OF UNINTENDED RISKS OR RESULTS AND THAT IN THE EVENT OF AN ERROR, NO PARTY (INCLUDING THE KEYHOLDERS OR ANY INDIVIDUAL OR ORGANIZATION THAT MAY HAVE CONTRIBUTED TO THE DEVELOPMENT OF THE ENS OR ETHEREUM) IS OBLIGATED TO FIX OR REMEDIATE ANY PROBLEM. <br>
+
+        USER FURTHER ACKNOWLEDGES AND AGREES THAT THERE  NO OTHER REPRESENTATIONS OR WARRANTIES OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY OR OTHERWISE, REGARDING THE ENS, AND USER HEREBY DISCLAIMS ALL OTHER WARRANTIES, INCLUDING ANY IMPLIED OR EXPRESS WARRANTIES: (A) OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, OR QUIET ENJOYMENT; (B) ARISING OUT OF ANY COURSE OF DEALING OR USAGE OF TRADE; (C) THAT THE ENS WILL BE UNINTERRUPTED, ERROR FREE, OR FREE OF HARMFUL COMPONENTS; (D) THAT THE ENS OR ANY CONTENT, INCLUDING USER CONTENT OR THIRD-PARTY CONTENT, WILL BE SECURE OR NOT OTHERWISE LOST OR DAMAGED; AND (D) THE ENS WILL HAVE ANY FUNCTIONALITY THAT IS NOT A NATURAL RESULT OF HOW THE SOURCE CODE SHOULD BE INTERPRETED.
     </p>
 
 </template>
