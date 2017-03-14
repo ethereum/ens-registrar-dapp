@@ -76,8 +76,12 @@ export default ethereum = (function() {
             break;
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
-            ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
-            resolve();
+            EthElements.Modal.question({
+                text: "<h3> The ENS is not yet open on the main net </h3> Due to some issues raised by the community, ens launch on main net has been postponed for security reasons. <br><br> <a href='https://github.com/ethereum/ens-registrar-dapp/issues'> Join the bug hunt effort!</a>"
+            });            
+            // ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
+            // resolve();
+            reject(errors.invalidNetwork);
             break;
           default:
             network='private';
@@ -251,14 +255,6 @@ export default ethereum = (function() {
       })
       .then(initRegistrar)
       .then(() => {
-        var registryStarted = 1489535999000
-        if (network == 'main' && Date.now() < registryStarted) {
-          
-          EthElements.Modal.question({
-              text: "<h3> The ENS is not yet open </h3> Check back in " + Math.ceil((registryStarted  - Date.now()) / (60*60*1000)) + " hours"
-          });
-        } 
-
         //set a global for easier debugging on the console
         g = {ens, registrar, network};
         initCollections(networkId);
