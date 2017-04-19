@@ -16,20 +16,39 @@ Template['components_nameStatus'].onCreated(function() {
           let prevInfo = TemplateVar.get(template, 'nameInfo');
           TemplateVar.set(template, 'loading', false);
           
-          if (prevInfo &&
-            prevInfo.name === entry.name + '.eth' &&
-            prevInfo.entry.mode === entry.mode) {
+          if (prevInfo 
+            && prevInfo.name === entry.name + '.eth' 
+            && prevInfo.entry.mode === entry.mode) {
+              console.log('dont update')
               //don't update unless name and status changed
               return;
           }
-          TemplateVar.set(template, 'nameInfo', {
-            name: entry.name + '.eth',
-            entry
-          })
+
+          if (entry.mode == 'not-yet-available') {
+
+            registrar.getAllowedTime(name, (err, timestamp) => {
+              console.log('getAvailableTime! ', timestamp.toFixed());
+              entry.availableDate = timestamp.toFixed();
+
+              TemplateVar.set(template, 'nameInfo', {
+                name: entry.name + '.eth',
+                entry
+              })
+            });
+
+          } else {
+
+            TemplateVar.set(template, 'nameInfo', {
+              name: entry.name + '.eth',
+              entry
+            })
+
+          }
 
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
+          
           console.timeEnd('lookupName');
 
 
@@ -67,11 +86,7 @@ Template['components_nameStatus'].onCreated(function() {
               }
 
             }, 3000);
-          };
-
-          
-            
-
+          };    
         }
       });
     } catch(e) {
@@ -124,6 +139,9 @@ Template['components_nameStatus'].helpers({
     }, 
     knownNamesRegistered() {
       return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+    },
+    toBecomeAvailableSoon() {
+      return Names.find({availableDate: {$lt: Math.floor(Date.now()/1000) + 7 * 24 * 60 * 60}, mode: {$nin: ['auction', 'forbidden']}, name:{$gt: ''}},{sort: {availableDate: -1}, limit: 100});
     }, 
     namesRegistered() {
       return Names.find({value: {$gt:0}}).count();
@@ -225,5 +243,24 @@ Template['aside-reveal'].helpers({
   highestBid() {
     var val = Template.instance().data.entry.highestBid;
     return web3.fromWei(val, 'ether');
+  }
+})
+
+
+Template['status-not-yet-available'].helpers({
+  availableDate() {
+    console.log('getAvailableDate: ', Template.instance().data.entry);    
+    var date = new Date(Template.instance().data.entry.availableDate * 1000);
+    return date.toLocaleString();  
+  }
+})
+
+
+Template['aside-not-yet-available'].helpers({
+  availableCountdown() {
+    var m = moment(Template.instance().data.entry.availableDate * 1000);
+    
+    return Math.floor(m.diff(moment(), 'minutes')/(24*60)) + 'd ' + Math.floor(m.diff(moment(), 'minutes')/60)%60 + 'h ';
+    
   }
 })

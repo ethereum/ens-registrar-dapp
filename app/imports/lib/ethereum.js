@@ -103,6 +103,7 @@ export default ethereum = (function() {
             return reject(err);
           }
           //TODO: Check that the registrar is correctly instanciated
+          console.log('done initialiting', err, result)
           resolve();
         });
       } catch(e) {
@@ -306,7 +307,15 @@ export default ethereum = (function() {
 
   function updateRevealNames() {
       var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
-      var names = Names.find({$or:[{registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},{mode: {$nin: ['open', 'owned']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}}]}).fetch();
+      // keep updating
+      var names = Names.find({$or:[
+          // any name I'm watching that is still on auction
+          {registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},
+          // any name whose registration date has passed and isn't finalized
+          {mode: {$nin: ['open', 'owned']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
+          // any name not yet available
+          {mode: 'not-yet-available', name:{$gt: ''}, watched: true},
+          ]}).fetch();
 
       console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));
 
