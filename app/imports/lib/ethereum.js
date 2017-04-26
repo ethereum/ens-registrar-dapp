@@ -171,17 +171,17 @@ export default ethereum = (function() {
 
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
-                console.log('\n Watched name auction started!', name, result.args.hash);
+                console.log('\n Watched name auction started!', name);
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name auction started!', name, result.args.hash);
+                console.log('\n Known name auction started!', name);
               }
 
               if (name) {
                 Names.upsert({name: name}, 
                   { $set: { 
                     fullname: name + '.eth',
-                    registrationDate: Number(result.args.auctionExpiryDate.toFixed()),
+                    registrationDate: Number(result.args.registrationDate.toFixed()),
                     hash: hash,
                     public: true
                   }})
@@ -307,15 +307,17 @@ export default ethereum = (function() {
 
   function updateRevealNames() {
       var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
-      // keep updating
+      // keep updating 
       var names = Names.find({$or:[
           // any name I'm watching that is still on auction
           {registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},
           // any name whose registration date has passed and isn't finalized
-          {mode: {$nin: ['open', 'owned']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
+          {mode: {$nin: ['open', 'owned', 'not-yet-available']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
           // any name not yet available
           {mode: 'not-yet-available', name:{$gt: ''}, watched: true},
-          ]}).fetch();
+          // any name registered before this registrar was live
+          {registrationDate: {$lt: 1492700000}, name:{$gt: ''}}
+          ]}, {limit:100}).fetch();
 
       console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));
 
@@ -325,7 +327,8 @@ export default ethereum = (function() {
               Names.upsert({name: e.name}, {$set: {
                   mode: entry.mode, 
                   value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
-                  highestBid: entry.highestBid
+                  highestBid: entry.highestBid,
+                  registrationDate: entry.registrationDate
                 }});            
           }})        
       })

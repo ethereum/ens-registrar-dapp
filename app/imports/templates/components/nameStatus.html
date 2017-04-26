@@ -39,12 +39,12 @@
         {{/unless}}  
 
         <br>
-        <h3> Available soon </h3>
+        <h3> Available Now </h3>
 
         Soon or this week
 
         <ul class="names">
-          {{#each auction in toBecomeAvailableSoon}}
+          {{#each auction in availableNow}}
               <li>
                   <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
               </li>
@@ -161,6 +161,8 @@
 </template>
 
 <template name="aside-not-yet-available">
+    {{>components_watch name=name}}
+
    <h3>Can be requested in</h3>
 
     <h1> {{availableCountdown}} </h1>

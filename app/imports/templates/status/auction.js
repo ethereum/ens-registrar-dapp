@@ -46,7 +46,10 @@ Template['status-auction'].events({
     } else {
       TemplateVar.set(template, 'bidding-' + name, true)
       let owner = web3.eth.accounts[0];
+      console.log('bidFactory', bidAmount);
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
+        console.log('bidFactory error', err);
+
         if(err != undefined) throw err;
 
         console.log('Bid: ', bid);
