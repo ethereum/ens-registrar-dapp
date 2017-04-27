@@ -44,7 +44,7 @@ Template['components_bid'].events({
     TemplateVar.set(template, `revealing-${bid.name}`, true);
     // Names.update({fullname: })
     registrar.unsealBid(bid, {
-      from: web3.eth.accounts[0], // Any account can reveal
+      from: bid.owner, // Any account can reveal
       gas: 300000
     }, Helpers.getTxHandler({
       onDone: () => TemplateVar.set(template, `revealing-${bid.name}`, false),

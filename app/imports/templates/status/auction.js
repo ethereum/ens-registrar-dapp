@@ -120,7 +120,7 @@ Template['status-auction'].helpers({
 
     let maxAmount = TemplateVar.get(template, 'maxAmount');
 
-    let amount = Math.floor(10 * (maxAmount * Math.pow(TemplateVar.get('anonymizer'), 3)))/10;
+    let amount = Math.floor(100 * (maxAmount * Math.pow(TemplateVar.get('anonymizer'), 3)))/100;
     TemplateVar.set('anonymizerAmount', amount);
     return amount;
   },
