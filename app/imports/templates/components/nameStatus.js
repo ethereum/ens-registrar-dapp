@@ -1,5 +1,20 @@
-import { registrar } from '/imports/lib/ethereum';
+import { registrar, network } from '/imports/lib/ethereum';
 import { updatePendingBids } from '/imports/lib/bids';
+
+Template['components_nameStatus'].onRendered(function() {
+  console.log('network?!', network);
+  TemplateVar.set('network', network);
+
+  if (network!= 'main') {
+  EthElements.Modal.question({
+    text: 'You are on the '+network+' network. Names owned this network are not valid on the mainchain',
+    ok: true,
+    cancel: false // simply show th cancel button and close the modal on click
+  });
+
+  }
+  
+})
 
 Template['components_nameStatus'].onCreated(function() {
   var template = this;
@@ -174,6 +189,9 @@ Template['components_nameStatus'].helpers({
     },
     showStats() {
       return Names.find({value: {$gt:0}}).count() > 50;
+    },
+    isMainNetwork(){
+      return TemplateVar.get('network') == 'main';
     }
 });
 
