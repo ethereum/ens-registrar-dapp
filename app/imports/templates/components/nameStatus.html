@@ -15,8 +15,7 @@
   {{else}}
     <div class="col-md-8">
 
-        <h1> Register an Ethereum Name</h1> 
-
+        <h1> Check availability of an Ethereum Name</h1> 
 
         {{#if showStats}}
         <ul class="big-numerals">
@@ -39,6 +38,7 @@
         {{> components_noNode}}
         {{/unless}}  
 
+        {{#if availableNow}}
         <br>
         <h3> Available Now </h3>
 
@@ -51,6 +51,7 @@
               </li>
             {{/each}}
         </ul>
+        {{/if}}
 
 
         {{#if hasAuctions}}

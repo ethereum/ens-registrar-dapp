@@ -5,7 +5,7 @@ Template['status-open'].events({
   'click .open-auction': function openAuction() {
     let name = Session.get('searched');
     let template = Template.instance();
-    var launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(13*7*24*60*60);
+    var launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
 
     // console.log('registryStarted', launchRatio, registrar.registryStarted.toFixed());
     // The goal here is to obscure the names we actually want
