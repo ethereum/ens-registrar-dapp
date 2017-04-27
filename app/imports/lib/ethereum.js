@@ -77,10 +77,10 @@ export default ethereum = (function() {
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
             EthElements.Modal.question({
-                text: "<h3> The ENS is not yet open on the main net </h3> Due to some issues raised by the community, ens launch on main net has been postponed for security reasons. <br><br> <a href='https://github.com/ethereum/ens-registrar-dapp/issues'> Join the bug hunt effort!</a>"
-            });            
-            // ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
-            // resolve();
+              text: "<h3> The ENS is not yet live </h3> Names will slowly become available after May 4th"
+            });
+            ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
+            resolve();
             reject(errors.invalidNetwork);
             break;
           default:
@@ -103,6 +103,7 @@ export default ethereum = (function() {
             return reject(err);
           }
           //TODO: Check that the registrar is correctly instanciated
+          console.log('done initialiting', err, result)
           resolve();
         });
       } catch(e) {
@@ -170,17 +171,17 @@ export default ethereum = (function() {
 
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
-                console.log('\n Watched name auction started!', name, result.args.hash);
+                console.log('\n Watched name auction started!', name);
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name auction started!', name, result.args.hash);
+                console.log('\n Known name auction started!', name);
               }
 
               if (name) {
                 Names.upsert({name: name}, 
                   { $set: { 
                     fullname: name + '.eth',
-                    registrationDate: Number(result.args.auctionExpiryDate.toFixed()),
+                    registrationDate: Number(result.args.registrationDate.toFixed()),
                     hash: hash,
                     public: true
                   }})
@@ -306,7 +307,17 @@ export default ethereum = (function() {
 
   function updateRevealNames() {
       var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
-      var names = Names.find({$or:[{registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},{mode: {$nin: ['open', 'owned']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}}]}).fetch();
+      // keep updating 
+      var names = Names.find({$or:[
+          // any name I'm watching that is still on auction
+          {registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},
+          // any name whose registration date has passed and isn't finalized
+          {mode: {$nin: ['open', 'owned', 'not-yet-available']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
+          // any name not yet available
+          {mode: 'not-yet-available', name:{$gt: ''}, watched: true},
+          // any name registered before this registrar was live
+          {registrationDate: {$lt: 1492700000}, name:{$gt: ''}}
+          ]}, {limit:100}).fetch();
 
       console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));
 
@@ -316,7 +327,8 @@ export default ethereum = (function() {
               Names.upsert({name: e.name}, {$set: {
                   mode: entry.mode, 
                   value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
-                  highestBid: entry.highestBid
+                  highestBid: entry.highestBid,
+                  registrationDate: entry.registrationDate
                 }});            
           }})        
       })

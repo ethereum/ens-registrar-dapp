@@ -37,7 +37,7 @@
           <p class="clear"><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
           <p class="clear">
           {{#if TemplateVar.get 'agree'}}
-          <button type="submit" class="dapp-block-button" disabled="true">
+          <button type="submit" class="dapp-block-button" disabled="{{bidding}}">
             {{#if bidding}}
               Bidding...
             {{else}}
@@ -48,7 +48,6 @@
           <button type="submit" class="dapp-block-button" disabled="true"> Bid </button>
           {{/if}}          
           </p>
-          <p>Bidding function will not be activated for a few days while some further tests are done. Thanks for your patience.</p>
         </form>
         {{else}}
         {{> components_noNode}}

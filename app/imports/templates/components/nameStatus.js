@@ -16,21 +16,43 @@ Template['components_nameStatus'].onCreated(function() {
           let prevInfo = TemplateVar.get(template, 'nameInfo');
           TemplateVar.set(template, 'loading', false);
           
-          if (prevInfo &&
-            prevInfo.name === entry.name + '.eth' &&
-            prevInfo.entry.mode === entry.mode) {
+          if (prevInfo 
+            && prevInfo.name === entry.name + '.eth'
+            && prevInfo.entry.availableDate
+            && prevInfo.entry.mode === entry.mode) {
               //don't update unless name and status changed
               return;
           }
-          TemplateVar.set(template, 'nameInfo', {
-            name: entry.name + '.eth',
-            entry
-          })
+
+          if (entry.mode == 'not-yet-available') {
+
+            registrar.getAllowedTime(name, (err, timestamp) => {
+              entry.availableDate = timestamp.toFixed();
+              // console.log('not-yet-available! ', timestamp.toFixed(), entry);
+
+              TemplateVar.set(template, 'nameInfo', {
+                name: entry.name + '.eth',
+                entry
+              })
+            });
+
+          } else {
+            // console.log('available! ', entry);
+
+            TemplateVar.set(template, 'nameInfo', {
+              name: entry.name + '.eth',
+              entry
+            })
+
+          }
+
+          // console.log('this entry', entry.name, entry.mode);
 
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
-          console.timeEnd('lookupName');
+          
+          // console.timeEnd('lookupName');
 
 
           Session.set('name', entry.name);
@@ -52,26 +74,25 @@ Template['components_nameStatus'].onCreated(function() {
             // To prevent too many writes, add a timer and only save to the database after a few seconds
             clearTimeout(timeout);
             timeoutName = name;
-            console.log('update name', name, entry);
+            // console.log('update name', name, entry);
 
             timeout = setTimeout(function() {
               if (name === Session.get('searched')) {
+                console.log('upsert', name, entry.availableDate);
+
                 Names.upsert({name: name}, {$set: {
                   fullname: name + '.eth',
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
                   value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
                   highestBid: entry.highestBid, 
+                  availableDate: entry.availableDate ? Number(entry.availableDate) :  0,
                   hash: entry.hash.replace('0x','').slice(0,12)
                 }});
               }
 
-            }, 3000);
-          };
-
-          
-            
-
+            }, 1000);
+          };    
         }
       });
     } catch(e) {
@@ -83,11 +104,11 @@ Template['components_nameStatus'].onCreated(function() {
     var searched = Session.get('searched');
     TemplateVar.set(template, 'error', false);
     TemplateVar.set(template, 'loading', true);
-    console.time('lookupName');
+    // console.time('lookupName');
     setTimeout(function() {
-      console.log('timeout')
+      // console.log('timeout')
       TemplateVar.set(template, 'loading', false);
-      console.timeEnd('lookupName');
+      // console.timeEnd('lookupName');
     }, 10000);
     lookupName(searched);
   })
@@ -112,7 +133,7 @@ Template['components_nameStatus'].helpers({
     }, 
     publicAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}, mode: {$nin: ['forbidden', 'not-yet-available']}},{sort: {registrationDate: -1}, limit: 100});
     },
     showExpiring() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
@@ -123,10 +144,13 @@ Template['components_nameStatus'].helpers({
       return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 100});
     }, 
     knownNamesRegistered() {
-      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
+    },
+    availableNow() {
+      return  Names.find({availableDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}, mode: 'open'},{sort: {availableDate: -1}, limit: 100}).fetch();
     }, 
     namesRegistered() {
-      return Names.find({value: {$gt:0}}).count();
+      return Names.find({value: {$gt:0}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}}).count();
     }, 
     hasAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
@@ -225,5 +249,28 @@ Template['aside-reveal'].helpers({
   highestBid() {
     var val = Template.instance().data.entry.highestBid;
     return web3.fromWei(val, 'ether');
+  }
+})
+
+
+Template['status-not-yet-available'].helpers({
+  availableDate() {
+    // console.log('getAvailableDate: ', Template.instance().data.entry);    
+    var date = new Date(Template.instance().data.entry.availableDate * 1000);
+    return date.toLocaleString();  
+  }
+})
+
+
+Template['aside-not-yet-available'].helpers({
+  availableCountdown() {
+    var m = moment(Template.instance().data.entry.availableDate * 1000);
+    if (m.diff(moment(), 'days') > 1)
+      return Math.floor(m.diff(moment(), 'minutes')/(24*60)) + ' days ' + Math.floor(m.diff(moment(), 'minutes')/60)%60 + ' hours';
+    else if (m.diff(moment(), 'hours') > 1)
+      return Math.floor(m.diff(moment(), 'minutes')/60)%60 + 'h ';
+    else
+      return 'less than an hour';
+
   }
 })

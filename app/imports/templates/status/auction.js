@@ -46,7 +46,10 @@ Template['status-auction'].events({
     } else {
       TemplateVar.set(template, 'bidding-' + name, true)
       let owner = web3.eth.accounts[0];
+      console.log('bidFactory', bidAmount);
       registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
+        console.log('bidFactory error', err);
+
         if(err != undefined) throw err;
 
         console.log('Bid: ', bid);
@@ -112,12 +115,12 @@ Template['status-auction'].helpers({
   anonymizerAmount() {
     let mainAccount = web3.eth.accounts[0];
     web3.eth.getBalance(mainAccount, function(e, balance) { 
-        TemplateVar.set(template, 'maxAmount', web3.fromWei(balance, 'ether').toFixed());
+        TemplateVar.set(template, 'maxAmount', Math.min(web3.fromWei(balance, 'ether').toFixed(), TemplateVar.get(template, 'bidAmount')*1000 : 100 ));
     });
 
     let maxAmount = TemplateVar.get(template, 'maxAmount');
 
-    let amount = Math.floor(10 * (maxAmount * Math.pow(TemplateVar.get('anonymizer'), 3)))/10;
+    let amount = Math.floor(100 * (maxAmount * Math.pow(TemplateVar.get('anonymizer'), 3)))/100;
     TemplateVar.set('anonymizerAmount', amount);
     return amount;
   },
