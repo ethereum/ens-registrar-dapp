@@ -115,7 +115,7 @@ Template['status-auction'].helpers({
   anonymizerAmount() {
     let mainAccount = web3.eth.accounts[0];
     web3.eth.getBalance(mainAccount, function(e, balance) { 
-        TemplateVar.set(template, 'maxAmount', web3.fromWei(balance, 'ether').toFixed());
+        TemplateVar.set(template, 'maxAmount', Math.min(web3.fromWei(balance, 'ether').toFixed(), TemplateVar.get(template, 'bidAmount')*1000 : 100 ));
     });
 
     let maxAmount = TemplateVar.get(template, 'maxAmount');

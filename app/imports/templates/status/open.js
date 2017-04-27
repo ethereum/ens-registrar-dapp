@@ -7,7 +7,7 @@ Template['status-open'].events({
     let template = Template.instance();
     var launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(13*7*24*60*60);
 
-    console.log('registryStarted', launchRatio, registrar.registryStarted.toFixed());
+    // console.log('registryStarted', launchRatio, registrar.registryStarted.toFixed());
     // The goal here is to obscure the names we actually want
     function randomName() {
       // gets a random name from our preimage hash
