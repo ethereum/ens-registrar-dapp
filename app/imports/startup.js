@@ -13,6 +13,8 @@ import './templates/components/address.html';
 import './templates/components/address.js';
 import './templates/components/nameLink.html';
 import './templates/components/nameLink.js';
+import './templates/components/newBid.html';
+import './templates/components/newBid.js';
 import './templates/components/explainerBody.html';
 import './templates/components/explainerBody.js';
 import './templates/components/noNode.html';

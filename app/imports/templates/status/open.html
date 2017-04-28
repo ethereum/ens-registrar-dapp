@@ -10,18 +10,20 @@
 
         {{#if hasNode}}
   
-          <p><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
-          {{#if TemplateVar.get 'agree'}}
-          <button type="submit" class="dapp-block-button open-auction" disabled={{opening}}> 
+          {{>components_newBid}}
+
+          <p>
+          Or..
+          </p>
+
+          <button type="submit" class="open-auction" disabled={{opening}}> 
             {{#if opening}}
               Opening...
             {{else}}
-              Open auction
+              Just open, don't bid now
             {{/if}}
           </button>
-          {{else}}
-              <button type="submit" class="dapp-block-button open-auction" disabled='true'> Open Auction </button> 
-          {{/if}}
+          
 
         {{else}}
         {{> components_noNode}}
