@@ -15,8 +15,7 @@
   {{else}}
     <div class="col-md-8">
 
-        <h1> Register an Ethereum Name</h1> 
-
+        <h1> Check availability of an Ethereum Name</h1> 
 
         {{#if showStats}}
         <ul class="big-numerals">
@@ -31,6 +30,12 @@
             </li>
         </ul>
         {{/if}}
+
+        {{#if isMainNetwork}}
+          <p><strong>ENS is not yet live on the main net. Names will start to become available on May 4th</strong></p>
+        {{else}}
+          <p><strong>You are NOT on the main Network, but on the {{TemplateVar.get 'network'}} network. Names bought here are not valid on the main net.</strong></p>
+        {{/if}}
         
         {{> component_explainerBody}}
 
@@ -39,6 +44,7 @@
         {{> components_noNode}}
         {{/unless}}  
 
+        {{#if availableNow}}
         <br>
         <h3> Available Now </h3>
 
@@ -51,6 +57,7 @@
               </li>
             {{/each}}
         </ul>
+        {{/if}}
 
 
         {{#if hasAuctions}}

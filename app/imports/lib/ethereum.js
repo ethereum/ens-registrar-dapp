@@ -76,9 +76,6 @@ export default ethereum = (function() {
             break;
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
-            EthElements.Modal.question({
-              text: "<h3> The ENS is not yet live </h3> Names will slowly become available after May 4th"
-            });
             ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
             resolve();
             reject(errors.invalidNetwork);
