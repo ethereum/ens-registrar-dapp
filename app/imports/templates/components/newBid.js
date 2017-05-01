@@ -9,7 +9,6 @@ Template['components_newBid'].onRendered(function() {
   let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
   let name = Session.get('searched');
 
-  // console.log('registryStarted', launchRatio, registrar.registryStarted.toFixed());
   // The goal here is to obscure the names we actually want
   function randomName() {
     // gets a random name from our preimage hash
