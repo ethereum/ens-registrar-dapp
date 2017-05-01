@@ -39,12 +39,7 @@ Template['components_newBid'].onCreated(function() {
   }
 
   function createDummyHashes(){
-    // var mode = Names.findOne({name: name}).mode;
-
-    console.log('\n\nname??', name, Names.findOne({name: name}));
-    // console.log('Is name open?', mode == 'auction', mode, name);
     let hashedName = '0x' + web3.sha3(name).replace('0x','')
-
     if (Names.findOne({name: name}).mode == 'auction') { 
       // If the name is already open, just create some dummy hashes
       var dummyHashes = [randomHash(), randomName(), randomMix()];
@@ -57,10 +52,7 @@ Template['components_newBid'].onCreated(function() {
       var dummyHashes = [randomName(), randomMix(), hashedName];
     }
     
-    console.log('dummyHashes', dummyHashes);
-
     TemplateVar.set(template, 'dummyHashes', dummyHashes);
-
   }
 
   setInterval(() => {
