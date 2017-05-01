@@ -6,6 +6,69 @@ var template;
 Template['components_newBid'].onCreated(function() {
   template = this;
   TemplateVar.set(template, 'anonymizer', 0.5);
+  let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
+  let name = Session.get('searched');
+
+  // console.log('registryStarted', launchRatio, registrar.registryStarted.toFixed());
+  // The goal here is to obscure the names we actually want
+  function randomName() {
+    // gets a random name from our preimage hash
+    return '0x' + web3.sha3(knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)]).replace('0x','');
+  }
+
+  function randomHash() {
+    // gets a random hash
+    var randomHex = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+          .times(launchRatio.toString())
+          .times(Math.random().toString())
+          .floor().toString(16);
+
+    var padding = '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+    return padding.slice(0, 66 - randomHex.length) + randomHex;
+  }
+
+  function randomMix() {
+    // gets a random name we know about
+    var availableNow = _.pluck(Names.find({mode:'open', name:{$not: name}, availableDate: {$lt: Date.now()/1000}}).fetch(), 'name');
+    if ( Math.random() * 20 < availableNow.length ) {
+      return '0x' + web3.sha3(availableNow[Math.floor(Math.random()*availableNow.length)]).replace('0x','')
+    } else {
+      return Math.random() > 0.5 ? randomHash() : randomName();
+    }
+  }
+
+  function createDummyHashes(){
+    // var mode = Names.findOne({name: name}).mode;
+
+    console.log('\n\nname??', name, Names.findOne({name: name}));
+    // console.log('Is name open?', mode == 'auction', mode, name);
+    let hashedName = '0x' + web3.sha3(name).replace('0x','')
+
+    if (Names.findOne({name: name}).mode == 'auction') { 
+      // If the name is already open, just create some dummy hashes
+      var dummyHashes = [randomHash(), randomName(), randomMix()];
+
+    } else if (knownNames.indexOf(name) > 0) {
+      // if the name is in the dictionary add a hash that isn't 
+      var dummyHashes = [randomHash(), randomMix(), hashedName];
+    } else {
+      // Otherwise, add a name that is
+      var dummyHashes = [randomName(), randomMix(), hashedName];
+    }
+    
+    console.log('dummyHashes', dummyHashes);
+
+    TemplateVar.set(template, 'dummyHashes', dummyHashes);
+
+  }
+
+  setInterval(() => {
+    if (typeof knownNames !== 'undefined' && !TemplateVar.get(template, 'dummyHashes')) {
+      createDummyHashes()
+    }
+  }, 1000);
+
 });
 
 Template['components_newBid'].events({
@@ -59,15 +122,18 @@ Template['components_newBid'].events({
         }, bid));
 
         Names.upsert({name: name}, {$set: { watched: true}});
-          
-        registrar.submitBid(bid, {
-          value: depositAmount, 
-          from: owner,
-          gas: 500000
-        }, Helpers.getTxHandler({
-          onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-          onSuccess: () => updatePendingBids(name)
-        }));
+
+        var dummyHashes = TemplateVar.get(template, 'dummyHashes')
+
+        registrar.submitBid(bid, dummyHashes,  {
+            value: depositAmount, 
+            from: owner,
+            gas: 900000
+          }, Helpers.getTxHandler({
+            onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
+            onSuccess: () => updatePendingBids(name)
+          }));        
+
       });
     }
   },

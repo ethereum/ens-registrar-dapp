@@ -15,13 +15,11 @@
 
         {{else}}
 
-        {{#if hasNode}}
-
-          {{>components_newBid}}
-  
-        {{else}}
-        {{> components_noNode}}
-        {{/if}}
+          {{#if hasNode}}
+            {{>components_newBid}}
+          {{else}}
+            {{> components_noNode}}
+          {{/if}}
 
         {{/if}}
           
