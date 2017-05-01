@@ -217,10 +217,10 @@
     <p>Owned by: {{> components_address addr=owner}}</p>
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
 
-    <p> <strong> Before any changes can be done to the name, this name needs to be finalized by the owner which will send them a refund {{refund}} ether to the owner.</strong></p>
+    <p> <strong> Before any changes can be done to the name, the owner of this name needs to be finalized which can send them a refund {{refund}} ether to them.</strong></p>
 
     {{#if hasNode}}
-    {{> finalizeButton }}
+    {{> finalizeButton owner=owner}}
     {{else}}
     {{> components_noNode}}
     {{/if}}    

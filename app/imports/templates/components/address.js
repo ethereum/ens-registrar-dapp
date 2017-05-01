@@ -50,10 +50,12 @@ Template['components_address'].helpers({
     return TemplateVar.get('name');
   },
   addrHead() {
-    return Template.instance().data.addr.slice(2,-8)
+    let address = Template.instance().data.addr || '0x0000000000000000000000000000000000000000'
+    return address.slice(2,-8)
   },
   addrTail() {
-    return Template.instance().data.addr.slice(-8)
+    let address = Template.instance().data.addr || '0x0000000000000000000000000000000000000000'    
+    return address.slice(-8)
   }
 })
 

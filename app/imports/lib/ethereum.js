@@ -196,17 +196,17 @@ export default ethereum = (function() {
 
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
-                console.log('\n Watched name registered!', name, result.args.hash, result.args.now.toFixed());
+                console.log('\n Watched name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name registered!', name, result.args.hash, result.args.now.toFixed());
+                console.log('\n Known name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               }
         
               Names.upsert({hash: hash}, 
                 { $set: { 
                   name: name ? name : null,
                   fullname: name ? name + '.eth' : null,
-                  registrationDate: Number(result.args.now.toFixed()),
+                  registrationDate: Number(result.args.registrationDate.toFixed()),
                   value: value,
                   public: name && name.length > 0
                 }});

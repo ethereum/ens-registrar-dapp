@@ -3,7 +3,7 @@ import Helpers from '/imports/lib/helpers/helperFunctions';
 import { updatePendingBids } from '/imports/lib/bids';
 var template;
 
-Template['components_newBid'].onCreated(function() {
+Template['components_newBid'].onRendered(function() {
   template = this;
   TemplateVar.set(template, 'anonymizer', 0.5);
   let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
@@ -53,6 +53,8 @@ Template['components_newBid'].onCreated(function() {
     }
     
     TemplateVar.set(template, 'dummyHashes', dummyHashes);
+
+    // console.log('dummyHashes', Names.findOne({name: name}), dummyHashes, _.map(dummyHashes, (e)=>{ return binarySearchNames(e)}), _.map(dummyHashes, (e)=>{ return Names.findOne({hash: e.slice(2,14)})}));
   }
 
   setInterval(() => {
