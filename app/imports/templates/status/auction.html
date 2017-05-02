@@ -2,9 +2,7 @@
     <div>
       <h1 class="domain-name"><strong>{{name}}</strong> is open for bids</h1>
  
-          <p>
-            You bid by submitting the maximum amount of ether you would be willing to lock in order to hold for this name. The top bidder will own the name, but you will be refunded of any amount more than the strictly necessary to overbid the second place, therefore you only need to bid once. Your maximum bid is kept secret until you reveal it.
-          </p>
+        {{>component_explainerBid}}
 
         {{#if hasBids}}
           <h3>Your bids</h3>
@@ -15,43 +13,11 @@
 
         {{else}}
 
-        {{#if hasNode}}
-  
-          <form class="new-bid">
-
-          <br><h3>How much you value this name?</h3>          
-          <p>
-            Send the maximum amount of value you would be willing to lock for this name:<br>
-            <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*">
-          </p>
-          <br>
-          <h3>Protect Bid anonimity</h3>
-          <div class="dapp-selector">
-            Keep the bid secret, send an extra random amount up to <span>{{anonymizerAmount}}<span> Ether</span></span> 
-            <br>
-            <input type="range" name="anonymizer" min="0" max="1" step="0.01" value="{{TemplateVar.get 'anonymizer'}}">
-            <span>Cheap</span>
-            <span>Private</span>
-          </div>
-          <br>
-          <p class="clear"><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
-          <p class="clear">
-          {{#if TemplateVar.get 'agree'}}
-          <button type="submit" class="dapp-block-button" disabled="{{bidding}}">
-            {{#if bidding}}
-              Bidding...
-            {{else}}
-              Bid
-            {{/if}}
-          </button>  
+          {{#if hasNode}}
+            {{>components_newBid}}
           {{else}}
-          <button type="submit" class="dapp-block-button" disabled="true"> Bid </button>
-          {{/if}}          
-          </p>
-        </form>
-        {{else}}
-        {{> components_noNode}}
-        {{/if}}
+            {{> components_noNode}}
+          {{/if}}
 
         {{/if}}
           

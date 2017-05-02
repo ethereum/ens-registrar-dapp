@@ -31,14 +31,16 @@ function getPublicAddrResolver() {
 }
 
 Template['status-owned'].onCreated(function() {
+  
+  TemplateVar.set(this, 'owner', null);
+  TemplateVar.set(this, 'address', null);
+  TemplateVar.set(this, 'content', null);
+  TemplateVar.set(this, 'hasSetResolver', false);
+
   this.autorun(() => {
     const {name, entry} = Template.currentData();
     
     TemplateVar.set(this, 'entryData', entry);
-    TemplateVar.set(this, 'owner', null);
-    TemplateVar.set(this, 'address', null);
-    TemplateVar.set(this, 'content', null);
-    TemplateVar.set(this, 'hasSetResolver', false);
     ens.owner(name, (err, res) => {
       if (!err) {
         TemplateVar.set(this, 'owner', res);

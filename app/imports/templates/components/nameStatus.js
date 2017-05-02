@@ -274,8 +274,8 @@ Template['aside-reveal'].helpers({
 Template['status-not-yet-available'].helpers({
   availableDate() {
     // console.log('getAvailableDate: ', Template.instance().data.entry);    
-    var date = new Date(Template.instance().data.entry.availableDate * 1000);
-    return date.toLocaleString();  
+    var m = moment(Template.instance().data.entry.availableDate * 1000);
+    return m.format('MMMM Do YYYY, HH:mm'); // April 28th 2017, 12:26:11 pm
   }
 })
 
