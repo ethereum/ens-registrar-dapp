@@ -14,7 +14,6 @@ Template['components_newBid'].onRendered(function() {
       var depositAmount = Math.floor(100*Math.random() * Math.min(maxAmount, 1))/100;
       TemplateVar.set(template, 'maxAmount', maxAmount);
       TemplateVar.set(template, 'depositAmount', depositAmount);
-
     });
   }
 

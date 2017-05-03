@@ -55,8 +55,6 @@ Template['components_nameStatus'].onCreated(function() {
             })
           }
 
-          // console.log('this entry:', entry.name, entry);
-
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
@@ -178,7 +176,7 @@ Template['components_nameStatus'].helpers({
       return LocalStore.get('hasNode');
     },
     showStats() {
-      return Names.find({value: {$gt:0}}).count() > 5;
+      return Names.find({value: {$gt:0}}).count() > 50;
     },
     isMainNetwork(){
       return TemplateVar.get('network') == 'main';
@@ -247,7 +245,7 @@ Template['status-not-yet-available'].helpers({
 Template['aside-not-yet-available'].helpers({
   availableCountdown() {
     if (Template.instance().data == null) return;
-    
+
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     if (m.diff(moment(), 'days') > 1)
       return Math.floor(m.diff(moment(), 'minutes')/(24*60)) + ' days ' + Math.floor(m.diff(moment(), 'minutes')/60)%24 + ' hours';
