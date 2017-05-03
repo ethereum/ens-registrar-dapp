@@ -235,7 +235,9 @@ Template['aside-reveal'].helpers({
 
 Template['status-not-yet-available'].helpers({
   availableDate() {
-    // console.log('getAvailableDate: ', Template.instance().data.entry);    
+    // console.log('getAvailableDate: ', Template.instance().data.entry); 
+    if (Template.instance().data == null) return;
+
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     return m.format('MMMM Do YYYY, HH:mm'); // April 28th 2017, 12:26:11 pm
   }
@@ -244,6 +246,8 @@ Template['status-not-yet-available'].helpers({
 
 Template['aside-not-yet-available'].helpers({
   availableCountdown() {
+    if (Template.instance().data == null) return;
+    
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     if (m.diff(moment(), 'days') > 1)
       return Math.floor(m.diff(moment(), 'minutes')/(24*60)) + ' days ' + Math.floor(m.diff(moment(), 'minutes')/60)%24 + ' hours';
