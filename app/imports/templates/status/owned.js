@@ -39,7 +39,7 @@ Template['status-owned'].onCreated(function() {
 
   this.autorun(() => {
     const {name, entry} = Template.currentData();
-    
+
     TemplateVar.set(this, 'entryData', entry);
     ens.owner(name, (err, res) => {
       if (!err) {
@@ -75,6 +75,12 @@ Template['status-owned'].helpers({
   owner() {
     return TemplateVar.get('owner')
   },
+  hasOwner() {
+    return Number(TemplateVar.get('owner')) > 0;
+  },
+  deedOwner() {
+    return TemplateVar.get('entryData').deed.owner;
+  },
   isMine() {
     const owner = TemplateVar.get('owner');
     return web3.eth.accounts.filter((acc) => acc == owner).length > 0;
@@ -92,13 +98,13 @@ Template['status-owned'].helpers({
 
     return Date.now() > releaseDate;
   },
-  deedValue() {
-    var val = TemplateVar.get('entryData').deed.balance;
-    return web3.fromWei(val.toFixed(), 'ether');
+  finalValue() {
+    var val = TemplateVar.get('entryData').value;
+    return Math.max(web3.fromWei(val.toFixed(), 'ether'), 0.01);
   },
-  deedValueIsMin() {
-    var val = TemplateVar.get('entryData').deed.balance;
-    return val.toFixed() == 10000000000000000;
+  noBids() {
+    var val = TemplateVar.get('entryData').value;
+    return val.toFixed() <= 10000000000000000;
   },
   renewalDate() {
     var years = 365 * 24 * 60 * 60 * 1000;
@@ -125,6 +131,19 @@ Template['status-owned'].helpers({
   hasBids() {
     const name = Session.get('searched');
     return MyBids.find({name: name, revealed: false}).count() > 0 ;
+  },
+  hasNode() {
+    return LocalStore.get('hasNode');
+  },
+  needsFinalization() {
+    var entry = TemplateVar.get('entryData');
+    var owner = TemplateVar.get('owner');
+    return owner != entry.deed.owner;
+  },
+  refund() {
+    var deed = new BigNumber(Template.instance().data.entry.deed.balance);
+    var value = new BigNumber(Template.instance().data.value || 10000000000000000);
+    return web3.fromWei( deed.minus(value).toFixed(), 'ether');
   }
 })
 
@@ -233,8 +252,8 @@ Template['status-owned'].events({
 });
 
 Template['aside-owned'].helpers({
-  deedValue() {
-    var val = Template.instance().data.entry.deed.balance;
-    return web3.fromWei(val.toFixed(), 'ether');
-  }
+  finalValue() {
+    var val = Number(Template.instance().data.entry.value);
+    return Math.max(web3.fromWei(val, 'ether'), 0.01);
+  }  
 })

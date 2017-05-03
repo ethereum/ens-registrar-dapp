@@ -10,7 +10,8 @@
       <div class="dapp-selector">
         Keep the bid secret, send an extra random amount up to <span>{{anonymizerAmount}}<span> Ether</span></span> 
         <br>
-        <input type="range" name="anonymizer" min="0" max="1" step="0.01" value="{{TemplateVar.get 'anonymizer'}}">
+        <input type="text" min="0.01" step="0.1" name="bidDeposit" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*">
+        
         <span>Cheap</span>
         <span>Private</span>
       </div>

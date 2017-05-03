@@ -40,35 +40,28 @@ Template['components_nameStatus'].onCreated(function() {
           }
 
           if (entry.mode == 'not-yet-available') {
-
             registrar.getAllowedTime(name, (err, timestamp) => {
               entry.availableDate = timestamp.toFixed();
-              // console.log('not-yet-available! ', timestamp.toFixed(), entry);
 
               TemplateVar.set(template, 'nameInfo', {
                 name: entry.name + '.eth',
                 entry
               })
             });
-
           } else {
-            // console.log('available! ', entry);
-
             TemplateVar.set(template, 'nameInfo', {
               name: entry.name + '.eth',
               entry
             })
-
           }
 
-          // console.log('this entry', entry.name, entry.mode);
+          // console.log('this entry:', entry.name, entry);
 
           TemplateVar.set(template, 'name', entry.name);
           TemplateVar.set(template, 'status', 'status-' + entry.mode);
           TemplateVar.set(template, 'aside', 'aside-' + entry.mode);
           
           // console.timeEnd('lookupName');
-
 
           Session.set('name', entry.name);
           if (entry.name) {
@@ -89,17 +82,17 @@ Template['components_nameStatus'].onCreated(function() {
             // To prevent too many writes, add a timer and only save to the database after a few seconds
             clearTimeout(timeout);
             timeoutName = name;
-            // console.log('update name', name, entry);
 
             timeout = setTimeout(function() {
               if (name === Session.get('searched')) {
-                console.log('upsert', name, entry.availableDate);
+                var value = entry.mode == 'owned' ? Math.max(Number(web3.fromWei(entry.value.toFixed(), 'ether')), 0.01) : 0;
 
+                console.log('upsert', name, value);
                 Names.upsert({name: name}, {$set: {
                   fullname: name + '.eth',
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
-                  value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+                  value: value, 
                   highestBid: entry.highestBid, 
                   availableDate: entry.availableDate ? Number(entry.availableDate) :  0,
                   hash: entry.hash.replace('0x','').slice(0,12)
@@ -161,9 +154,6 @@ Template['components_nameStatus'].helpers({
     knownNamesRegistered() {
       return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 100});
     },
-    availableNow() {
-      return  Names.find({availableDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}, mode: 'open'},{sort: {availableDate: -1}, limit: 100}).fetch();
-    }, 
     namesRegistered() {
       return Names.find({value: {$gt:0}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}}).count();
     }, 
@@ -188,7 +178,7 @@ Template['components_nameStatus'].helpers({
       return LocalStore.get('hasNode');
     },
     showStats() {
-      return Names.find({value: {$gt:0}}).count() > 50;
+      return Names.find({value: {$gt:0}}).count() > 5;
     },
     isMainNetwork(){
       return TemplateVar.get('network') == 'main';
@@ -203,34 +193,6 @@ Template['aside-forbidden-can-invalidate'].helpers({
   invalidatorFee() {
     var val = Template.instance().data.entry.deed.balance;
     return web3.fromWei(val ? val.toFixed()/2 : 0, 'ether');
-  },
-  hasNode() {
-    return LocalStore.get('hasNode');
-  }
-})
-
-
-Template['status-finalize'].helpers({
-  owner() {
-    return Template.instance().data.entry.deed.owner;
-  },
-  refund() {
-    var deed = new BigNumber(Template.instance().data.entry.deed.balance);
-    var value = new BigNumber(Template.instance().data.value || 10000000000000000);
-    return web3.fromWei( deed.minus(value).toFixed(), 'ether');
-  },
-  registrationDate() {
-    var date = new Date(Template.instance().data.entry.registrationDate * 1000);
-    return date.toLocaleString();
-  },
-  renewalDate() {
-    var years = 365 * 24 * 60 * 60 * 1000;
-    var date = new Date(Template.instance().data.entry.registrationDate * 1000 + 2 * years);
-    return date.toLocaleDateString();
-  },
-  highestBid() {
-    var val = Template.instance().data.entry.highestBid;
-    return web3.fromWei(val, 'ether');
   },
   hasNode() {
     return LocalStore.get('hasNode');
