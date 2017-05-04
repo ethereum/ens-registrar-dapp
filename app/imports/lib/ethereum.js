@@ -156,9 +156,8 @@ export default ethereum = (function() {
 
       return new Promise((resolve, reject) => {
         var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: lastBlockLooked});
-
-        // event HashRegistered(bytes32 indexed hash, address indexed owner, uint value, uint now);
         var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: lastBlockLooked});
+        var BidRevealedEvent = registrar.contract.BidRevealed({}, {fromBlock: lastBlockLooked});
 
         AuctionStartedEvent.watch(function(error, result) {
           if (!error) {            
@@ -211,7 +210,29 @@ export default ethereum = (function() {
                   public: name && name.length > 0
                 }});
           } 
-        });      
+        }); 
+
+        BidRevealedEvent.watch(function(error, result) {
+          if (!error) {
+            // console.log('Bid Revealed', result);
+            var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
+            var status = Number(result.args.status.toFixed());
+            var hash = result.args.hash.replace('0x','').slice(0,12);
+            var bidder = result.args.owner.slice(2,10);
+            
+            if (Names.findOne({hash: hash, watched: true})) {
+              name = Names.findOne({hash: hash}).name;
+              var statusMessage = [
+                'but it revealed after the auction ended or it was below min price.',
+                'but it revealed after the auction ended.',
+                'and was the highest bid at time of reveal',
+                'but there was already only the second higher bidder',
+                'but there was already more than two higher bidders',
+              ];
+              console.log('\n Bid Revealed for', name + '; Account', bidder, 'was willing to pay', value, 'ether,', statusMessage[status]);
+            }
+          }
+        })
 
         resolve(); 
       })
@@ -285,8 +306,8 @@ export default ethereum = (function() {
                 var badge = m.fromNow(true);
             } else {
                 if ( MyBids.find({name: e.name, revealed: { $not: true }}).count() > 0) {
-                    var badge = '🚨';
-                    mist.menu.setBadge('🚨 Bids expire soon');
+                    var badge = 'Reveal now!';
+                    mist.menu.setBadge('Some bids to expire soon');
                 }
             }
 
@@ -309,11 +330,9 @@ export default ethereum = (function() {
           // any name I'm watching that is still on auction
           {registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},
           // any name whose registration date has passed and isn't finalized
-          {mode: {$nin: ['open', 'owned', 'not-yet-available']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
-          // any name not yet available
-          {mode: 'not-yet-available', name:{$gt: ''}, watched: true},
-          // any name registered before this registrar was live
-          {registrationDate: {$lt: 1492700000}, name:{$gt: ''}}
+          {mode: {$nin: ['open', 'owned', 'not-yet-available', 'forbidden']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
+          // any name registered before this registrar was live (cleans bad data)
+          {registrationDate: {$gt:0, $lt: 1492700000}, name:{$gt: ''}},
           ]}, {limit:100}).fetch();
 
       console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));

@@ -3,7 +3,6 @@ import ethereum from '/imports/lib/ethereum';
 import Helpers from '/imports/lib/helpers/helperFunctions';
 
 function updateRevealedStatus(template, bid) {
-  console.log('updateRevealedStatus', bid);
   registrar.isBidRevealed(bid, (err, isRevealed) => {
     console.log('isBidRevealed callback', isRevealed, err)
     if(err) {

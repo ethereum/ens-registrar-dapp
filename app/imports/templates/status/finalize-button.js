@@ -15,7 +15,7 @@ Template['finalizeButton'].events({
     TemplateVar.set(template, 'finalizing', true);
     registrar.finalizeAuction(name, {
       from: template.data.owner,
-      gas: 1000000
+      gas: 200000
     }, Helpers.getTxHandler({
       onDone: () => TemplateVar.set(template, 'finalizing', false),
       onSuccess: () => Helpers.refreshStatus()

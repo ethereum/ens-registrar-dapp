@@ -13,7 +13,7 @@
         {{>view_names}}
     </aside>    
   {{else}}
-    <div class="col-md-8">
+    <div class="col-md-8 main-content">
 
         <h1> Check availability of an Ethereum Name</h1> 
 
@@ -31,11 +31,9 @@
         </ul>
         {{/if}}
 
-        {{#if isMainNetwork}}
-          <p><strong>ENS is not yet live on the main net. Names will start to become available on May 4th</strong></p>
-        {{else}}
+        {{#unless isMainNetwork}}
           <p><strong>You are NOT on the main Network, but on the {{TemplateVar.get 'network'}} network. Names bought here are not valid on the main net.</strong></p>
-        {{/if}}
+        {{/unless}}
         
         {{> component_explainerBody}}
 
@@ -43,22 +41,6 @@
         {{#unless hasNode}}
         {{> components_noNode}}
         {{/unless}}  
-
-        {{#if availableNow}}
-        <br>
-        <h3> Available Now </h3>
-
-        Names become available slowly.
-
-        <ul class="names">
-          {{#each auction in availableNow}}
-              <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
-              </li>
-            {{/each}}
-        </ul>
-        {{/if}}
-
 
         {{#if hasAuctions}}
         <br>
@@ -69,7 +51,13 @@
         <ul class="names">
           {{#each auction in publicAuctions}}
               <li>
-                  <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
+                  <a href='#{{auction.name}}'>
+                    {{#if auction.watched}}
+                      <strong>{{auction.fullname}}</strong>
+                    {{else}}
+                      {{auction.fullname}}
+                    {{/if}}
+                  </a> 
               </li>
             {{/each}}
         </ul>
@@ -82,7 +70,13 @@
           <ul class="names">
             {{#each auction in publicAuctionsAboutToExpire}}
                 <li>
-                    <a href='#{{auction.name}}'>{{auction.fullname}}</a> 
+                    <a href='#{{auction.name}}'>
+                    {{#if auction.watched}}
+                      <strong>{{auction.fullname}}</strong>
+                    {{else}}
+                      {{auction.fullname}}
+                    {{/if}}
+                    </a> 
                 </li>
               {{/each}}
           </ul>
@@ -97,7 +91,13 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}}'>{{auction.fullname}}</a>  
+                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}}'>
+                    {{#if auction.watched}}
+                      <strong>{{auction.fullname}}</strong>
+                    {{else}}
+                      {{auction.fullname}}
+                    {{/if}}
+                  </a>  
                     {{#if canBeInvalidated auction.name }}
                     <icon class="icon-alert">!</icon> 
                     {{/if}}
@@ -154,8 +154,6 @@
     </ul>
 </template>
 
-
-
 <template name="status-not-yet-available">
     <div>
         <h1><strong>{{name}}</strong> is not yet available</h1>
@@ -165,6 +163,9 @@
         <p>
           Once a name is requested, a period of 72 hours begins in which anyone can put a sealed bid for it and send the necessary funds (minimum of 0.01 ether). This period is followed by a 48 hour one (the "Reveal Period") in which <strong>bids must be revealed. Any bid that is not revealed during Reveal Period results in the loss of its related funds</strong>. The highest bidder after all bids are revealed during this Reveal Period becomes the registrant of the name, and the ether they sent to the contract will be refunded immediately, <strong>minus the value required to outbid the second highest bidder.</strong> The remaining funds are kept locked in a contract for at least a year, after which they can be withdrawn by the registrant upon releasing rights of use of the name. Names with registrants are controlled only by their registrants, who can transfer or release the name until it needs to be renewed.
         </p>
+
+        <button type="submit" class="dapp-block-button" disabled="true"> Cannot open now </button>
+
     </div>
 </template>
 
@@ -175,8 +176,6 @@
 
     <h1> {{availableCountdown}} </h1>
 </template>
-
-
 
 <template name="status-reveal">
     <div>
@@ -207,37 +206,3 @@
 
 </template>
 
-<template name="status-finalize">
-   <h1 class="domain-name"><strong>{{name}}</strong> is owned</h1> 
-
-    <p>
-        This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
-    </p>
-
-    <p>Owned by: {{> components_address addr=owner}}</p>
-    <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
-
-    <p> <strong> Before any changes can be done to the name, the owner of this name needs to be finalized which can send them a refund {{refund}} ether to them.</strong></p>
-
-    {{#if hasNode}}
-    {{> finalizeButton owner=owner}}
-    {{else}}
-    {{> components_noNode}}
-    {{/if}}    
-   
-</template>
-
-
-<template name='aside-finalize'>
-      {{>components_watch name=name}}
-</template>
-
-<template name="finalizeButton">
-  <button class="dapp-block-button finalize" disabled={{finalizing}}>
-    {{#if finalizing}}
-      Finalizing...
-    {{else}}
-      Finalize it 
-    {{/if}}
-  </button>
-</template>

@@ -3,17 +3,13 @@
       <br><h3>How much do you value this name?</h3>          
       <p>
         Send the maximum amount of value you would be willing to lock for this name:<br>
-        <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*">
+        <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*" value="{{TemplateVar.get 'bidAmount'}}"> <span>ether</span>
       </p>
       <br>
       <h3>Protect bid anonymity</h3>
-      <div class="dapp-selector">
-        Keep the bid secret, send an extra random amount up to <span>{{anonymizerAmount}}<span> Ether</span></span> 
+        To keep the bid secret, we strongly reccomend sending an extra amount 
         <br>
-        <input type="range" name="anonymizer" min="0" max="1" step="0.01" value="{{TemplateVar.get 'anonymizer'}}">
-        <span>Cheap</span>
-        <span>Private</span>
-      </div>
+        <input type="text" min="0.01" step="0.1" name="depositAmount" placeholder="0.01" class="deposit-amount dapp-large" value="{{depositAmount}}"> <span>ether</span>  
       <br>
       <p class="clear"><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
       <p class="clear">

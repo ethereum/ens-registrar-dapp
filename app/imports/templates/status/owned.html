@@ -7,16 +7,35 @@
 
   <p>
       This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
-  {{#if deedValueIsMin}} 
+  {{#if noBids}} 
       No other bid was above the minimum of <em>0.01 ether</em>.
   {{else}} 
-      Second highest bid was <em>{{deedValue}} ether</em>.
+      Second highest bid was <em>{{finalValue}} ether</em>.
   {{/if}}
   </p>
 
-  <p>Owned by: {{> components_address addr=owner}} </p>
-  <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
-  
+  {{#if needsFinalization}}
+
+    <p>Owned by: {{> components_address addr=deedOwner}} </p>
+    {{#if hasOwner}}
+      <p>Currently assigned to: {{> components_address addr=owner}} </p>
+    {{/if}}
+    <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
+
+    <p> <strong> Before any changes can be done to the name, the owner of this name needs to be finalized which can send them a refund {{refund}} ether to them.</strong></p>
+
+    {{#if hasNode}}
+    {{> finalizeButton owner=deedOwner}}
+    {{else}}
+    {{> components_noNode}}
+    {{/if}} 
+
+  {{else}}
+
+    <p>Owned by: {{> components_address addr=owner}} </p>
+    <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
+ 
+
   <div class="records-section">
     <h3>Records</h3>
     {{#if (TemplateVar.get 'hasSetResolver')}}
@@ -63,14 +82,14 @@
         {{#if (TemplateVar.get 'settingResolver')}}
           <button class="dapp-block-button disabled dapp-small" disabled>Setting resolver...</button>
         {{else}}
-          <button class="dapp-block-button set-resolver dapp-small">Set resolver</button>
+          <button class="dapp-block-button set-resolver dapp-small" disabled>Set resolver (not yet implemented)</button>
         {{/if}}
       {{/if}}
     {{/if}}
   </div>
 
   
-  {{#if isMine}}
+    {{#if isMine}}
     <div class="transfer-section">
         <h3>Transfer or Release</h3>
         <p>Transfer ownership of {{name}} to another account <br></p>
@@ -85,7 +104,7 @@
         {{/if}}
         <br>
         {{#if canRelease}}
-         <p>If you don't want to hold this name anymore, you can release it and get <strong>{{deedValue}} ether</strong> back. <br></p>
+         <p>If you don't want to hold this name anymore, you can release it and get <strong>{{finalValue}} ether</strong> back. <br></p>
 
         {{#if releasing}}
         <button class="dapp-block-button disabled dapp-small" disabled>Releasing...</button>
@@ -95,11 +114,12 @@
 
 
         {{else}}
-         <p>If you don't want to hold this name anymore, you'll be able to release it in <strong> {{releaseDate}}</strong> and get <strong>{{deedValue}} ether</strong> back.</p>
+         <p>If you don't want to hold this name anymore, you'll be able to release it in <strong> {{releaseDate}}</strong> and get <strong>{{finalValue}} ether</strong> back.</p>
         {{/if}}
         
     </div>
-  {{/if}}
+    {{/if}}  <!-- /if mine -->
+  {{/if}}   <!-- /if needsFinalizing -->
 
     {{#if hasBids}}
     <div class="unused-bids">
@@ -121,8 +141,18 @@
 
     <ul>
         <li>
-            <span class="big-numeral">{{deedValue}}</span> <span class="unit">ether</span> locked in this name
+            <span class="big-numeral">{{finalValue}}</span> <span class="unit">ether</span> locked in this name
         </li>
         
     </ul>
+</template>
+
+<template name="finalizeButton">
+  <button class="dapp-block-button finalize" disabled={{finalizing}}>
+    {{#if finalizing}}
+      Finalizing...
+    {{else}}
+      Finalize it 
+    {{/if}}
+  </button>
 </template>
