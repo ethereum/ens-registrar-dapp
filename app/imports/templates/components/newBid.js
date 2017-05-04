@@ -138,10 +138,15 @@ Template['components_newBid'].events({
             }));
         } else {
           console.log('Dummy hashes not working', dummyHashes);
+
+          EthElements.Modal.question({
+            text: 'Bid failed, please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
+            ok: true
+          });
+
           TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);         
           return;
-        }       
-
+        }
       });
     }
   },

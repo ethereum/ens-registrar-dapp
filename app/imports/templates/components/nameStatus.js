@@ -249,7 +249,7 @@ Template['aside-not-yet-available'].helpers({
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     if (m.diff(moment(), 'days') > 1)
       return Math.floor(m.diff(moment(), 'minutes')/(24*60)) + ' days ' + Math.floor(m.diff(moment(), 'minutes')/60)%24 + ' hours';
-    else if (m.diff(moment(), 'hours') > 1)
+    else if (m.diff(moment(), 'hours') >= 1)
       return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ';
     else
       return 'less than an hour';

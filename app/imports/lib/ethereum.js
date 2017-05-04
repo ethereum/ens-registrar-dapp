@@ -163,15 +163,17 @@ export default ethereum = (function() {
           if (!error) {            
               LocalStore.set('lastBlockLooked', result.blockNumber);
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var name;
+              var name, mode;
 
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
+                mode = Names.findOne({hash: hash}).mode;
                 console.log('\n Watched name auction started!', name);
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
                 console.log('\n Known name auction started!', name);
               }
+
 
               if (name) {
                 Names.upsert({name: name}, 
@@ -179,6 +181,7 @@ export default ethereum = (function() {
                     fullname: name + '.eth',
                     registrationDate: Number(result.args.registrationDate.toFixed()),
                     hash: hash,
+                    mode: mode || 'open',
                     public: true
                   }})
               }
@@ -189,12 +192,13 @@ export default ethereum = (function() {
           if (!error) {
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var name;
+              var name, mode;
               
               LocalStore.set('lastBlockLooked', result.blockNumber);
 
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
+                mode = Names.findOne({hash: hash}).mode;                
                 console.log('\n Watched name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
@@ -207,6 +211,7 @@ export default ethereum = (function() {
                   fullname: name ? name + '.eth' : null,
                   registrationDate: Number(result.args.registrationDate.toFixed()),
                   value: value,
+                  mode: mode || 'owned',                  
                   public: name && name.length > 0
                 }});
           } 
