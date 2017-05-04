@@ -7,6 +7,7 @@ Template['components_newBid'].onRendered(function() {
   template = this;
   TemplateVar.set(template, 'anonymizer', 0.5);
   let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
+  console.log('launchRatio', launchRatio);
 
   if (web3.eth.accounts.length > 0 ){
     web3.eth.getBalance(web3.eth.accounts[0], function(e, balance) { 
@@ -66,10 +67,11 @@ Template['components_newBid'].onRendered(function() {
       
       TemplateVar.set(template, 'dummyHashes', dummyHashes);
 
-      // console.log('dummyHashes', Names.findOne({name: name}), dummyHashes, _.map(dummyHashes, (e)=>{ return binarySearchNames(e)}), _.map(dummyHashes, (e)=>{ return Names.findOne({hash: e.slice(2,14)})}));
+      console.log('dummyHashes', Names.findOne({name: name}), dummyHashes, _.map(dummyHashes, (e)=>{ return binarySearchNames(e)}), _.map(dummyHashes, (e)=>{ return Names.findOne({hash: e.slice(2,14)})}));
     };
   
-    createDummyHashes(name)
+    console.log('name:', name);
+    createDummyHashes(name);
 
   });
 
@@ -125,15 +127,20 @@ Template['components_newBid'].events({
         Names.upsert({name: name}, {$set: { watched: true}});
 
         var dummyHashes = TemplateVar.get(template, 'dummyHashes')
-
-        registrar.submitBid(bid, dummyHashes,  {
-            value: depositAmount, 
-            from: owner,
-            gas: 900000
-          }, Helpers.getTxHandler({
-            onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-            onSuccess: () => updatePendingBids(name)
-          }));        
+        if (dummyHashes && dummyHashes.length == 3) {
+          registrar.submitBid(bid, dummyHashes,  {
+              value: depositAmount, 
+              from: owner,
+              gas: 900000
+            }, Helpers.getTxHandler({
+              onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
+              onSuccess: () => updatePendingBids(name)
+            }));
+        } else {
+          console.log('Dummy hashes not working', dummyHashes);
+          TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);         
+          return;
+        }       
 
       });
     }
