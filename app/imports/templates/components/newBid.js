@@ -18,60 +18,69 @@ Template['components_newBid'].onRendered(function() {
     });
   }
 
+  // The goal here is to obscure the names we actually want
+  function randomName() {
+    if (typeof knownNames !== "undefined") {
+      // gets a random name from our preimage hash
+      return '0x' + web3.sha3(knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)]).replace('0x','');
+    } else {
+      return randomMix();
+    }
+    
+  }
+
+  function randomHash() {
+    // gets a random hash
+    var randomHex = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+          .times(launchRatio.toString())
+          .times(Math.random().toString())
+          .floor().toString(16);
+
+    var padding = '0x0000000000000000000000000000000000000000000000000000000000000000';
+
+    return padding.slice(0, 66 - randomHex.length) + randomHex;
+  }
+
+  function randomMix() {
+    // gets a random name we know about
+    var availableNow = _.pluck(Names.find({mode:'open', name:{$not: name}, availableDate: {$lt: Date.now()/1000}}).fetch(), 'name');
+    if ( Math.random() * 20 < availableNow.length ) {
+      return '0x' + web3.sha3(availableNow[Math.floor(Math.random()*availableNow.length)]).replace('0x','')
+    } else {
+      return Math.random() > 0.5 ? randomHash() : randomName();
+    }
+  }
+
+  function createHashesArray(name){
+    let hashedName = '0x' + web3.sha3(name).replace('0x','')
+    let entry = Names.findOne({name: name});
+    if (entry && entry.mode && entry.mode == 'auction') { 
+      // If the name is already open, just create some dummy hashes
+      var hashesArray = [randomHash(), randomName(), randomMix()];
+
+    } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > 0) {
+      // if the name is in the dictionary add a hash that isn't 
+      var hashesArray = [randomHash(), randomMix(), hashedName];
+    } else {
+      // Otherwise, add a name that is
+      var hashesArray = [randomName(), randomMix(), hashedName];
+    }
+    
+    TemplateVar.set(template, 'hashesArray', hashesArray);
+
+    console.log('hashesArray', name, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}));
+  };
+
+  let name = Session.get('searched');
+  console.log('name:', name);
+  createHashesArray(name);
+
   this.autorun(() => {
 
     let name = Session.get('searched');
-
-    // The goal here is to obscure the names we actually want
-    function randomName() {
-      // gets a random name from our preimage hash
-      return '0x' + web3.sha3(knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)]).replace('0x','');
-    }
-
-    function randomHash() {
-      // gets a random hash
-      var randomHex = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-            .times(launchRatio.toString())
-            .times(Math.random().toString())
-            .floor().toString(16);
-
-      var padding = '0x0000000000000000000000000000000000000000000000000000000000000000';
-
-      return padding.slice(0, 66 - randomHex.length) + randomHex;
-    }
-
-    function randomMix() {
-      // gets a random name we know about
-      var availableNow = _.pluck(Names.find({mode:'open', name:{$not: name}, availableDate: {$lt: Date.now()/1000}}).fetch(), 'name');
-      if ( Math.random() * 20 < availableNow.length ) {
-        return '0x' + web3.sha3(availableNow[Math.floor(Math.random()*availableNow.length)]).replace('0x','')
-      } else {
-        return Math.random() > 0.5 ? randomHash() : randomName();
-      }
-    }
-
-    function createDummyHashes(name){
-      let hashedName = '0x' + web3.sha3(name).replace('0x','')
-      let entry = Names.findOne({name: name});
-      if (entry && entry.mode && entry.mode == 'auction') { 
-        // If the name is already open, just create some dummy hashes
-        var dummyHashes = [randomHash(), randomName(), randomMix()];
-
-      } else if (knownNames.indexOf(name) > 0) {
-        // if the name is in the dictionary add a hash that isn't 
-        var dummyHashes = [randomHash(), randomMix(), hashedName];
-      } else {
-        // Otherwise, add a name that is
-        var dummyHashes = [randomName(), randomMix(), hashedName];
-      }
-      
-      TemplateVar.set(template, 'dummyHashes', dummyHashes);
-
-      console.log('dummyHashes', Names.findOne({name: name}), dummyHashes, _.map(dummyHashes, (e)=>{ return binarySearchNames(e)}), _.map(dummyHashes, (e)=>{ return Names.findOne({hash: e.slice(2,14)})}));
-    };
-  
+    let dictionaryLoaded = typeof knownNames !== "undefined";
     console.log('name:', name);
-    createDummyHashes(name);
+    createHashesArray(name);
 
   });
 
@@ -126,9 +135,9 @@ Template['components_newBid'].events({
 
         Names.upsert({name: name}, {$set: { watched: true}});
 
-        var dummyHashes = TemplateVar.get(template, 'dummyHashes')
-        if (dummyHashes && dummyHashes.length == 3) {
-          registrar.submitBid(bid, dummyHashes,  {
+        var hashesArray = TemplateVar.get(template, 'hashesArray')
+        if (hashesArray && hashesArray.length == 3) {
+          registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
               from: owner,
               gas: 900000
@@ -137,7 +146,7 @@ Template['components_newBid'].events({
               onSuccess: () => updatePendingBids(name)
             }));
         } else {
-          console.log('Dummy hashes not working', dummyHashes);
+          console.log('Hash array not loading', hashesArray);
 
           EthElements.Modal.question({
             text: 'Bid failed, please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
