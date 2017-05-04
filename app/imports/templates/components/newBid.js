@@ -19,17 +19,17 @@ Template['components_newBid'].onRendered(function() {
   }
 
   // The goal here is to obscure the names we actually want
-  function randomName() {
+  template.randomName = function() {
     if (typeof knownNames !== "undefined") {
       // gets a random name from our preimage hash
       return '0x' + web3.sha3(knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)]).replace('0x','');
     } else {
-      return randomMix();
+      return template.randomMix();
     }
     
   }
 
-  function randomHash() {
+  template.randomHash = function() {
     // gets a random hash
     var randomHex = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
           .times(launchRatio.toString())
@@ -41,29 +41,29 @@ Template['components_newBid'].onRendered(function() {
     return padding.slice(0, 66 - randomHex.length) + randomHex;
   }
 
-  function randomMix() {
+  template.randomMix = function() {
     // gets a random name we know about
     var availableNow = _.pluck(Names.find({mode:'open', name:{$not: name}, availableDate: {$lt: Date.now()/1000}}).fetch(), 'name');
     if ( Math.random() * 20 < availableNow.length ) {
       return '0x' + web3.sha3(availableNow[Math.floor(Math.random()*availableNow.length)]).replace('0x','')
     } else {
-      return Math.random() > 0.5 ? randomHash() : randomName();
+      return Math.random() > 0.5 ? template.randomHash() : template.randomName();
     }
   }
 
-  function createHashesArray(name){
+  template.createHashesArray = function() {
     let hashedName = '0x' + web3.sha3(name).replace('0x','')
     let entry = Names.findOne({name: name});
     if (entry && entry.mode && entry.mode == 'auction') { 
       // If the name is already open, just create some dummy hashes
-      var hashesArray = [randomHash(), randomName(), randomMix()];
+      var hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
 
     } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > 0) {
       // if the name is in the dictionary add a hash that isn't 
-      var hashesArray = [randomHash(), randomMix(), hashedName];
+      var hashesArray = [template.randomHash(), template.randomMix(), hashedName];
     } else {
       // Otherwise, add a name that is
-      var hashesArray = [randomName(), randomMix(), hashedName];
+      var hashesArray = [template.randomName(), template.randomMix(), hashedName];
     }
     
     TemplateVar.set(template, 'hashesArray', hashesArray);
@@ -73,14 +73,14 @@ Template['components_newBid'].onRendered(function() {
 
   let name = Session.get('searched');
   console.log('name:', name);
-  createHashesArray(name);
+  template.createHashesArray(name);
 
   this.autorun(() => {
 
     let name = Session.get('searched');
     let dictionaryLoaded = typeof knownNames !== "undefined";
     console.log('name:', name);
-    createHashesArray(name);
+    template.createHashesArray(name);
 
   });
 
@@ -89,13 +89,14 @@ Template['components_newBid'].onRendered(function() {
 Template['components_newBid'].events({
   'submit .new-bid'(event, template) {
     event.preventDefault();
-    
+
     const target = event.target;
     const bidAmount = EthTools.toWei(TemplateVar.get(template, 'bidAmount'), 'ether');
     let totalDeposit = TemplateVar.get(template, 'depositAmount')+TemplateVar.get(template, 'bidAmount');
     const depositAmount = EthTools.toWei(totalDeposit, 'ether');
     const name = Session.get('name');
     let secret;
+    template.createHashesArray(name);
     
     if (window.crypto && window.crypto.getRandomValues) {
       secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
@@ -117,7 +118,7 @@ Template['components_newBid'].events({
           content: 'No accounts added to dapp',
           duration: 3
       });
-    } else if (bidAmount < 10000000000000000) {
+    } else if (!bidAmount || bidAmount < 10000000000000000) {
       GlobalNotification.error({
           content: 'Bid below minimum value',
           duration: 3
@@ -185,7 +186,6 @@ Template['components_newBid'].events({
   },
   'change #agreement': function(e) {
     let template = Template.instance();
-
     TemplateVar.set(template, 'agree', e.currentTarget.checked ? true : false);
   }
 })
@@ -196,5 +196,8 @@ Template['components_newBid'].helpers({
   },
   depositAmount(){
     return TemplateVar.get('depositAmount');
+  },
+  dictionaryLoaded() {
+    return typeof knownNames !== "undefined";
   }
 })
