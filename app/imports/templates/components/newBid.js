@@ -68,7 +68,7 @@ Template['components_newBid'].onRendered(function() {
     
     TemplateVar.set(template, 'hashesArray', hashesArray);
 
-    console.log('hashesArray', name, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}));
+    console.log('hashesArray created', name, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}));
   };
 
   let name = Session.get('searched');
