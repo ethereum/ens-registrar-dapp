@@ -263,3 +263,54 @@ ul.names {
     z-index: 100;
     position: absolute;
 }
+
+
+// RESPONSIVE
+
+@media only screen and (max-width: 500px) {
+  header {
+    transition: none;
+      
+    &.invalid-name {
+      transition: none;
+    }
+
+    div {
+      position: absolute;
+      left: 0;
+      right: 0;
+
+      h1 {
+        font-size: 130%;
+        margin-bottom: @gridHeight/2;
+      }
+
+      .search-input {
+        width: 95%;
+      }
+
+      .tld {
+        position: absolute;
+        left: auto;
+        top: 58px;
+        right: 20px;
+      }
+    }
+  }
+
+  .dapp-content {
+    padding: 0;
+    width: 100%;
+  }
+
+  .main-content {
+      .names {
+          column-count: 2;
+      }
+  }  
+
+  .dapp-modal-container.explainer-modal {
+    width: 100%;
+    min-width: auto;
+  }
+}
