@@ -168,10 +168,10 @@ export default ethereum = (function() {
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
                 mode = Names.findOne({hash: hash}).mode;
-                console.log('\n Watched name auction started!', name);
+                // console.log('\n Watched name auction started!', name);
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name auction started!', name);
+                // console.log('\n Known name auction started!', name);
               }
 
 
@@ -199,10 +199,10 @@ export default ethereum = (function() {
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
                 mode = Names.findOne({hash: hash}).mode;                
-                console.log('\n Watched name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
+                // console.log('\n Watched name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
+                // console.log('\n Known name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               }
         
               Names.upsert({hash: hash}, 

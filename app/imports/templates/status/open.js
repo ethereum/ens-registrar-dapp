@@ -9,14 +9,17 @@ Template['status-open'].events({
   'click .open-auction': function openAuction() {
     let name = Session.get('searched');
     let template = Template.instance();
+    const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
+    var hashes = TemplateVar.getFrom('.new-bid', 'hashesArray');
     
     if (web3.eth.accounts.length == 0) {
       alert('No accounts found');
     } else {
       TemplateVar.set(template, 'opening-' + name, true)
-      registrar.openAuction(name, TemplateVar.getFrom('.new-bid', 'dummyHashes'), {
+      registrar.openAuction(name, hashes, {
         from: web3.eth.accounts[0],
-        gas: 1000000
+        gas: 900000,
+        gasPrice: gasPrice
       }, Helpers.getTxHandler({
         onDone: () => TemplateVar.set(template, 'opening-' + name, false),
         onSuccess: () => {

@@ -138,16 +138,15 @@ Template['components_nameStatus'].helpers({
       return TemplateVar.get('nameInfo').name
     }, 
     publicAuctions() {
-      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}, mode: {$nin: ['forbidden', 'not-yet-available']}},{sort: {registrationDate: -1}, limit: 100});
+      return Names.find({registrationDate: {$gt:0}, name:{$gt: '', $regex: /^.{7,}$/}, mode: {$nin: ['forbidden', 'not-yet-available']}},{sort: {registrationDate: -1}, limit: 50});
     },
     showExpiring() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: -1}, limit: 100}).count() > 100;
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: -1}}).count() > 100;
     }, 
     publicAuctionsAboutToExpire() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 99});
+      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 48});
     }, 
     knownNamesRegistered() {
       return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 99});

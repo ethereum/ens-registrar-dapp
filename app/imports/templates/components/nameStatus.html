@@ -51,12 +51,8 @@
         <ul class="names">
           {{#each auction in publicAuctions}}
               <li>
-                  <a href='#{{auction.name}}'>
-                    {{#if auction.watched}}
-                      <strong>{{auction.fullname}}</strong>
-                    {{else}}
-                      {{auction.fullname}}
-                    {{/if}}
+                  <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
+                    {{auction.fullname}}
                   </a> 
               </li>
             {{/each}}
@@ -64,19 +60,15 @@
 
           {{#if showExpiring}}
           <br>
-          <h3> Knowns Auctions about to expire </h3>
+          <h3> Last chance to bid! </h3>
 
 
           <ul class="names">
             {{#each auction in publicAuctionsAboutToExpire}}
                 <li>
-                    <a href='#{{auction.name}}'>
-                    {{#if auction.watched}}
-                      <strong>{{auction.fullname}}</strong>
-                    {{else}}
+                    <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
                       {{auction.fullname}}
-                    {{/if}}
-                    </a> 
+                    </a>
                 </li>
               {{/each}}
           </ul>

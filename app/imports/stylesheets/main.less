@@ -157,6 +157,7 @@ ul.names {
     a { 
       font-weight: 400;
       font-size: 125%;
+      white-space: nowrap;
 
       &.can-invalidate {
         color: @colorError;
@@ -204,7 +205,7 @@ ul.names {
         column-count: 3;
         a {
           font-weight: 300;
-          strong {
+          &.watched {
             font-weight: 400;
           }
         }
