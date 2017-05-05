@@ -8,13 +8,13 @@ Template['components_newBid'].onRendered(function() {
   TemplateVar.set(template, 'anonymizer', 0.5);
   let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
   console.log('launchRatio', launchRatio);
+  TemplateVar.set(template, 'bidAmount', 0.01);
+  TemplateVar.set(template, 'depositAmount', 0);
 
   if (web3.eth.accounts.length > 0 ){
     web3.eth.getBalance(web3.eth.accounts[0], function(e, balance) { 
       var maxAmount = Number(web3.fromWei(balance, 'ether').toFixed());
-      var depositAmount = Math.floor(100*Math.random() * Math.min(maxAmount, 1))/100;
       TemplateVar.set(template, 'maxAmount', maxAmount);
-      TemplateVar.set(template, 'depositAmount', depositAmount);
     });
   }
 
@@ -22,7 +22,14 @@ Template['components_newBid'].onRendered(function() {
   template.randomName = function() {
     if (typeof knownNames !== "undefined") {
       // gets a random name from our preimage hash
-      return '0x' + web3.sha3(knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)]).replace('0x','');
+      var someName = knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)];
+      if (someName.length > 6 && someName == someName.toLowerCase() && someName !== name) {
+        // Check if it's correct
+        return '0x' + web3.sha3(someName).replace('0x','');
+      } else {
+        // picked invalid. Let's pick another..
+        return template.randomName();
+      }
     } else {
       return template.randomMix();
     }
@@ -31,8 +38,16 @@ Template['components_newBid'].onRendered(function() {
 
   template.randomHash = function() {
     // gets a random hash
-    var randomHex = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-          .times(launchRatio.toString())
+    if (typeof BigNumber !== "undefined") {
+      var ceiling = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+    } else if (typeof web3.BigNumber !== "undefined"){
+      var ceiling = new web3.BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
+    } else {
+      console.log('Error with BigNumber package');
+      return;
+    }
+
+    var randomHex = ceiling.times(launchRatio.toString())
           .times(Math.random().toString())
           .floor().toString(16);
 
@@ -52,36 +67,41 @@ Template['components_newBid'].onRendered(function() {
   }
 
   template.createHashesArray = function() {
+    var hashesArray = [];
     let hashedName = '0x' + web3.sha3(name).replace('0x','')
     let entry = Names.findOne({name: name});
     if (entry && entry.mode && entry.mode == 'auction') { 
       // If the name is already open, just create some dummy hashes
-      var hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
+      hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
 
     } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > 0) {
       // if the name is in the dictionary add a hash that isn't 
-      var hashesArray = [template.randomHash(), template.randomMix(), hashedName];
+      hashesArray = [template.randomHash(), template.randomMix(), hashedName];
     } else {
       // Otherwise, add a name that is
-      var hashesArray = [template.randomName(), template.randomMix(), hashedName];
+      hashesArray = [template.randomName(), template.randomMix(), hashedName];
     }
     
     TemplateVar.set(template, 'hashesArray', hashesArray);
 
-    console.log('hashesArray created', name, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}));
+    console.log('hashesArray created', name, typeof knownNames, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}), hashesArray);
   };
 
   let name = Session.get('searched');
   console.log('name:', name);
-  template.createHashesArray(name);
+  template.createHashesArray();
 
   this.autorun(() => {
-
+    // This changes as the searched name changes
     let name = Session.get('searched');
-    let dictionaryLoaded = typeof knownNames !== "undefined";
-    console.log('name:', name);
-    template.createHashesArray(name);
 
+    var dictionaryLoader = setInterval(()=>{
+      // try loading dictionary
+      if (typeof knownNames !== "undefined"){
+        template.createHashesArray();
+        clearInterval(dictionaryLoader);
+      }
+    }, 1000)
   });
 
 });
@@ -97,7 +117,8 @@ Template['components_newBid'].events({
     const name = Session.get('name');
     let secret;
     template.createHashesArray(name);
-    
+    const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
+
     if (window.crypto && window.crypto.getRandomValues) {
       secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
     } else {
@@ -141,7 +162,8 @@ Template['components_newBid'].events({
           registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
               from: owner,
-              gas: 900000
+              gas: 650000, 
+              gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
               onSuccess: () => updatePendingBids(name)
@@ -168,9 +190,7 @@ Template['components_newBid'].events({
   'input input[name="bidAmount"]': function(e){
     var maxAmount = TemplateVar.get('maxAmount');
     var bidAmount = Math.min(Number(e.currentTarget.value) || 0.01, maxAmount);
-    var depositAmount = Math.floor(100*Math.random()*(Math.min(maxAmount, bidAmount*10) - bidAmount)/2)/100;
     TemplateVar.set('bidAmount', bidAmount);
-    TemplateVar.set('depositAmount', depositAmount);
   },
   /**
   Deposit amount  
@@ -187,6 +207,14 @@ Template['components_newBid'].events({
   'change #agreement': function(e) {
     let template = Template.instance();
     TemplateVar.set(template, 'agree', e.currentTarget.checked ? true : false);
+  },
+  'click .show-advanced': function(e) {
+    e.preventDefault();
+    TemplateVar.set(template, 'showAdvanced', true);
+  },
+  'click .hide-advanced': function(e) {
+    e.preventDefault();
+    TemplateVar.set(template, 'showAdvanced', false);
   }
 })
 
@@ -199,5 +227,15 @@ Template['components_newBid'].helpers({
   },
   dictionaryLoaded() {
     return typeof knownNames !== "undefined";
+  },
+  feeExplainer() {
+    var priceInShannon = web3.fromWei(TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice'), 'shannon');
+    if ( priceInShannon < 2 ){
+      return 'Fee too low, might never be picked up';
+    } else if(priceInShannon < 4) {
+      return 'Might take several minutes';
+    } else {
+      return ' ';
+    }
   }
 })

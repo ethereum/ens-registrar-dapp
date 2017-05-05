@@ -32,6 +32,7 @@ Template['components_bid'].onRendered(function() {
 
 Template['components_bid'].events({
   'click .reveal-bid': function(e, template) {
+    
     if (web3.eth.accounts.length == 0) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',

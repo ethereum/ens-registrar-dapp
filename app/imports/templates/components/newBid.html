@@ -6,11 +6,24 @@
         <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*" value="{{TemplateVar.get 'bidAmount'}}"> <span>ether</span>
       </p>
       <br>
-      <h3>Protect bid anonymity</h3>
+      {{#if TemplateVar.get 'showAdvanced'}}
+          <h3>Protect bid anonymity</h3>
         To keep the bid secret, we strongly recommend sending an extra amount 
         <br>
         <input type="text" min="0.01" step="0.1" name="depositAmount" placeholder="0.01" class="deposit-amount dapp-large" value="{{depositAmount}}"> <span>ether</span>  
-      <br>
+        <br>
+        <h3>Max Fee</h3>
+
+        {{> dapp_selectGasPrice gas=650000 gasPrice=20000000000 low='cheaper' high='faster'}} <br>
+        <em>{{feeExplainer}}</em> <br><br>
+
+        <a href="#" class="hide-advanced">Hide options</a>
+
+      {{else}}
+        <a href="#" class="show-advanced">Show more options</a>
+      {{/if}}
+        <br>
+
       <p class="clear"><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
       <p class="clear">
         {{#if dictionaryLoaded}}
