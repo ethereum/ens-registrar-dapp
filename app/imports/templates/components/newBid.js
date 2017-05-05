@@ -157,7 +157,7 @@ Template['components_newBid'].events({
           registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
               from: owner,
-              gas: 900000, 
+              gas: 650000, 
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),

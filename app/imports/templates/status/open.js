@@ -18,7 +18,7 @@ Template['status-open'].events({
       TemplateVar.set(template, 'opening-' + name, true)
       registrar.openAuction(name, hashes, {
         from: web3.eth.accounts[0],
-        gas: 900000,
+        gas: 650000,
         gasPrice: gasPrice
       }, Helpers.getTxHandler({
         onDone: () => TemplateVar.set(template, 'opening-' + name, false),
