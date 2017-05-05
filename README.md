@@ -1,6 +1,6 @@
 # Ethereum Name Service Registrar DApp
 
-This app allows you to register a .eth domain name, for use in ethereum decentralized applications and compatible blockchain browsers.
+This app allows you to register a .eth domain name for use in ethereum decentralized applications and compatible blockchain browsers.
 
 Check [ens.domains](http://ens.domains/) for more information about the ENS.
 
