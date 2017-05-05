@@ -23,7 +23,7 @@ Template['components_newBid'].onRendered(function() {
     if (typeof knownNames !== "undefined") {
       // gets a random name from our preimage hash
       var someName = knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)];
-      if (someName.length > 6 && someName == someName.toLowerCase()) {
+      if (someName.length > 6 && someName == someName.toLowerCase() && someName !== name) {
         // Check if it's correct
         return '0x' + web3.sha3(someName).replace('0x','');
       } else {
@@ -67,36 +67,41 @@ Template['components_newBid'].onRendered(function() {
   }
 
   template.createHashesArray = function() {
+    var hashesArray = [];
     let hashedName = '0x' + web3.sha3(name).replace('0x','')
     let entry = Names.findOne({name: name});
     if (entry && entry.mode && entry.mode == 'auction') { 
       // If the name is already open, just create some dummy hashes
-      var hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
+      hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
 
     } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > 0) {
       // if the name is in the dictionary add a hash that isn't 
-      var hashesArray = [template.randomHash(), template.randomMix(), hashedName];
+      hashesArray = [template.randomHash(), template.randomMix(), hashedName];
     } else {
       // Otherwise, add a name that is
-      var hashesArray = [template.randomName(), template.randomMix(), hashedName];
+      hashesArray = [template.randomName(), template.randomMix(), hashedName];
     }
     
     TemplateVar.set(template, 'hashesArray', hashesArray);
 
-    console.log('hashesArray created', name, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}));
+    console.log('hashesArray created', name, typeof knownNames, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}), hashesArray);
   };
 
   let name = Session.get('searched');
   console.log('name:', name);
-  template.createHashesArray(name);
+  template.createHashesArray();
 
   this.autorun(() => {
-
+    // This changes as the searched name changes
     let name = Session.get('searched');
-    let dictionaryLoaded = typeof knownNames !== "undefined";
-    console.log('name:', name);
-    template.createHashesArray(name);
 
+    var dictionaryLoader = setInterval(()=>{
+      // try loading dictionary
+      if (typeof knownNames !== "undefined"){
+        template.createHashesArray();
+        clearInterval(dictionaryLoader);
+      }
+    }, 1000)
   });
 
 });

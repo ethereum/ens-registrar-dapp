@@ -11,14 +11,32 @@ Template['status-open'].events({
     let template = Template.instance();
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
     var hashes = TemplateVar.getFrom('.new-bid', 'hashesArray');
-    
+
+    // check if hashes are present
+    if (!hashes || !(hashes.length > 0)) {
+      GlobalNotification.error({
+          content: 'Dictionary not loaded. Wait a few seconds and try again',
+          duration: 3
+      });
+      return;
+    }
+
+    // remove the desired name from the dummy list to avoid duplicates
+    var i = hashes.indexOf('0x'+web3.sha3(name).replace('0x',''))
+    if (i > -1) {
+        hashes.splice(i, 1);
+    }
+
     if (web3.eth.accounts.length == 0) {
-      alert('No accounts found');
-    } else {
+        GlobalNotification.error({
+          content: 'No accounts added to dapp',
+          duration: 3
+        });
+      } else {
       TemplateVar.set(template, 'opening-' + name, true)
       registrar.openAuction(name, hashes, {
         from: web3.eth.accounts[0],
-        gas: 650000,
+        gas: 300000,
         gasPrice: gasPrice
       }, Helpers.getTxHandler({
         onDone: () => TemplateVar.set(template, 'opening-' + name, false),
