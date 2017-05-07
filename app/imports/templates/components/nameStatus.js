@@ -39,7 +39,7 @@ Template['components_nameStatus'].onCreated(function() {
               return;
           }
 
-          if (entry.mode == 'not-yet-available') {
+          if (!entry.availableDate || entry.availableDate == 0) {
             registrar.getAllowedTime(name, (err, timestamp) => {
               entry.availableDate = timestamp.toFixed();
 
@@ -85,7 +85,7 @@ Template['components_nameStatus'].onCreated(function() {
               if (name === Session.get('searched')) {
                 var value = entry.mode == 'owned' ? Math.max(Number(web3.fromWei(entry.value.toFixed(), 'ether')), 0.01) : 0;
 
-                console.log('upsert', name, value);
+                console.log('upsert', name);
                 Names.upsert({name: name}, {$set: {
                   fullname: name + '.eth',
                   mode: entry.mode, 
@@ -145,7 +145,8 @@ Template['components_nameStatus'].helpers({
       return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: -1}}).count() > 100;
     }, 
     publicAuctionsAboutToExpire() {
-      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
+      // subtracts 10 minutes from the reveal deadline, for good measure
+      var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60 + 10 * 60;      
       return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 48});
     }, 
     knownNamesRegistered() {

@@ -1,6 +1,6 @@
 <template name="status-auction">
     <div>
-      <h1 class="domain-name"><strong>{{name}}</strong> is open for bids</h1>
+      <h1 class="domain-name"><strong>{{name}}</strong> is waiting for bids</h1>
  
         {{>component_explainerBid}}
 
@@ -14,7 +14,12 @@
         {{else}}
 
           {{#if hasNode}}
-            {{>components_newBid}}
+            {{#unless TemplateVar.get 'outOfTime'}}
+              {{>components_newBid}}
+            {{else}}
+              <button type="submit" class="dapp-block-button" disabled="true"> Bids closed </button><br><br>
+              <strong> About to go in the reveal phase in a few minutes, bidding is closed </strong>
+            {{/unless}}
           {{else}}
             {{> components_noNode}}
           {{/if}}
