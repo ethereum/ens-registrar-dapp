@@ -8,16 +8,25 @@
               </li>
             {{/each}}
         </ul>
+        <br>
+        <a href="" class="toggle-sort">
+            {{#if TemplateVar.get 'sort-date'}}
+                Sort by name
+            {{else}} 
+                Sort by date
+            {{/if}}
+        </a>
+
     {{/if}}
 
-    {{#if hasBids}}
     <h3>More Options</h3>
     <ul>
+        {{#if hasBids}}
         <li><a href="" class="export-bids">Export Bids </a></li>
+        {{/if}}
         <li><a href="" class="import-bids">Import Bids</a></li>
     </ul>
 
-    {{/if}}
 
 </template>
 
