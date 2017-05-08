@@ -51,12 +51,8 @@
         <ul class="names">
           {{#each auction in publicAuctions}}
               <li>
-                  <a href='#{{auction.name}}'>
-                    {{#if auction.watched}}
-                      <strong>{{auction.fullname}}</strong>
-                    {{else}}
-                      {{auction.fullname}}
-                    {{/if}}
+                  <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
+                    {{auction.fullname}}
                   </a> 
               </li>
             {{/each}}
@@ -64,19 +60,15 @@
 
           {{#if showExpiring}}
           <br>
-          <h3> Knowns Auctions about to expire </h3>
+          <h3> Last chance to bid! </h3>
 
 
           <ul class="names">
             {{#each auction in publicAuctionsAboutToExpire}}
                 <li>
-                    <a href='#{{auction.name}}'>
-                    {{#if auction.watched}}
-                      <strong>{{auction.fullname}}</strong>
-                    {{else}}
+                    <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
                       {{auction.fullname}}
-                    {{/if}}
-                    </a> 
+                    </a>
                 </li>
               {{/each}}
           </ul>
@@ -118,7 +110,7 @@
     <div>
         <h1>Name is too short</h1>
         <p>
-            On the temporary registrar only names longer than 6 characters are allowed
+            Names are <strong>temporarily</strong> limited to 7 characters or more.  This limit will be reduced at <a href="http://docs.ens.domains/en/latest/faq.html#how-was-the-minimum-character-length-of-7-chosen">some point in the future</a>.
         </p>
     </div>
 </template>
@@ -127,7 +119,7 @@
     <div>
         <h1>Name is too short</h1>
         <p>
-            On the temporary registrar only names longer than 6 characters are allowed.
+            Names are <strong>temporarily</strong> limited to 7 characters or more.  This limit will be reduced at <a href="http://docs.ens.domains/en/latest/faq.html#how-was-the-minimum-character-length-of-7-chosen">some point in the future</a>.
         </p>
         <p>
             <strong>But wait!</strong> Someone has accidentally registered this name. Invalidate it and you'll get 50% of their refund.

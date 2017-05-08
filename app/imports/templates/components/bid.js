@@ -21,7 +21,7 @@ function updateRevealedStatus(template, bid) {
     // Timeout, set revealing as false
     console.log('Timeout, set revealing as false')
     MyBids.update({ _id: bid._id }, { $set: {revealing: false} });
-  }, 15000);
+  }, 60000);
 }
 
 Template['components_bid'].onRendered(function() {
@@ -32,6 +32,7 @@ Template['components_bid'].onRendered(function() {
 
 Template['components_bid'].events({
   'click .reveal-bid': function(e, template) {
+    
     if (web3.eth.accounts.length == 0) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',

@@ -150,14 +150,13 @@ export default ethereum = (function() {
 
   window.watchEvents = function watchEvents() {
       var lastBlockLooked = LocalStore.get('lastBlockLooked') || 400000;
-      lastBlockLooked -= 1000;
+      lastBlockLooked -= 250;
 
       console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
 
       return new Promise((resolve, reject) => {
         var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: lastBlockLooked});
         var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: lastBlockLooked});
-        var BidRevealedEvent = registrar.contract.BidRevealed({}, {fromBlock: lastBlockLooked});
 
         AuctionStartedEvent.watch(function(error, result) {
           if (!error) {            
@@ -168,10 +167,8 @@ export default ethereum = (function() {
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
                 mode = Names.findOne({hash: hash}).mode;
-                console.log('\n Watched name auction started!', name);
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name auction started!', name);
               }
 
 
@@ -199,10 +196,8 @@ export default ethereum = (function() {
               if (Names.findOne({hash: hash})) {
                 name = Names.findOne({hash: hash}).name;
                 mode = Names.findOne({hash: hash}).mode;                
-                console.log('\n Watched name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               } else if(binarySearchNames(result.args.hash)) {
                 name = binarySearchNames(result.args.hash);
-                console.log('\n Known name registered!', name, result.args.hash, result.args.registrationDate.toFixed());
               }
         
               Names.upsert({hash: hash}, 
@@ -216,28 +211,6 @@ export default ethereum = (function() {
                 }});
           } 
         }); 
-
-        BidRevealedEvent.watch(function(error, result) {
-          if (!error) {
-            // console.log('Bid Revealed', result);
-            var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
-            var status = Number(result.args.status.toFixed());
-            var hash = result.args.hash.replace('0x','').slice(0,12);
-            var bidder = result.args.owner.slice(2,10);
-            
-            if (Names.findOne({hash: hash, watched: true})) {
-              name = Names.findOne({hash: hash}).name;
-              var statusMessage = [
-                'but it revealed after the auction ended or it was below min price.',
-                'but it revealed after the auction ended.',
-                'and was the highest bid at time of reveal',
-                'but there was already only the second higher bidder',
-                'but there was already more than two higher bidders',
-              ];
-              console.log('\n Bid Revealed for', name + '; Account', bidder, 'was willing to pay', value, 'ether,', statusMessage[status]);
-            }
-          }
-        })
 
         resolve(); 
       })
