@@ -166,7 +166,10 @@ Template['components_newBid'].events({
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-              onSuccess: () => updatePendingBids(name)
+              onSuccess: () => { 
+                EthElements.Modal.show('modals_backup'); 
+                updatePendingBids(name);
+              }
             }));
         } else {
           console.log('Hash array not loading', hashesArray);
