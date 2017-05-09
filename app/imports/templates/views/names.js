@@ -6,7 +6,7 @@ Template['view_names'].helpers({
     return MyBids.find().count() > 0;
   },
   names() {
-    if (TemplateVar.get('sort-date')) {
+    if (LocalStore.get('sort-date')) {
       return Names.find({watched:true},{sort: {availableDate: 1}});
     } else {
       return Names.find({watched:true},{sort: {name: 1}});
@@ -14,6 +14,9 @@ Template['view_names'].helpers({
   },
   watchesNames() {
     return Names.find({watched:true}).count() > 0;
+  }, 
+  sortedByDate(){
+    return LocalStore.get('sort-date') === true;
   }
 })
 
@@ -28,6 +31,6 @@ Template['view_names'].events({
   },
   'click .toggle-sort': function(e) {
     e.preventDefault();
-    TemplateVar.set('sort-date', !TemplateVar.get('sort-date'))
+    LocalStore.set('sort-date', !LocalStore.get('sort-date'))
   }
 })

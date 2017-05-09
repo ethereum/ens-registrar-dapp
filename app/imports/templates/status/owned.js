@@ -31,34 +31,36 @@ function getPublicAddrResolver() {
 }
 
 Template['status-owned'].onCreated(function() {
-  
-  TemplateVar.set(this, 'owner', null);
-  TemplateVar.set(this, 'address', null);
-  TemplateVar.set(this, 'content', null);
-  TemplateVar.set(this, 'hasSetResolver', false);
+  const template = this;
 
-  this.autorun(() => {
-    const {name, entry} = Template.currentData();
+  TemplateVar.set(template, 'owner', null);
+  TemplateVar.set(template, 'address', null);
+  TemplateVar.set(template, 'content', null);
+  TemplateVar.set(template, 'hasSetResolver', false);
 
-    TemplateVar.set(this, 'entryData', entry);
+  template.autorun(() => {
+    const name = Session.get('searched');
+    const entry = Names.findOne({name: name}); 
+    TemplateVar.set(template, 'entryData', entry);
+
     ens.owner(name, (err, res) => {
       if (!err) {
-        TemplateVar.set(this, 'owner', res);
+        TemplateVar.set(template, 'owner', res);
       }
     });
     ens.resolver(name, (err, res) => {
       if (err) {
         return;
       }
-      TemplateVar.set(this, 'hasSetResolver', true);
+      TemplateVar.set(template, 'hasSetResolver', true);
       res.addr((err, address) => {
         if (!err) {
-          TemplateVar.set(this, 'address', address);
+          TemplateVar.set(template, 'address', address);
         }
       });
       res.content((err, content) => {
         if (!err) {
-          TemplateVar.set(this, 'content', content);
+          TemplateVar.set(template, 'content', content);
         }
       })
     });
@@ -79,7 +81,7 @@ Template['status-owned'].helpers({
     return Number(TemplateVar.get('owner')) > 0;
   },
   deedOwner() {
-    return TemplateVar.get('entryData').deed.owner;
+    return TemplateVar.get('entryData').owner;
   },
   isMine() {
     const owner = TemplateVar.get('owner');
@@ -99,12 +101,12 @@ Template['status-owned'].helpers({
     return Date.now() > releaseDate;
   },
   finalValue() {
-    var val = TemplateVar.get('entryData').value;
-    return Math.max(web3.fromWei(val.toFixed(), 'ether'), 0.01);
+    const entry = Names.findOne({name: Session.get('searched')}); 
+    return Math.max(entry.value, 0.01);
   },
   noBids() {
     var val = TemplateVar.get('entryData').value;
-    return val.toFixed() <= 10000000000000000;
+    return val.toFixed() <= 0.01;
   },
   renewalDate() {
     var years = 365 * 24 * 60 * 60 * 1000;
@@ -138,12 +140,12 @@ Template['status-owned'].helpers({
   needsFinalization() {
     var entry = TemplateVar.get('entryData');
     var owner = TemplateVar.get('owner');
-    return owner != entry.deed.owner;
+    return owner != entry.owner;
   },
   refund() {
-    var deed = new BigNumber(Template.instance().data.entry.deed.balance);
-    var value = new BigNumber(Template.instance().data.value || 10000000000000000);
-    return web3.fromWei( deed.minus(value).toFixed(), 'ether');
+    var entry = TemplateVar.get('entryData');
+    if (!entry || !entry.deedBalance) return '-';
+    return entry.deedBalance - entry.value;
   }
 })
 
@@ -252,8 +254,16 @@ Template['status-owned'].events({
 });
 
 Template['aside-owned'].helpers({
+  deedBalance() {
+    const entry = Names.findOne({name: Session.get('searched')}); 
+    return entry.deedBalance || '--' ;
+  },
   finalValue() {
-    var val = Number(Template.instance().data.entry.value);
-    return Math.max(web3.fromWei(val, 'ether'), 0.01);
-  }  
+    const entry = Names.findOne({name: Session.get('searched')}); 
+    return entry.value || '--' ;
+  },
+  canRefund() {
+    const entry = Names.findOne({name: Session.get('searched')}); 
+    return entry.deedBalance !== entry.value;  
+  } 
 })

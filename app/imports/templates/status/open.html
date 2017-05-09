@@ -3,7 +3,12 @@
       <h1 class="domain-name"><strong>{{name}}</strong> is available</h1> 
         {{>component_explainerBid}}
 
-        {{#if hasNode}}
+        
+        
+      </div>
+
+      {{#unless hasBids}}
+      {{#if hasNode}}
   
           {{>components_newBid}}
 
@@ -23,20 +28,27 @@
         {{else}}
         {{> components_noNode}}
         {{/if}}
-        
-      </div>
-
-      {{#if hasBids}}
+      {{else}}
       <div class="unused-bids">
-          <h3>Unused bids</h3>
+          <h3>You have bid but the auction is not open</h3>
 
-          You open bids that you didn't reveal, but no one else did either, so these can be used again. Open the auction to retrieve your old bids.
+          You open bids on an auction that isn't open. Either an error occurred opening the auction, or the auction ended without any bids. In either case, <strong>you must open the auction again to validate your bid</strong>.
 
           {{#each bid in bids}}
           {{> components_bid bid=bid status='open' }}
           {{/each}}
+
+          <br>
+          <button type="submit" class="open-auction dapp-block-button" disabled={{opening}}> 
+            {{#if opening}}
+              Opening...
+            {{else}}
+              Open Auction
+            {{/if}}
+          </button>
       </div>
-      {{/if}}
+      <div style="visibility: hidden;">{{>components_newBid}}</div>      
+      {{/unless}}
 
 </template>
 

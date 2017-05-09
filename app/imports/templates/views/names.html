@@ -8,14 +8,15 @@
               </li>
             {{/each}}
         </ul>
-        <br>
         <a href="" class="toggle-sort">
-            {{#if TemplateVar.get 'sort-date'}}
+            {{TemplateVar.get 'sortedByDate'}}?
+            {{#if TemplateVar.get 'sortedByDate'}}
                 Sort by name
             {{else}} 
                 Sort by date
             {{/if}}
         </a>
+        <br>
 
     {{/if}}
 

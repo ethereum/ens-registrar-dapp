@@ -83,12 +83,8 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}}'>
-                    {{#if auction.watched}}
-                      <strong>{{auction.fullname}}</strong>
-                    {{else}}
-                      {{auction.fullname}}
-                    {{/if}}
+                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}} {{#if auction.watched}}watched{{/if}}'>
+                    {{auction.fullname}}
                   </a>  
                     {{#if canBeInvalidated auction.name }}
                     <icon class="icon-alert">!</icon> 
