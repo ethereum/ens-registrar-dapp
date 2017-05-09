@@ -162,13 +162,14 @@ export default ethereum = (function() {
           if (!error) {            
               LocalStore.set('lastBlockLooked', result.blockNumber);
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var name, mode;
+              var nameObj = Names.findOne({hash: hash});
+              var name, mode, binarySearchNamesResult;
 
-              if (Names.findOne({hash: hash})) {
-                name = Names.findOne({hash: hash}).name;
-                mode = Names.findOne({hash: hash}).mode;
-              } else if(binarySearchNames(result.args.hash)) {
-                name = binarySearchNames(result.args.hash);
+              if (nameObj) {
+                name = nameObj.name;
+                mode = nameObj.mode;
+              } else if(binarySearchNamesResult = binarySearchNames(result.args.hash)) {
+                name = binarySearchNamesResult;
               }
 
 
@@ -189,15 +190,16 @@ export default ethereum = (function() {
           if (!error) {
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var name, mode;
+              var nameObj = Names.findOne({hash: hash});
+              var name, mode, binarySearchNamesResult;
               
               LocalStore.set('lastBlockLooked', result.blockNumber);
 
-              if (Names.findOne({hash: hash})) {
-                name = Names.findOne({hash: hash}).name;
-                mode = Names.findOne({hash: hash}).mode;                
-              } else if(binarySearchNames(result.args.hash)) {
-                name = binarySearchNames(result.args.hash);
+              if (nameObj = Names.findOne({hash: hash})) {
+                name = nameObj.name;
+                mode = nameObj.mode;                
+              } else if(binarySearchNamesResult = binarySearchNames(result.args.hash)) {
+                name = binarySearchNamesResult;
               }
         
               Names.upsert({hash: hash}, 
