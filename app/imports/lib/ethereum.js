@@ -124,29 +124,30 @@ export default ethereum = (function() {
     var minIndex = 0;
     var maxIndex = knownNames.length - 1;
     var currentIndex = (maxIndex + minIndex) / 2 | 0;
-    var currentElement;
+    var currentElement, currentElementSha3;
 
     if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
-          searchElement = searchElement.slice(2);
+      searchElement = searchElement.slice(2);
     } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
-          searchElement = '0x' + searchElement;
+      searchElement = '0x' + searchElement;
     }
 
     while (minIndex <= maxIndex) {
-        currentIndex = (minIndex + maxIndex) / 2 | 0;
-        currentElement = knownNames[currentIndex];
+      currentIndex = (minIndex + maxIndex) / 2 | 0;
+      currentElement = knownNames[currentIndex];
+      currentElementSha3 = web3.sha3(currentElement);
 
-        if (web3.sha3(currentElement) < searchElement) {
-            minIndex = currentIndex + 1;
-        } else if (web3.sha3(currentElement) > searchElement) {
-            maxIndex = currentIndex - 1;
-        } else {
-            return knownNames[currentIndex];
-        }
+      if (currentElementSha3 < searchElement) {
+        minIndex = currentIndex + 1;
+      } else if (currentElementSha3 > searchElement) {
+        maxIndex = currentIndex - 1;
+      } else {
+        return knownNames[currentIndex];
+      }
     }
 
     return null;
-    }
+  }
 
   window.watchEvents = function watchEvents() {
       var lastBlockLooked = LocalStore.get('lastBlockLooked') || 400000;
