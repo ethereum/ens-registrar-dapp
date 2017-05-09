@@ -143,6 +143,11 @@
         <li>
             <span class="big-numeral">{{finalValue}}</span> <span class="unit">ether</span> locked in this name
         </li>
+        {{#if canRefund}}
+        <li>
+            <span class="big-numeral">{{deedBalance}}</span> <span class="unit">ether</span> still held in this name
+        </li>
+        {{/if}}
         
     </ul>
 </template>
