@@ -152,6 +152,7 @@ export default ethereum = (function() {
   window.watchEvents = function watchEvents() {
       var lastBlockLooked = LocalStore.get('lastBlockLooked') || 400000;
       lastBlockLooked -= 250;
+      Names._collection.pauseObservers();
 
       console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
 
@@ -217,6 +218,7 @@ export default ethereum = (function() {
 
         resolve(); 
       })
+      Names._collection.resumeObservers();  
     }  
 
   function reportStatus(description, isReady, theresAnError) {
