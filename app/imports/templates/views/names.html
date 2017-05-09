@@ -9,8 +9,7 @@
             {{/each}}
         </ul>
         <a href="" class="toggle-sort">
-            {{TemplateVar.get 'sortedByDate'}}?
-            {{#if TemplateVar.get 'sortedByDate'}}
+            {{#if sortedByDate}}
                 Sort by name
             {{else}} 
                 Sort by date
