@@ -218,6 +218,10 @@ Template['components_newBid'].events({
   'click .hide-advanced': function(e) {
     e.preventDefault();
     TemplateVar.set(template, 'showAdvanced', false);
+  },
+  'change input[name="fee"]': function(e) {
+      var priceInShannon = web3.fromWei(TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice'), 'shannon');
+      TemplateVar.set(template, 'priceInShannon', priceInShannon);
   }
 })
 
@@ -232,11 +236,14 @@ Template['components_newBid'].helpers({
     return typeof knownNames !== "undefined";
   },
   feeExplainer() {
-    var priceInShannon = web3.fromWei(TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice'), 'shannon');
-    if ( priceInShannon < 2 ){
-      return 'Fee too low, might never be picked up';
-    } else if(priceInShannon < 4) {
-      return 'Might take several minutes';
+    var priceInShannon = TemplateVar.get(template, 'priceInShannon') || 20;
+    console.log('priceInShannon', priceInShannon);
+    if ( priceInShannon < 10 ){
+      return 'Might take several minutes but it will eventually pick up';
+    } else if(priceInShannon < 20) {
+      return 'Will take about a minute';
+    } else if(priceInShannon > 20) {
+      return 'Will pick up in the first block';
     } else {
       return ' ';
     }

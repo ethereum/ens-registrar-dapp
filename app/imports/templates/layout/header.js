@@ -28,7 +28,7 @@ Template['layout_header'].onRendered(function() {
 
 Template['layout_header'].events({
   'input #search-input': function(event, template) {
-    event.target.value = event.target.value.replace(/[\.\s\_\/\\\@]*/g,'');
+    event.target.value = event.target.value.replace(/[\.\s\_\/\\\@]*/g,'').toLowerCase();
     if (template.lookupTimeout) {
       clearTimeout(template.lookupTimeout);
     }

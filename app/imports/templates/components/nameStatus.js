@@ -91,7 +91,7 @@ Template['components_nameStatus'].onCreated(function() {
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
                   value: value, 
-                highestBid: entry.highestBid, 
+                  highestBid: entry.highestBid, 
                   availableDate: entry.availableDate ? Number(entry.availableDate) :  0,
                   hash: entry.hash.replace('0x','').slice(0,12),
                   owner: entry.mode == 'owned' ? entry.deed.owner : '',
