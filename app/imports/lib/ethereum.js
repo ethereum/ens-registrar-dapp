@@ -17,6 +17,7 @@ export default ethereum = (function() {
   let subscribers = [];
   let customEnsAddress;
   let ensAddress;
+  let publishedAtBlock;
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -68,6 +69,7 @@ export default ethereum = (function() {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
             network='ropsten';
             ensAddress='0x112234455c3a32fd11230c42e7bccd4a84e02010';
+            publishedAtBlock = 400000;
             resolve();
             break;
           case '0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303':
@@ -77,8 +79,8 @@ export default ethereum = (function() {
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
             ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
+            publishedAtBlock = 3605331;
             resolve();
-            reject(errors.invalidNetwork);
             break;
           default:
             network='private';
@@ -150,7 +152,7 @@ export default ethereum = (function() {
   }
 
   window.watchEvents = function watchEvents() {
-      var lastBlockLooked = LocalStore.get('lastBlockLooked') || 400000;
+      var lastBlockLooked = LocalStore.get('lastBlockLooked') || publishedAtBlock;
       lastBlockLooked -= 250;
 
       console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
