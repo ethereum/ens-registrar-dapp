@@ -171,7 +171,7 @@ export default ethereum = (function() {
               if (nameObj) {
                 name = nameObj.name;
                 mode = nameObj.mode;
-              } else if(binarySearchNamesResult = binarySearchNames(result.args.hash)) {
+              } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
                 name = binarySearchNamesResult;
               }
 
@@ -201,7 +201,6 @@ export default ethereum = (function() {
               if (nameObj = Names.findOne({hash: hash})) {
                 name = nameObj.name;
                 mode = nameObj.mode;                
-              } else if(binarySearchNamesResult = binarySearchNames(result.args.hash)) {
                 name = binarySearchNamesResult;
               }
         
