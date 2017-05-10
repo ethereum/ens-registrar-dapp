@@ -63,10 +63,22 @@ Template['components_bid'].helpers({
   recoverAfterBurn() {
     return web3.fromWei(MyBids.findOne({_id: this.bid._id}).depositAmount, 'ether') / 1000;
   },
+  refund() {
+    var bid = MyBids.findOne({_id: this.bid._id});
+    return web3.fromWei(bid.depositAmount - bid.value, 'ether') / 1000;
+  },
   canReveal() {
     return this.status === 'reveal';
   },
   expired() {
     return this.status === 'owned';
+  }, 
+  isTopBidder() {
+    var value = Number(web3.fromWei(MyBids.findOne({_id: this.bid._id}).value, 'ether'));    
+    var highestBid = Number(web3.fromWei(Names.findOne({name: this.bid.name}).highestBid, 'ether'));
+    return value >= highestBid;
+  }, 
+  burnFee() {
+    return MyBids.findOne({_id: this.bid._id}).value * 0.005;
   }
 })
