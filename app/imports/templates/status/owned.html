@@ -1,8 +1,8 @@
 <template name="status-owned">
   {{#if isMine}}
-    <h1 class="domain-name">You own <strong>{{name}}</strong></h1> 
+    <h1 class="domain-name">You own <strong>{{TemplateVar.get 'name'}}</strong></h1> 
   {{else}}
-    <h1 class="domain-name"><strong>{{name}}</strong> is owned</h1> 
+    <h1 class="domain-name"><strong>{{TemplateVar.get 'name'}}</strong> is owned</h1> 
   {{/if}}
 
   <p>
@@ -15,8 +15,9 @@
   </p>
 
   {{#if needsFinalization}}
-
+    {{#if deedOwner}}
     <p>Owned by: {{> components_address addr=deedOwner}} </p>
+    {{/if}}
     {{#if hasOwner}}
       <p>Currently assigned to: {{> components_address addr=owner}} </p>
     {{/if}}
@@ -37,12 +38,13 @@
  
 
   <div class="records-section">
-    <h3>Records</h3>
+    <hr>
     {{#if (TemplateVar.get 'hasSetResolver')}}
       <p class="addr-record">
-        <strong>addr:</strong>
+        <h3>Main Ethereum address:</h3>
         {{#if (TemplateVar.get 'editingAddr')}}
           {{> dapp_addressInput }} <br>
+          
           {{#if (TemplateVar.get 'settingAddr')}}
             <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
             <button class="dapp-block-button disabled dapp-small" disabled>Cancel</button>
@@ -62,27 +64,47 @@
           {{/if}}
         {{/if}}
       </p>
-      <p>
-        <strong>content:</strong>
-        {{#if records.content}}
-          <strong>{{records.content}}</strong>
+      <p class="content-record">
+        <h3>Content hash for apps (IPFS/Swarm):</h3>
+
+        {{#if (TemplateVar.get 'editingHash')}}
+          <input type="text" class="content-input" value="{{TemplateVar.get 'newHash'}}"> <br><br>
+          
+          {{#if (TemplateVar.get 'settingHash')}}
+            <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
+            <button class="dapp-block-button disabled dapp-small" disabled>Cancel</button>
+          {{else}}
+            <button class="dapp-block-button set-hash dapp-small">Apply</button>
+            <button class="dapp-block-button cancel-edit-hash dapp-small">Cancel</button>
+          {{/if}}
+          
         {{else}}
-          <span>not set</span>
+          {{#if records.content}}
+            <a href="bzz://{{records.content}}/">bzz://{{records.content}}/</a> <br><br>
+            {{#if isMine}}
+              <button class="dapp-block-button edit-hash dapp-small">Edit</button>
+            {{/if}}
+          {{else}}
+            <span>not set</span>
+          {{/if}}
         {{/if}}
+
+
+
       </p>
     {{else}}
+      <h3>Records</h3>
       <p>
         Records are not enabled for this name (no resolver found).
       </p>
       {{#if isMine}}
         <p>
-          You can point your name to a basic resolver which has the <strong>addr</strong>
-          record, which is the one you need for your name to point to an address.
+          A resolver is a contract that can answer queries about your domain. You can choose any resolver but at the moment we deployed a basic resolver that can answer about ethereum addresses and content hashes. 
         </p>
         {{#if (TemplateVar.get 'settingResolver')}}
-          <button class="dapp-block-button disabled dapp-small" disabled>Setting resolver...</button>
+          <button class="dapp-block-button disabled dapp-small" disabled> Setting resolver... </button>
         {{else}}
-          <button class="dapp-block-button set-resolver dapp-small" disabled>Set resolver (not yet implemented)</button>
+          <button class="dapp-block-button set-resolver dapp-small"> Set to default resolver </button>
         {{/if}}
       {{/if}}
     {{/if}}
@@ -91,10 +113,14 @@
   
     {{#if isMine}}
     <div class="transfer-section">
+        <hr>    
         <h3>Transfer or Release</h3>
-        <p>Transfer ownership of {{name}} to another account <br></p>
+        <p>Transfer ownership of <strong>{{name}}</strong> to another account <br></p>
+        <p><strong>ATTENTION: THIS IS IRREVERSIBLE</strong> once a name is transferred, only the new owner can transfer it back. Make sure you know what you're doing</p>
         <p>
-        Account to transfer the name to:
+        Account to transfer the name to: 
+        </p>
+        <p>
         {{> dapp_addressInput }}
         </p>
         {{#if transferring}}

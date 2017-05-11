@@ -91,7 +91,7 @@ Template['components_nameStatus'].onCreated(function() {
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
                   value: value, 
-                highestBid: entry.highestBid, 
+                  highestBid: entry.highestBid, 
                   availableDate: entry.availableDate ? Number(entry.availableDate) :  0,
                   hash: entry.hash.replace('0x','').slice(0,12),
                   owner: entry.mode == 'owned' ? entry.deed.owner : '',
@@ -216,18 +216,24 @@ Template['status-reveal'].helpers({
 
 Template['aside-reveal'].helpers({ 
   registrationDate() {
+    if (Template.instance().data == null) return 'loading...';
     var m = moment(Template.instance().data.entry.registrationDate * 1000);
-
     return m.format('YYYY-MM-DD HH:mm');
   }, 
   timeRemaining() {
+    if (Template.instance().data == null) return '--h --m';
     var m = moment(Template.instance().data.entry.registrationDate * 1000);
-    
     return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ' + Math.floor(m.diff(moment(), 'minutes')%60) + 'm ' + Math.floor(m.diff(moment(), 'seconds')%60) + 's';
     
   },
   highestBid() {
+    if (Template.instance().data == null) return '--';
     var val = Template.instance().data.entry.highestBid;
+    return web3.fromWei(val, 'ether');
+  },
+  secondHighestBid() {
+    if (Template.instance().data == null) return '--';
+    var val = Template.instance().data.entry.value;
     return web3.fromWei(val, 'ether');
   }
 })
@@ -236,7 +242,7 @@ Template['aside-reveal'].helpers({
 Template['status-not-yet-available'].helpers({
   availableDate() {
     // console.log('getAvailableDate: ', Template.instance().data.entry); 
-    if (Template.instance().data == null) return;
+    if (Template.instance().data == null) return 'loading...';
 
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     return m.format('MMMM Do YYYY, HH:mm'); // April 28th 2017, 12:26:11 pm
@@ -246,7 +252,7 @@ Template['status-not-yet-available'].helpers({
 
 Template['aside-not-yet-available'].helpers({
   availableCountdown() {
-    if (Template.instance().data == null) return;
+    if (Template.instance().data == null) return '--h --m';
 
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     if (m.diff(moment(), 'days') > 1)
