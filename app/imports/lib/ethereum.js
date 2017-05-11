@@ -1,3 +1,12 @@
+if (localStorage.getItem('dev') === '1') {
+  console.log('Clearing LS');
+  localStorage.clear();
+  localStorage.setItem('dev', '1');
+}
+else {
+  console.log('Not clearing LS');
+}
+
 import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
 import initCollections from './collections';
@@ -102,7 +111,7 @@ export default ethereum = (function() {
             return reject(err);
           }
           //TODO: Check that the registrar is correctly instanciated
-          console.log('done initialiting', err, result)
+          console.log('done initializing', err, result)
           resolve();
         });
       } catch(e) {
@@ -152,18 +161,50 @@ export default ethereum = (function() {
   }
 
   window.watchEvents = function watchEvents() {
-      var lastBlockLooked = LocalStore.get('lastBlockLooked') || publishedAtBlock;
-      lastBlockLooked -= 250;
 
-      console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
+      web3.eth.getBlock('latest', (error, block) => {
+        var STEP = 500; // blocks until now to look at
+        var lastBlockLooked = localStorage.getItem('lastBlockLooked');
+        var searchFromBlock = Math.max(lastBlockLooked, block.number - STEP);
 
-      return new Promise((resolve, reject) => {
-        var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: lastBlockLooked});
-        var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: lastBlockLooked});
+        console.log(knownNames.length, ' known names loaded. Now checking for events since block ', searchFromBlock);
+        
+        return new Promise((resolve, reject) => {
+          var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: searchFromBlock});
 
-        AuctionStartedEvent.watch(function(error, result) {
-          if (!error) {            
+          AuctionStartedEvent.watch(function(error, result) {
+            if (!error) {            
+                LocalStore.set('lastBlockLooked', result.blockNumber);
+                var hash = result.args.hash.replace('0x','').slice(0,12);
+                var nameObj = Names.findOne({hash: hash});
+                var name, mode, binarySearchNamesResult;
+
+                if (nameObj) {
+                  name = nameObj.name;
+                  mode = nameObj.mode;
+                } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
+                  name = binarySearchNamesResult;
+                }
+
+                if (name) {
+                  Names.upsert({ name: name }, {
+                    $set: {
+                      fullname: name + '.eth',
+                      registrationDate: Number(result.args.registrationDate.toFixed()),
+                      hash: hash,
+                      mode: mode || 'open',
+                      public: true
+                    }
+                  });
+                }
+            } 
+          });
+
+          var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: searchFromBlock});
+          HashRegisteredEvent.watch(function(error, result) {
+            if (!error) {
               LocalStore.set('lastBlockLooked', result.blockNumber);
+              var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
               var nameObj = Names.findOne({hash: hash});
               var name, mode, binarySearchNamesResult;
@@ -174,52 +215,24 @@ export default ethereum = (function() {
               } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
                 name = binarySearchNamesResult;
               }
-
-
-              if (name) {
-                Names.upsert({name: name}, 
-                  { $set: { 
-                    fullname: name + '.eth',
-                    registrationDate: Number(result.args.registrationDate.toFixed()),
-                    hash: hash,
-                    mode: mode || 'open',
-                    public: true
-                  }})
-              }
-          } 
-        });
-
-        HashRegisteredEvent.watch(function(error, result) {
-          if (!error) {
-              var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
-              var hash = result.args.hash.replace('0x','').slice(0,12);
-              var nameObj = Names.findOne({hash: hash});
-              var name, mode, binarySearchNamesResult;
-              
-              LocalStore.set('lastBlockLooked', result.blockNumber);
-
-              if (nameObj = Names.findOne({hash: hash})) {
-                name = nameObj.name;
-                mode = nameObj.mode;                
-                name = binarySearchNamesResult;
-              }
         
-              Names.upsert({hash: hash}, 
-                { $set: { 
+              Names.upsert({ hash: hash }, {
+                  $set: {
                   name: name ? name : null,
                   fullname: name ? name + '.eth' : null,
                   registrationDate: Number(result.args.registrationDate.toFixed()),
                   value: value,
-                  mode: mode || 'owned',                  
+                  mode: mode || 'owned',
                   public: name && name.length > 0
-                }});
-          } 
-        }); 
+                }
+              });
+            } 
+          }); 
 
-        resolve(); 
+          resolve(); 
+        })
       })
-    }  
-
+  }
   function reportStatus(description, isReady, theresAnError) {
     subscribers.forEach((subscriber) => subscriber({
       isReady,
