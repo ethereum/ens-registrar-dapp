@@ -59,7 +59,7 @@ Template['components_newBid'].onRendered(function() {
   template.randomMix = function() {
     // gets a random name we know about
     var availableNow = _.pluck(Names.find({mode:'open', name:{$not: name}, availableDate: {$lt: Date.now()/1000}}).fetch(), 'name');
-    if ( Math.random() * 20 < availableNow.length ) {
+    if ( Math.random() * 200 < availableNow.length ) {
       return '0x' + web3.sha3(availableNow[Math.floor(Math.random()*availableNow.length)]).replace('0x','')
     } else {
       return Math.random() > 0.5 ? template.randomHash() : template.randomName();

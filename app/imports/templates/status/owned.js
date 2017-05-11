@@ -7,63 +7,53 @@ function getPublicAddrResolver() {
   let address;
   switch(network) {
     case 'ropsten': address = '0x4c641fb9bad9b60ef180c31f56051ce826d21a9a'; break;
+    case 'main': address = '0x1da022710df5002339274aadee8d58218e9d6ab5'; break;
     default: return null;
   }
   if (!publicAddrResolver) {
-    publicAddrResolver = web3.eth.contract([{"constant":true,"inputs":[{"name":"node","type":"bytes32"},
-      {"name":"contentType","type":"uint256"}],"name":"ABI","outputs":[{"name":"","type":"uint256"},
-      {"name":"","type":"bytes"}],"payable":false,"type":"function"},{"constant":true,"inputs":
-      [{"name":"node","type":"bytes32"}],"name":"addr","outputs":[{"name":"ret","type":"address"}],
-      "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
-      {"name":"kind","type":"bytes32"}],"name":"has","outputs":[{"name":"","type":"bool"}],
-      "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
-      {"name":"contentType","type":"uint256"},{"name":"data","type":"bytes"}],"name":"setABI","outputs":[],"payable":false,"type":"function"},
-      {"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"name","outputs":[{"name":"ret","type":"string"}],
-      "payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"name","type":"string"}],
-      "name":"setName","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},
-      {"name":"addr","type":"address"}],"name":"setAddr","outputs":[],"payable":false,"type":"function"},
-      {"inputs":[{"name":"ensAddr","type":"address"}],"payable":false,"type":"constructor"},{"payable":false,"type":"fallback"},
-      {"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"a","type":"address"}],
-      "name":"AddrChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},
-      {"indexed":false,"name":"name","type":"string"}],"name":"NameChanged","type":"event"}]).at(address);
+    publicAddrResolver = web3.eth.contract([{"constant":true,"inputs":[{"name":"interfaceID","type":"bytes4"}],"name":"supportsInterface","outputs":[{"name":"","type":"bool"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"node","type":"bytes32"},{"name":"contentTypes","type":"uint256"}],"name":"ABI","outputs":[{"name":"contentType","type":"uint256"},{"name":"data","type":"bytes"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"x","type":"bytes32"},{"name":"y","type":"bytes32"}],"name":"setPubkey","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"content","outputs":[{"name":"ret","type":"bytes32"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"addr","outputs":[{"name":"ret","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"contentType","type":"uint256"},{"name":"data","type":"bytes"}],"name":"setABI","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"name","outputs":[{"name":"ret","type":"string"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"name","type":"string"}],"name":"setName","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"hash","type":"bytes32"}],"name":"setContent","outputs":[],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"node","type":"bytes32"}],"name":"pubkey","outputs":[{"name":"x","type":"bytes32"},{"name":"y","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"node","type":"bytes32"},{"name":"addr","type":"address"}],"name":"setAddr","outputs":[],"payable":false,"type":"function"},{"inputs":[{"name":"ensAddr","type":"address"}],"payable":false,"type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"a","type":"address"}],"name":"AddrChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"hash","type":"bytes32"}],"name":"ContentChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"name","type":"string"}],"name":"NameChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":true,"name":"contentType","type":"uint256"}],"name":"ABIChanged","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"node","type":"bytes32"},{"indexed":false,"name":"x","type":"bytes32"},{"indexed":false,"name":"y","type":"bytes32"}],"name":"PubkeyChanged","type":"event"}]).at(address);
   }
   return publicAddrResolver;
 }
 
-Template['status-owned'].onCreated(function() {
+Template['status-owned'].onRendered(function() {
   const template = this;
-
   TemplateVar.set(template, 'owner', null);
-  TemplateVar.set(template, 'address', null);
-  TemplateVar.set(template, 'content', null);
-  TemplateVar.set(template, 'hasSetResolver', false);
 
   template.autorun(() => {
     const name = Session.get('searched');
     const entry = Names.findOne({name: name}); 
-    TemplateVar.set(template, 'entryData', entry);
 
-    ens.owner(entry.fullname , (err, res) => {
-      if (!err) {
-        TemplateVar.set(template, 'owner', res);
-      }
-    });
-    ens.resolver(entry.fullname, (err, res) => {
-      if (err) {
-        return;
-      }
-      TemplateVar.set(template, 'hasSetResolver', true);
-      res.addr((err, address) => {
+    if (!TemplateVar.get(template, 'entryData') || TemplateVar.get(template, 'entryData').name !== name) {
+      TemplateVar.set(template, 'address', null);
+      TemplateVar.set(template, 'content', null);
+      TemplateVar.set(template, 'hasSetResolver', false);
+
+      ens.owner(entry.fullname , (err, res) => {
+      console.log('ens owner', err, res);
         if (!err) {
-          TemplateVar.set(template, 'address', address);
+          TemplateVar.set(template, 'owner', res);
         }
       });
-      res.content((err, content) => {
-        if (!err) {
-          TemplateVar.set(template, 'content', content);
-        }
-      })
-    });
+      //ens.resolver(entry.fullname, (err, res) => {
+      //  console.log('ens resolver', err, res);
+      //  if (!err) {
+      //    TemplateVar.set(template, 'hasSetResolver', true);
+      //    res.addr((err, address) => {
+      //      if (!err) {
+      //        TemplateVar.set(template, 'address', address);
+      //      }
+      //    });
+      //    res.content((err, content) => {
+      //      if (!err) {
+      //        TemplateVar.set(template, 'content', content);
+      //      }
+      //    });
+      //  }
+      //});
+    } 
+
+    TemplateVar.set(template, 'entryData', entry);
   })
 });
 
@@ -88,15 +78,21 @@ Template['status-owned'].helpers({
     return web3.eth.accounts.filter((acc) => acc == owner).length > 0;
   },
   registrationDate() {
-    var date = new Date(TemplateVar.get('entryData').registrationDate * 1000);
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return 'loading';
+    var date = new Date(entry.registrationDate * 1000);
     return date.toISOString().slice(0,10);
   },
   releaseDate() {
-    var releaseDate = new Date((TemplateVar.get('entryData').registrationDate + 365 * 24 * 60 * 60) * 1000);
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return 'loading';
+    var releaseDate = new Date((entry.registrationDate + 365 * 24 * 60 * 60) * 1000);
     return releaseDate.toISOString().slice(0,10);
   },
   canRelease() {
-    var releaseDate = new Date((TemplateVar.get('entryData').registrationDate + 365 * 24 * 60 * 60) * 1000);
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return false;
+    var releaseDate = new Date((entry.registrationDate + 365 * 24 * 60 * 60) * 1000);
 
     return Date.now() > releaseDate;
   },
@@ -106,16 +102,22 @@ Template['status-owned'].helpers({
     return Math.max(entry.value, 0.01);
   },
   noBids() {
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return true;  
     var val = TemplateVar.get('entryData').value;
     return val.toFixed() <= 0.01;
   },
   renewalDate() {
     var years = 365 * 24 * 60 * 60 * 1000;
-    var date = new Date(TemplateVar.get('entryData').registrationDate * 1000 + 2 * years);
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return 'loading';
+    var date = new Date(entry.registrationDate * 1000 + 2 * years);
     return date.toISOString().slice(0,10);
   },
   highestBid() {
-    var val = TemplateVar.get('entryData').highestBid;
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return '--';
+    var val = entry.highestBid;
     return web3.fromWei(val, 'ether');
   },
   content() {
@@ -142,7 +144,7 @@ Template['status-owned'].helpers({
     var entry = TemplateVar.get('entryData');
     var owner = TemplateVar.get('owner');
     if (!entry) return;
-    return owner != entry.owner;
+    return owner !== entry.owner;
   },
   refund() {
     var entry = TemplateVar.get('entryData');
@@ -158,7 +160,7 @@ Template['status-owned'].events({
     const name = template.data.entry.name;
     if (!newOwner) {
       GlobalNotification.error({
-          content: 'No address chosen',
+          content: 'Invalid address',
           duration: 3
       });
       return;
@@ -250,6 +252,35 @@ Template['status-owned'].events({
       Helpers.getTxHandler({
         onSuccess: () => Helpers.refreshStatus(),
         onDone: () => TemplateVar.set(template, 'settingAddr', false)
+      })
+    )
+  },
+  'click .edit-hash': function(e, template) {
+    TemplateVar.set('editingHash', true);
+  },
+  'click .cancel-edit-hash': function(e, template) {
+    TemplateVar.set('editingHash', false);
+  },
+  'input .content-input': function(e, template) {
+    TemplateVar.set('newHash', e.currentTarget.value.toLowerCase().replace(/^0x|[^a-f0-9]/g,''));
+  },
+  'click .set-hash': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const fullname = template.data.name;
+    const newHash = '0x' + TemplateVar.get('newHash');
+    const publicResolver = getPublicAddrResolver();
+    if (!publicResolver) {
+      GlobalNotification.error({
+        content: `Public resolver not found on ${network} network.`,
+        duration: 5
+      });
+      return;
+    }
+    TemplateVar.set('settingHash', true)
+    publicResolver.setContent(ens.namehash(fullname), newHash, {from: owner, gas: 300000}, 
+      Helpers.getTxHandler({
+        onSuccess: () => Helpers.refreshStatus(),
+        onDone: () => TemplateVar.set(template, 'settingHash', false)
       })
     )
   }
