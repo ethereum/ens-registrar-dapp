@@ -16,43 +16,51 @@ function getPublicAddrResolver() {
   return publicAddrResolver;
 }
 
-Template['status-owned'].onRendered(function() {
+Template['status-owned'].onCreated(function() {
   const template = this;
   TemplateVar.set(template, 'owner', null);
+  let prevName;
 
   template.autorun(() => {
     const name = Session.get('searched');
+    if (prevName == name) return;
+    prevName = name;
+
     const entry = Names.findOne({name: name}); 
 
-    if (!TemplateVar.get(template, 'entryData') || TemplateVar.get(template, 'entryData').name !== name) {
-      TemplateVar.set(template, 'address', null);
-      TemplateVar.set(template, 'content', null);
-      TemplateVar.set(template, 'hasSetResolver', false);
+    if (entry.owner == null) {
+      setTimeout(function() {
+      console.log('template', template);
+          TemplateVar.set(template, 'entryData', Names.findOne({name: name}));
+      }, 3000);
+    }
 
-      ens.owner(entry.fullname , (err, res) => {
-      console.log('ens owner', err, res);
-        if (!err) {
-          TemplateVar.set(template, 'owner', res);
-        }
-      });
-      //ens.resolver(entry.fullname, (err, res) => {
-      //  console.log('ens resolver', err, res);
-      //  if (!err) {
-      //    TemplateVar.set(template, 'hasSetResolver', true);
-      //    res.addr((err, address) => {
-      //      if (!err) {
-      //        TemplateVar.set(template, 'address', address);
-      //      }
-      //    });
-      //    res.content((err, content) => {
-      //      if (!err) {
-      //        TemplateVar.set(template, 'content', content);
-      //      }
-      //    });
-      //  }
-      //});
-    } 
+    TemplateVar.set(template, 'address', null);
+    TemplateVar.set(template, 'content', null);
+    TemplateVar.set(template, 'hasSetResolver', false);
 
+    ens.owner(entry.fullname , (err, res) => {
+      if (!err) {
+        TemplateVar.set(template, 'owner', res);
+      }
+    });
+    ens.resolver(entry.fullname, (err, res) => {
+      if (!err) {
+        TemplateVar.set(template, 'hasSetResolver', true);
+        res.addr((err, address) => {
+          if (!err) {
+            TemplateVar.set(template, 'address', address);
+          }
+        });
+        res.content((err, content) => {
+          if (!err) {
+            TemplateVar.set(template, 'content', content);
+          }
+        });
+      }
+    });
+     
+    TemplateVar.set(template, 'name', name);
     TemplateVar.set(template, 'entryData', entry);
   })
 });
@@ -71,7 +79,9 @@ Template['status-owned'].helpers({
     return Number(TemplateVar.get('owner')) > 0;
   },
   deedOwner() {
-    return TemplateVar.get('entryData').owner;
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return 'loading';
+    return entry.owner;
   },
   isMine() {
     const owner = TemplateVar.get('owner');
@@ -104,7 +114,7 @@ Template['status-owned'].helpers({
   noBids() {
     var entry = TemplateVar.get('entryData')
     if (!entry) return true;  
-    var val = TemplateVar.get('entryData').value;
+    var val = entry.value;
     return val.toFixed() <= 0.01;
   },
   renewalDate() {
@@ -293,10 +303,12 @@ Template['aside-owned'].helpers({
   },
   finalValue() {
     const entry = Names.findOne({name: Session.get('searched')}); 
-    return entry.value || '--' ;
+    if (!entry) return '--';
+    return entry.value;
   },
   canRefund() {
     const entry = Names.findOne({name: Session.get('searched')}); 
+    if (!entry) return false;    
     return entry.deedBalance !== entry.value;  
   } 
 })
