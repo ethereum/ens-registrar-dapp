@@ -43,12 +43,12 @@ Template['status-owned'].onCreated(function() {
     const entry = Names.findOne({name: name}); 
     TemplateVar.set(template, 'entryData', entry);
 
-    ens.owner(name, (err, res) => {
+    ens.owner(entry.fullname , (err, res) => {
       if (!err) {
         TemplateVar.set(template, 'owner', res);
       }
     });
-    ens.resolver(name, (err, res) => {
+    ens.resolver(entry.fullname, (err, res) => {
       if (err) {
         return;
       }
@@ -102,6 +102,7 @@ Template['status-owned'].helpers({
   },
   finalValue() {
     const entry = Names.findOne({name: Session.get('searched')}); 
+    if (!entry) return;
     return Math.max(entry.value, 0.01);
   },
   noBids() {
@@ -140,6 +141,7 @@ Template['status-owned'].helpers({
   needsFinalization() {
     var entry = TemplateVar.get('entryData');
     var owner = TemplateVar.get('owner');
+    if (!entry) return;
     return owner != entry.owner;
   },
   refund() {
@@ -266,4 +268,33 @@ Template['aside-owned'].helpers({
     const entry = Names.findOne({name: Session.get('searched')}); 
     return entry.deedBalance !== entry.value;  
   } 
+})
+
+
+Template['finalizeButton'].events({
+  'click .finalize': function() {
+    const name = Session.get('searched');
+    const template = Template.instance();
+
+    console.log('template' ,template)
+    
+    if (web3.eth.accounts.length == 0) {
+      alert('No accounts added to dapp');
+      return;
+    }
+    TemplateVar.set(template, 'finalizing', true);
+    registrar.finalizeAuction(name, {
+      from: template.data.owner,
+      gas: 200000
+    }, Helpers.getTxHandler({
+      onDone: () => TemplateVar.set(template, 'finalizing', false),
+      onSuccess: () => Helpers.refreshStatus()
+    }));
+  }
+})
+
+Template['finalizeButton'].helpers({
+  finalizing() {
+    return TemplateVar.get('finalizing');
+  }
 })

@@ -91,7 +91,7 @@ Template['components_nameStatus'].onCreated(function() {
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
                   value: value, 
-                highestBid: entry.highestBid, 
+                  highestBid: entry.highestBid, 
                   availableDate: entry.availableDate ? Number(entry.availableDate) :  0,
                   hash: entry.hash.replace('0x','').slice(0,12),
                   owner: entry.mode == 'owned' ? entry.deed.owner : '',
@@ -216,18 +216,24 @@ Template['status-reveal'].helpers({
 
 Template['aside-reveal'].helpers({ 
   registrationDate() {
+    if (Template.instance().data == null) return;
     var m = moment(Template.instance().data.entry.registrationDate * 1000);
-
     return m.format('YYYY-MM-DD HH:mm');
   }, 
   timeRemaining() {
+    if (Template.instance().data == null) return;
     var m = moment(Template.instance().data.entry.registrationDate * 1000);
-    
     return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ' + Math.floor(m.diff(moment(), 'minutes')%60) + 'm ' + Math.floor(m.diff(moment(), 'seconds')%60) + 's';
     
   },
   highestBid() {
+    if (Template.instance().data == null) return;
     var val = Template.instance().data.entry.highestBid;
+    return web3.fromWei(val, 'ether');
+  },
+  secondHighestBid() {
+    if (Template.instance().data == null) return;
+    var val = Template.instance().data.entry.value;
     return web3.fromWei(val, 'ether');
   }
 })
