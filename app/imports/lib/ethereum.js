@@ -1,12 +1,3 @@
-if (localStorage.getItem('dev') === '1') {
-  console.log('Clearing LS');
-  localStorage.clear();
-  localStorage.setItem('dev', '1');
-}
-else {
-  console.log('Not clearing LS');
-}
-
 import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
 import initCollections from './collections';
