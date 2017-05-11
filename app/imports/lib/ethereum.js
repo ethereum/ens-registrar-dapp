@@ -17,6 +17,7 @@ export default ethereum = (function() {
   let subscribers = [];
   let customEnsAddress;
   let ensAddress;
+  let publishedAtBlock;
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -68,6 +69,7 @@ export default ethereum = (function() {
           case '0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d':
             network='ropsten';
             ensAddress='0x112234455c3a32fd11230c42e7bccd4a84e02010';
+            publishedAtBlock = 25409;
             resolve();
             break;
           case '0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303':
@@ -77,8 +79,8 @@ export default ethereum = (function() {
           case '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3':
             network='main';
             ensAddress='0x314159265dd8dbb310642f98f50c066173c1259b';
+            publishedAtBlock = 3605331;
             resolve();
-            reject(errors.invalidNetwork);
             break;
           default:
             network='private';
@@ -124,32 +126,33 @@ export default ethereum = (function() {
     var minIndex = 0;
     var maxIndex = knownNames.length - 1;
     var currentIndex = (maxIndex + minIndex) / 2 | 0;
-    var currentElement;
+    var currentElement, currentElementSha3;
 
     if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
-          searchElement = searchElement.slice(2);
+      searchElement = searchElement.slice(2);
     } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
-          searchElement = '0x' + searchElement;
+      searchElement = '0x' + searchElement;
     }
 
     while (minIndex <= maxIndex) {
-        currentIndex = (minIndex + maxIndex) / 2 | 0;
-        currentElement = knownNames[currentIndex];
+      currentIndex = (minIndex + maxIndex) / 2 | 0;
+      currentElement = knownNames[currentIndex];
+      currentElementSha3 = web3.sha3(currentElement);
 
-        if (web3.sha3(currentElement) < searchElement) {
-            minIndex = currentIndex + 1;
-        } else if (web3.sha3(currentElement) > searchElement) {
-            maxIndex = currentIndex - 1;
-        } else {
-            return knownNames[currentIndex];
-        }
+      if (currentElementSha3 < searchElement) {
+        minIndex = currentIndex + 1;
+      } else if (currentElementSha3 > searchElement) {
+        maxIndex = currentIndex - 1;
+      } else {
+        return knownNames[currentIndex];
+      }
     }
 
     return null;
-    }
+  }
 
   window.watchEvents = function watchEvents() {
-      var lastBlockLooked = LocalStore.get('lastBlockLooked') || 400000;
+      var lastBlockLooked = LocalStore.get('lastBlockLooked') || publishedAtBlock;
       lastBlockLooked -= 250;
 
       console.log(knownNames.length + ' known names loaded. Now checking for events since block ' + lastBlockLooked);
@@ -162,13 +165,14 @@ export default ethereum = (function() {
           if (!error) {            
               LocalStore.set('lastBlockLooked', result.blockNumber);
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var name, mode;
+              var nameObj = Names.findOne({hash: hash});
+              var name, mode, binarySearchNamesResult;
 
-              if (Names.findOne({hash: hash})) {
-                name = Names.findOne({hash: hash}).name;
-                mode = Names.findOne({hash: hash}).mode;
-              } else if(binarySearchNames(result.args.hash)) {
-                name = binarySearchNames(result.args.hash);
+              if (nameObj) {
+                name = nameObj.name;
+                mode = nameObj.mode;
+              } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
+                name = binarySearchNamesResult;
               }
 
 
@@ -189,15 +193,15 @@ export default ethereum = (function() {
           if (!error) {
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var name, mode;
+              var nameObj = Names.findOne({hash: hash});
+              var name, mode, binarySearchNamesResult;
               
               LocalStore.set('lastBlockLooked', result.blockNumber);
 
-              if (Names.findOne({hash: hash})) {
-                name = Names.findOne({hash: hash}).name;
-                mode = Names.findOne({hash: hash}).mode;                
-              } else if(binarySearchNames(result.args.hash)) {
-                name = binarySearchNames(result.args.hash);
+              if (nameObj = Names.findOne({hash: hash})) {
+                name = nameObj.name;
+                mode = nameObj.mode;                
+                name = binarySearchNamesResult;
               }
         
               Names.upsert({hash: hash}, 
