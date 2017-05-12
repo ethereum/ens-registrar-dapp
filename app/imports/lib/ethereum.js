@@ -335,6 +335,36 @@ export default ethereum = (function() {
           }})        
       })
 
+      var lastDay = Math.floor(new Date().getTime()) - 24 * 60 * 60 + 10 * 60 * 1000;      
+
+      // Clean up Pending Bids
+      _.each(PendingBids.find({date: {$gt: lastDay}}).fetch(), ( bid, i) => {  
+        // check for duplicates 
+        var dupBid = MyBids.find({shaBid:bid.shaBid}).fetch();
+        if (dupBid && dupBid.shaBid == bid.shaBid && dupBid.secret == bid.secret){
+            console.log('removing duplicate bid for', bid.name)
+            PendingBids.remove({_id: bid._id});            
+        } else {
+          registrar.contract.sealedBids.call(bid.owner, bid.shaBid, (err, result) => {
+            if (err) {
+              console.log('Error looking bid', bid.name, err);
+            } else if (result !== '0x0000000000000000000000000000000000000000') {
+              console.log('Insert bid', bid.name);
+              //bid successfully submitted
+              MyBids.insert(bid);
+              PendingBids.remove({_id: bid._id});            
+            } else {
+              // Check for pending bids that are too late
+              var name = Names.findOne({name: bid.name});
+              if (name && name.mode == 'owned') {
+                console.log('Pending bid for', bid.name, 'has been removed because name is', name.mode);
+                PendingBids.remove({_id: bid._id});          
+              }
+            }
+          })        
+        }
+      })
+
       updateMistMenu();
   }  
 

@@ -91,6 +91,11 @@ Template['components_newBid'].onRendered(function() {
   console.log('name:', name);
   template.createHashesArray();
 
+  var pending = PendingBids.find({name: name}, {sort: {value: -1}}).fetch();
+  if (pending && pending.length > 0) {
+    TemplateVar.set(template, 'bidAmount', web3.fromWei(pending[0].value, 'ether'));
+  }
+
   this.autorun(() => {
     // This changes as the searched name changes
     let name = Session.get('searched');
@@ -167,8 +172,8 @@ Template['components_newBid'].events({
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
               onSuccess: () => { 
-                EthElements.Modal.show('modals_backup'); 
                 updatePendingBids(name);
+                EthElements.Modal.show('modals_backup'); 
               }
             }));
         } else {
