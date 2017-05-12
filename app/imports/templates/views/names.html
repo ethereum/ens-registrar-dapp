@@ -1,0 +1,32 @@
+<template name="view_names">
+    {{#if watchesNames}}
+        <h3> Watched Names </h3>
+        <ul class="names">
+            {{#each name in names}}
+              <li>
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+              </li>
+            {{/each}}
+        </ul>
+        <a href="" class="toggle-sort">
+            {{#if sortedByDate}}
+                Sort by name
+            {{else}} 
+                Sort by date
+            {{/if}}
+        </a>
+        <br>
+
+    {{/if}}
+
+    <h3>More Options</h3>
+    <ul>
+        {{#if hasBids}}
+        <li><a href="" class="export-bids">Export Bids </a></li>
+        {{/if}}
+        <li><a href="" class="import-bids">Import Bids</a></li>
+    </ul>
+
+
+</template>
+

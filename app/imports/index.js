@@ -1,5 +1,8 @@
-if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1')
-    Meteor.disconnect();
+import { registrar } from '/imports/lib/ethereum';
+
+if(location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  Meteor.disconnect();
+}
 
 Meteor.startup(function() {
     // SET default language
@@ -30,6 +33,35 @@ Meteor.startup(function() {
         }
     });
 
-  // Set Meta Title
-  Meta.setTitle(TAPi18n.__("dapp.app.title"));
+    // add class to the header when scrolling
+    $(window).on('scroll', function() {
+        var scrollPosition = $(window).scrollTop();
+        
+        if( scrollPosition > 150 ) {
+            $('header').addClass('fixed');
+        } else if( scrollPosition > 90 ) {
+            $('header').addClass('about-to-be-fixed ');
+        } else {
+            $('header').removeClass('fixed');
+            $('header').removeClass('about-to-be-fixed ');
+        }
+    })
+
+    // activates when back button is pressed 
+    window.onpopstate = function(event) {
+        var name = event.currentTarget.location.hash.slice(1)
+
+        if (name !== Session.get('searched')) {
+            Session.set('searched', name);
+            Session.set('name', name);
+            $('#search-input').val(name);
+            window.location.hash = '#' + name;    
+        }
+        
+    }
 });
+
+
+
+
+

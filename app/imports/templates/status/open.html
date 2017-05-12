@@ -1,18 +1,57 @@
 <template name="status-open">
     <div>
       <h1 class="domain-name"><strong>{{name}}</strong> is available</h1> 
-        <p>
-            Names in Ethereum are used to send ether, to access apps and other future uses. Names are not "bought" from anyone, ownership is guaranteed by willingness to lock ether for at least a year on the domain. While the ether is locked, the owner retains the rights to the domain, including the right to add extradata, create subdomains, lease, loan, sell it or do anything with another smart contract. The full process takes seven days and the amount of ether to be locked will be decided by auction. If nobody tries to claim your name in the first week, then you'll be refunded all the funds other than the minimum amount of <strong>0.01</strong> ether, required.
-        </p>
-        <p>
-          After at minimum a year, the owner can release the name back to the market and therefore recover their funds. When the permanent registrar is deployed, owners will have the right to choose to move their names to the new registrar or get their ether back. The permanent registrar will most probably include rules that might require further locking of ether, in order to make sitting on an inactive domain unprofitable.
-        </p>
-        <button type="submit" class="dapp-block-button open-auction" disabled={{opening}}> 
-          {{#if opening}}
-            Opening...
-          {{else}}
-            Open auction
-          {{/if}}
-        </button>
-    </div>
+        {{>component_explainerBid}}
+
+        
+        
+      </div>
+
+      {{#unless hasBids}}
+      {{#if hasNode}}
+  
+          {{>components_newBid}}
+
+          <p>
+          Or..
+          </p>
+
+          <button type="submit" class="open-auction" disabled={{opening}}> 
+            {{#if opening}}
+              Opening...
+            {{else}}
+              Open without bidding
+            {{/if}}
+          </button>
+          
+
+        {{else}}
+        {{> components_noNode}}
+        {{/if}}
+      {{else}}
+      <div class="unused-bids">
+          <h3>You have bid but the auction is not open</h3>
+
+          You open bids on an auction that isn't open. Either an error occurred opening the auction, or the auction ended without any bids. In either case, <strong>you must open the auction again to validate your bid</strong>.
+
+          {{#each bid in bids}}
+          {{> components_bid bid=bid status='open' }}
+          {{/each}}
+
+          <br>
+          <button type="submit" class="open-auction dapp-block-button" disabled={{opening}}> 
+            {{#if opening}}
+              Opening...
+            {{else}}
+              Open Auction
+            {{/if}}
+          </button>
+      </div>
+      <div style="visibility: hidden;">{{>components_newBid}}</div>      
+      {{/unless}}
+
+</template>
+
+<template name='aside-open'>
+      {{>components_watch name=name}}
 </template>

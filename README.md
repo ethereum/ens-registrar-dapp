@@ -1,6 +1,12 @@
 # Ethereum Name Service Registrar DApp
 
-How to run it:
+This app allows you to register a .eth domain name, for use in ethereum decentralized applications and compatible blockchain browsers.
+
+Check [ens.domains](http://ens.domains/) for more information about the ENS.
+
+Try the app: [registrar.ens.domains](http://registrar.ens.domains/)
+
+### How to run it
 
     cd app
     meteor npm install
@@ -9,7 +15,7 @@ How to run it:
 
 ### Deploying to github pages
 
-A static copy of the app is kept at [ethereum.github.io/ens-registrar-dapp](https://ethereum.github.io/ens-registrar-dapp/). The page reflects whatever is kept at the `docs` folder in the `master` branch. So to update the static site, create a working branch and execute these:
+A static copy of the app is kept at [registrar.ens.domains](http://registrar.ens.domains/). The page reflects whatever is kept at the `docs` folder in the `master` branch. So to update the static site, create a working branch and execute these:
 
 ```
 cd app

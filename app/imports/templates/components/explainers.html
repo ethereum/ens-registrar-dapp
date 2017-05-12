@@ -1,0 +1,51 @@
+
+<template name="component_explainerBody">
+  <p>
+    This app allows you to register a <strong>.eth</strong> domain name for use in ethereum decentralized applications (dapps) and compatible blockchain browsers. Names are not purchased. Each name registered requires depositing some amount of ether directly into its respective registrar contract for a minimum duration of one year, thus no central entity receives the funds. All ether deposited to contract deeds are then temporarily locked until the end of the auction. 
+
+  </p>        
+  <p>
+    The registration process begins with an auction in which bids are placed for a name. There are three possible outcomes for bidders:
+    </p>
+
+    <ol>
+        <li>
+        During the designated “reveal” period, your bid is revealed to be the highest one and you win the auction. In this case, a deposit equivalent to the value of the second highest bid will be used to secure your name, and the remainder is returned to you :-)
+        </li>
+        <li>
+        During the designated “reveal” period, you reveal your bid, but you are not the highest bidder so you do not win the auction. In this case, your entire deposit will be returned to you, minus a 0.5% fee that is burned :-/
+        </li>
+        <li>
+        If for any reason you failed to reveal your bid during the designated “reveal” period, your entire deposit is burned :-(
+        </li> 
+    </ol>
+
+    <p>
+    Once a name is requested, a period of 72 hours begins in which anyone can put a sealed bid for it and send the necessary funds (minimum of 0.01 ether). This period is followed by a 48 hour one (the "Reveal Period") in which <strong>bids must be revealed. Any bid that is not revealed during Reveal Period results in the loss of its related funds</strong>. Revealing your bid requires information stored in your browser, or backed up using the 'Export Bids' option. The highest bidder after all bids are revealed during this Reveal Period becomes the registrant of the name, and the ether they sent to the contract will be refunded immediately, <strong>minus the value required to outbid the second highest bidder.</strong> The remaining funds are kept locked in a contract for at least a year, after which they can be withdrawn by the registrant upon releasing rights of use of the name. Names with registrants are controlled only by their registrants, who can transfer or release the name until it needs to be renewed.     
+    </p>
+
+    <p>
+    The registrar contract is expected to be upgraded in 2018 to include small renewal fees in order to discourage long term squatting and speculation.  
+    </p>
+
+  <button class="dapp-block-button dapp-small explainer">Understand the process</button>
+</template>
+
+<template name="component_explainerBid">
+    <p>
+        Names in Ethereum are used to send ether, to access apps and for other future uses. Names are not "bought" from anyone. Ownership is guaranteed by willingness to lock ether for at least a year. While the ether is locked, the owner retains the rights to the domain, including the right to add extradata, create subdomains, lease, loan, sell it or do anything with another smart contract. The locking process takes five days, and the amount of ether locked gets determined by auction. If nobody tries to claim your name in the first week, then you'll be refunded all the funds other than the minimum amount of 0.01 ether.
+    </p>
+    <p>
+      After at minimum a year, the owner can release the name back to the market and thereby recover locked funds. When the permanent registrar is deployed, owners will have the right to move their names to the new registrar or get their ether back. The permanent registrar will probably make sitting on an inactive domain unprofitable by further locking of ether. The current registrar is temporary: it is expected that in 1 to 2 years a new update process will replace it with extra functions to discourage squatting. Names registered now are very likely to be grandfathered in the updated registrar, but you are expected to execute a transaction to move names. The current contract will not accept registrations in 4 years, and any ether remaining on it will become irretrievable after 8 years. Keep yourself informed and be ready to transfer your names in the coming years.
+    </p>
+ 
+    <strong>Max bidding</strong>
+
+    <p>
+      You bid for a name by submitting the maximum amount of ether you are willing to lock. If you are outbid, your ether will be refunded. If your bid wins, you will be refunded any amount your bid exceeds a second place bidder. Note: you only need to bid once. Your maximum bid is kept secret until you reveal it.
+    </p>
+ 
+</template>
+
+
+

@@ -1,0 +1,46 @@
+<template name="components_newBid">
+  <form class="new-bid">
+      <br><h3>How much do you value this name?</h3>          
+      <p>
+        Send the maximum amount of value you would be willing to lock for this name:<br>
+        <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*" value="{{TemplateVar.get 'bidAmount'}}"> <span>ether</span>
+      </p>
+      <br>
+      {{#if TemplateVar.get 'showAdvanced'}}
+          <h3>Protect bid anonymity</h3>
+        To keep the bid secret, we strongly recommend sending an extra amount 
+        <br>
+        <input type="text" min="0.01" step="0.1" name="depositAmount" placeholder="0.01" class="deposit-amount dapp-large" value="{{depositAmount}}"> <span>ether</span>  
+        <br>
+        <h3>Max Fee</h3>
+
+        {{> dapp_selectGasPrice gas=650000 gasPrice=20000000000 low='cheaper' high='faster'}} <br>
+        <em>{{feeExplainer}}</em> <br><br>
+
+        <a href="#" class="hide-advanced">Hide options</a>
+
+      {{else}}
+        <a href="#" class="show-advanced">Show more options</a>
+      {{/if}}
+        <br>
+
+      <p class="clear"><input type="checkbox" id="agreement" name="agreement"> <label for="agreement">I understand <a href="#terms" class="explainer">how the process works and my risks and responsibilities involved </a>.</label></p>
+      <p class="clear">
+        {{#if dictionaryLoaded}}
+            {{#if TemplateVar.get 'agree'}}
+                <button type="submit" class="dapp-block-button" disabled="{{bidding}}">
+                {{#if bidding}}
+                  Bidding...
+                {{else}}
+                  Bid
+                {{/if}}
+                </button>  
+            {{else}}
+                <button type="submit" class="dapp-block-button" disabled="true"> Bid </button>
+            {{/if}}
+        {{else}}
+                <button type="submit" class="dapp-block-button" disabled="true"> Loading dictionary.. </button>
+        {{/if}}          
+      </p>
+    </form>
+</template>

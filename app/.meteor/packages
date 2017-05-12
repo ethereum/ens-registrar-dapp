@@ -21,7 +21,6 @@ ecmascript
 
 # Ethereum
 
-ethereum:accounts@0.3.5
 ethereum:elements
 ethereum:tools
 ethereum:dapp-styles
@@ -38,8 +37,7 @@ tap:i18n
 mrt:moment
 session@1.1.7
 hashanp:geopattern
-yasinuslu:blaze-meta
 chuangbo:cookie
 numeral:numeral
 frozeman:global-notifications
-abernix:standard-minifier-js
+abernix:standard-minifier-js@1.2.2

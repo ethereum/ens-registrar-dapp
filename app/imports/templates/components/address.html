@@ -1,0 +1,23 @@
+<template name="components_address">
+  <div class="components_address">
+    {{#if addr}}
+      {{> dapp_identicon identity=addr class="dapp-tiny"}}
+      {{#if hasName}}
+        {{ > components_nameLink fullname=name }}
+        {{#if mine}}
+          <i class="icon-user help owns" title="Account is yours"></i>
+        {{/if}}
+      {{else}}
+        {{#if mine}}
+          <em class="name">this account belongs to you</em>
+        {{/if}}
+      {{/if}}
+      <span class="address {{hasName}} {{#if mine}}has-name{{/if}}">
+        <span class="start">{{addrHead}}</span><span class="end">{{addrTail}}</span>
+      </span>
+    {{else}}
+      <span class="dapp-identicon dapp-tiny dapp-icon-loading" title="This is a security icon. If the address changes in any way, the resulting icon should be a completely different one."></span>
+      <span class="address">Loading address</span>
+    {{/if}}
+  </div>
+</template>

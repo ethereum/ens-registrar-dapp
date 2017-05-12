@@ -37,10 +37,6 @@ Base64@~0.2.0:
   version "2.0.7"
   resolved "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2"
 
-bindings@~1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.2.1.tgz#14ad6113812d2d37d72e67b4cacb4bb726505f11"
-
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.4.0:
   version "4.11.6"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.6.tgz#53344adb14617a13f6e8dd2ce28905d1c0ba3215"
@@ -197,12 +193,6 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
 
-debug@~2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
-  dependencies:
-    ms "0.7.1"
-
 deep-equal@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
@@ -263,26 +253,22 @@ es-to-primitive@^1.1.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.1"
 
-eth-registrar-ens@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/eth-registrar-ens/-/eth-registrar-ens-0.1.0.tgz#9326773803c7da07d15b2356006f469918d1317e"
+eth-registrar-ens@0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/eth-registrar-ens/-/eth-registrar-ens-0.6.5.tgz#935d64643a44077998ed7de03d7cfe4f68be80d5"
   dependencies:
-    ethereum-ens "^0.1.1"
-    node-stringprep "^0.8.0"
+    ethereum-ens "^0.4.0"
     underscore "^1.8.3"
+    web3 "^0.18.2"
 
-ethereum-ens@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/ethereum-ens/-/ethereum-ens-0.1.1.tgz#e1e295684786455785c1827deb401fb92e294276"
+ethereum-ens@^0.4.0, ethereum-ens@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/ethereum-ens/-/ethereum-ens-0.4.2.tgz#16107e1c0bd6b4569481589743286f598220aebc"
   dependencies:
     crypto-js "^3.1.6"
-
-ethereum-ens@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/ethereum-ens/-/ethereum-ens-0.2.4.tgz#30349deaf5aead6fbfc5c04c5ad526c114bde3d8"
-  dependencies:
-    crypto-js "^3.1.6"
-    node-stringprep "^0.8.0"
+    idna-uts46 "^1.0.1"
+    pako "^1.0.4"
+    text-encoding "^0.6.4"
     underscore "^1.8.3"
 
 events@^1.1.1:
@@ -346,6 +332,12 @@ http-browserify@^1.7.0:
 https-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
+
+idna-uts46@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/idna-uts46/-/idna-uts46-1.0.1.tgz#bfa1d44b22937ce14e106463ac814e9d1449b777"
+  dependencies:
+    punycode "^1.3.2"
 
 ieee754@^1.1.4:
   version "1.1.8"
@@ -443,22 +435,6 @@ minimist@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
-ms@0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
-
-nan@~2.3.3:
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.3.5.tgz#822a0dc266290ce4cd3a12282ca3e7e364668a08"
-
-node-stringprep@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/node-stringprep/-/node-stringprep-0.8.0.tgz#e4a39e48ea4486ec454bc08dca51dd1aa4686417"
-  dependencies:
-    bindings "~1.2.1"
-    debug "~2.2.0"
-    nan "~2.3.3"
-
 object-inspect@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.2.1.tgz#3b62226eb8f6d441751c7d8f22a20ff80ac9dc3f"
@@ -476,6 +452,10 @@ once@^1.3.0:
 os-browserify@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/os-browserify/-/os-browserify-0.2.1.tgz#63fc4ccee5d2d7763d26bbf8601078e6c2e0044f"
+
+pako@^1.0.4:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.5.tgz#d2205dfe5b9da8af797e7c163db4d1f84e4600bc"
 
 pako@~0.2.0:
   version "0.2.9"
@@ -523,7 +503,7 @@ public-encrypt@^4.0.0:
     parse-asn1 "^5.0.0"
     randombytes "^2.0.1"
 
-punycode@^1.4.1:
+punycode@^1.3.2, punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
 
@@ -616,6 +596,10 @@ tape@^4.6.3:
     string.prototype.trim "~1.1.2"
     through "~2.3.8"
 
+text-encoding@^0.6.4:
+  version "0.6.4"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.6.4.tgz#e399a982257a276dae428bb92845cb71bdc26d19"
+
 through@~2.3.4, through@~2.3.8:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
@@ -661,18 +645,23 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-web3@^0.17.0-beta:
-  version "0.17.0-beta"
-  resolved "https://registry.yarnpkg.com/web3/-/web3-0.17.0-beta.tgz#57af38245bff7a32099f7ce5780fad5bbc00da5b"
+web3@^0.18.2:
+  version "0.18.4"
+  resolved "https://registry.yarnpkg.com/web3/-/web3-0.18.4.tgz#81ec1784145491f2eaa8955b31c06049e07c5e7d"
   dependencies:
     bignumber.js "git+https://github.com/debris/bignumber.js.git#94d7146671b9719e00a09c29b01a691bc85048c2"
     crypto-js "^3.1.4"
     utf8 "^2.1.1"
+    xhr2 "*"
     xmlhttprequest "*"
 
 wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
+
+xhr2@*:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/xhr2/-/xhr2-0.1.4.tgz#7f87658847716db5026323812f818cadab387a5f"
 
 xmlhttprequest@*:
   version "1.8.0"
