@@ -49,7 +49,7 @@
         <ul class="names">
           {{#each auction in publicAuctions}}
               <li>
-                  <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
+                  <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}} {{recent auction.registrationDate}}'>
                     {{auction.fullname}}
                   </a> 
               </li>
@@ -81,7 +81,7 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}} {{#if auction.watched}}watched{{/if}}'>
+                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}} {{#if auction.watched}}watched{{/if}} {{recent auction.registrationDate}}'>
                     {{auction.fullname}}
                   </a>  
                     {{#if canBeInvalidated auction.name }}

@@ -172,6 +172,10 @@ Template['components_nameStatus'].helpers({
     canBeInvalidated(name) {
       return name.length < 7;
     },
+    recent(registrationDate) {
+      var diff = Math.floor(new Date().getTime()/1000) - registrationDate;      
+      return ((diff < 600 && diff > 0)|| (diff < 60-5*24*60*60)) ? 'recent' : '';
+    },
     hasNode() {
       return LocalStore.get('hasNode');
     },
