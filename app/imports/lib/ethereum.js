@@ -157,6 +157,7 @@ export default ethereum = (function() {
         var STEP = 500; // blocks until now to look at
         var lastBlockLooked = localStorage.getItem('lastBlockLooked');
         var searchFromBlock = Math.max(lastBlockLooked, block.number - STEP);
+        var namesCount;
 
         console.log(knownNames.length, ' known names loaded. Now checking for events since block ', searchFromBlock);
         
@@ -187,6 +188,13 @@ export default ethereum = (function() {
                       public: true
                     }
                   });
+
+                  var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;  
+                  namesCount = Names.find({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
+                  if (namesCount > 100) { 
+                    console.log('Auctioned names db reached', namesCount, 'removing some excess names');
+                    Names.find({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}},{sort: {registrationDate: 1}, limit: namesCount - 100});
+                  }
                 }
             } 
           });
@@ -207,16 +215,25 @@ export default ethereum = (function() {
                 name = binarySearchNamesResult;
               }
         
-              Names.upsert({ hash: hash }, {
-                  $set: {
-                  name: name ? name : null,
-                  fullname: name ? name + '.eth' : null,
-                  registrationDate: Number(result.args.registrationDate.toFixed()),
-                  value: value,
-                  mode: mode || 'owned',
-                  public: name && name.length > 0
-                }
-              });
+              if (name) { 
+                Names.upsert({ hash: hash }, {
+                    $set: {
+                    name: name ? name : null,
+                    fullname: name ? name + '.eth' : null,
+                    registrationDate: Number(result.args.registrationDate.toFixed()),
+                    value: value,
+                    mode: mode || 'owned',
+                    public: name && name.length > 0
+                  }
+                });
+              }
+
+              namesCount = Names.find({value: {$gt:0}, mode: 'owned', watched: {$not: true}}).count()
+              if (namesCount > 50) {
+                console.log('Registered names db reached', namesCount, 'removing some excess names');
+                Names.remove({name:'', watched: {$not: true}}, {sort: {registrationDate: 1}});
+                Names.remove({value: {$gt:0}, mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: 1}, limit: namesCount - 50});
+              } 
             } 
           }); 
 
@@ -335,7 +352,7 @@ export default ethereum = (function() {
           }})        
       })
 
-      var lastDay = Math.floor(new Date().getTime()) - 24 * 60 * 60 + 10 * 60 * 1000;      
+      var lastDay = Math.floor(new Date().getTime()) - (24 * 60 * 60 + 10 * 60) * 1000;      
 
       // Clean up Pending Bids
       _.each(PendingBids.find({date: {$gt: lastDay}}).fetch(), ( bid, i) => {  
@@ -347,7 +364,7 @@ export default ethereum = (function() {
         } else {
           registrar.contract.sealedBids.call(bid.owner, bid.shaBid, (err, result) => {
             if (err) {
-              console.log('Error looking bid', bid.name, err);
+              console.log('Error looking for bid', bid.name, err);
             } else if (result !== '0x0000000000000000000000000000000000000000') {
               console.log('Insert bid', bid.name);
               //bid successfully submitted

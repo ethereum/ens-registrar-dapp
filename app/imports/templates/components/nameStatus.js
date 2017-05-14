@@ -152,10 +152,10 @@ Template['components_nameStatus'].helpers({
       return Names.find({registrationDate: {$gt: revealDeadline, $lt: revealDeadline + 24 * 60 * 60}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 48});
     }, 
     knownNamesRegistered() {
-      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 99});
+      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 48});
     },
     namesRegistered() {
-      return Names.find({value: {$gt:0}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}}).count();
+      return Names.find({value: {$gt:0}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}}).count() > 1;
     }, 
     hasAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
