@@ -173,8 +173,10 @@ Template['components_nameStatus'].helpers({
       return name.length < 7;
     },
     recent(registrationDate) {
+      // Check to see if it should be either on recently registered or started recently
+      var hours = 60*60;
       var diff = Math.floor(new Date().getTime()/1000) - registrationDate;      
-      return ((diff < 600 && diff > 0)|| (diff < 60-5*24*60*60)) ? 'recent' : '';
+      return ((diff > 0 && diff < 3 * hours)|| (diff < 5*60-5*24*hours)) ? 'recent' : '';
     },
     hasNode() {
       return LocalStore.get('hasNode');

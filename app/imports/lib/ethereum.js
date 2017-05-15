@@ -193,7 +193,7 @@ export default ethereum = (function() {
                   namesCount = Names.find({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
                   if (namesCount > 100) { 
                     console.log('Auctioned names db reached', namesCount, 'removing some excess names');
-                    Names.find({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}},{sort: {registrationDate: 1}, limit: namesCount - 100});
+                    Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
                   }
                 }
             } 
@@ -228,11 +228,11 @@ export default ethereum = (function() {
                 });
               }
 
-              namesCount = Names.find({value: {$gt:0}, mode: 'owned', watched: {$not: true}}).count()
-              if (namesCount > 50) {
+              namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
+              if (namesCount > 100) {
                 console.log('Registered names db reached', namesCount, 'removing some excess names');
-                Names.remove({name:'', watched: {$not: true}}, {sort: {registrationDate: 1}});
-                Names.remove({value: {$gt:0}, mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: 1}, limit: namesCount - 50});
+                Names.remove({name:'', watched: {$not: true}});
+                Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: Math.floor(new Date().getTime()/1000) - 12 * 60 * 60 }});
               } 
             } 
           }); 

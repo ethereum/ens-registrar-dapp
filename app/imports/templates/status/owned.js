@@ -82,7 +82,7 @@ Template['status-owned'].helpers({
   },
   deedOwner() {
     var entry = TemplateVar.get('entryData')
-    if (!entry) return 'loading';
+    if (!entry) return '';
     return entry.owner;
   },
   isMine() {
