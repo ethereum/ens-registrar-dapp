@@ -157,6 +157,7 @@ export default ethereum = (function() {
         var STEP = 500; // blocks until now to look at
         var lastBlockLooked = localStorage.getItem('lastBlockLooked');
         var searchFromBlock = Math.max(lastBlockLooked, block.number - STEP);
+        var namesCount;
 
         console.log(knownNames.length, ' known names loaded. Now checking for events since block ', searchFromBlock);
         
@@ -187,6 +188,13 @@ export default ethereum = (function() {
                       public: true
                     }
                   });
+
+                  var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;  
+                  namesCount = Names.find({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
+                  if (namesCount > 100) { 
+                    console.log('Auctioned names db reached', namesCount, 'removing some excess names');
+                    Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
+                  }
                 }
             } 
           });
@@ -207,16 +215,25 @@ export default ethereum = (function() {
                 name = binarySearchNamesResult;
               }
         
-              Names.upsert({ hash: hash }, {
-                  $set: {
-                  name: name ? name : null,
-                  fullname: name ? name + '.eth' : null,
-                  registrationDate: Number(result.args.registrationDate.toFixed()),
-                  value: value,
-                  mode: mode || 'owned',
-                  public: name && name.length > 0
-                }
-              });
+              if (name) { 
+                Names.upsert({ hash: hash }, {
+                    $set: {
+                    name: name ? name : null,
+                    fullname: name ? name + '.eth' : null,
+                    registrationDate: Number(result.args.registrationDate.toFixed()),
+                    value: value,
+                    mode: mode || 'owned',
+                    public: name && name.length > 0
+                  }
+                });
+              }
+
+              namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
+              if (namesCount > 100) {
+                console.log('Registered names db reached', namesCount, 'removing some excess names');
+                Names.remove({name:'', watched: {$not: true}});
+                Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: Math.floor(new Date().getTime()/1000) - 12 * 60 * 60 }});
+              } 
             } 
           }); 
 
@@ -333,6 +350,36 @@ export default ethereum = (function() {
                   registrationDate: entry.registrationDate
                 }});            
           }})        
+      })
+
+      var lastDay = Math.floor(new Date().getTime()) - (24 * 60 * 60 + 10 * 60) * 1000;      
+
+      // Clean up Pending Bids
+      _.each(PendingBids.find({date: {$gt: lastDay}}).fetch(), ( bid, i) => {  
+        // check for duplicates 
+        var dupBid = MyBids.find({shaBid:bid.shaBid}).fetch();
+        if (dupBid && dupBid.shaBid == bid.shaBid && dupBid.secret == bid.secret){
+            console.log('removing duplicate bid for', bid.name)
+            PendingBids.remove({_id: bid._id});            
+        } else {
+          registrar.contract.sealedBids.call(bid.owner, bid.shaBid, (err, result) => {
+            if (err) {
+              console.log('Error looking for bid', bid.name, err);
+            } else if (result !== '0x0000000000000000000000000000000000000000') {
+              console.log('Insert bid', bid.name);
+              //bid successfully submitted
+              MyBids.insert(bid);
+              PendingBids.remove({_id: bid._id});            
+            } else {
+              // Check for pending bids that are too late
+              var name = Names.findOne({name: bid.name});
+              if (name && name.mode == 'owned') {
+                console.log('Pending bid for', bid.name, 'has been removed because name is', name.mode);
+                PendingBids.remove({_id: bid._id});          
+              }
+            }
+          })        
+        }
       })
 
       updateMistMenu();

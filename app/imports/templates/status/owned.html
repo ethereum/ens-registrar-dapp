@@ -15,9 +15,9 @@
   </p>
 
   {{#if needsFinalization}}
-    {{#if deedOwner}}
+    {{#if deedOwner}}  deedOwner  {{/if}}
+
     <p>Owned by: {{> components_address addr=deedOwner}} </p>
-    {{/if}}
     {{#if hasOwner}}
       <p>Currently assigned to: {{> components_address addr=owner}} </p>
     {{/if}}
@@ -26,7 +26,11 @@
     <p> <strong> Before any changes can be done to the name, the owner of this name needs to be finalized which can send them a refund {{refund}} ether to them.</strong></p>
 
     {{#if hasNode}}
-    {{> finalizeButton owner=deedOwner}}
+      {{#if isMine}}
+        {{> finalizeButton owner=deedOwner}}
+      {{else}}
+        <button class="dapp-block-button disabled" disabled>Only owner can finalize</button>      
+      {{/if}}
     {{else}}
     {{> components_noNode}}
     {{/if}} 

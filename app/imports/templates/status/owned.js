@@ -25,19 +25,22 @@ Template['status-owned'].onCreated(function() {
     const name = Session.get('searched');
     if (prevName == name) return;
     prevName = name;
+    TemplateVar.set(template, 'name', name);
+    var entryData = TemplateVar.get(template, 'entryData');
 
     const entry = Names.findOne({name: name}); 
 
-    if (entry.owner == null) {
+    if (typeof entry == 'undefined' || entry.owner == null || entry.fullname == null) {
       setTimeout(function() {
-      console.log('template', template);
           TemplateVar.set(template, 'entryData', Names.findOne({name: name}));
       }, 3000);
+      return;
     }
 
     TemplateVar.set(template, 'address', null);
     TemplateVar.set(template, 'content', null);
     TemplateVar.set(template, 'hasSetResolver', false);
+    TemplateVar.set(template, 'owner', entry.owner);
 
     ens.owner(entry.fullname , (err, res) => {
       if (!err) {
@@ -60,7 +63,6 @@ Template['status-owned'].onCreated(function() {
       }
     });
      
-    TemplateVar.set(template, 'name', name);
     TemplateVar.set(template, 'entryData', entry);
   })
 });
@@ -80,12 +82,13 @@ Template['status-owned'].helpers({
   },
   deedOwner() {
     var entry = TemplateVar.get('entryData')
-    if (!entry) return 'loading';
+    if (!entry) return '';
     return entry.owner;
   },
   isMine() {
-    const owner = TemplateVar.get('owner');
-    return web3.eth.accounts.filter((acc) => acc == owner).length > 0;
+    var entry = TemplateVar.get('entryData')
+    if (!entry) return;    
+    return web3.eth.accounts.filter((acc) => acc == entry.owner).length > 0;
   },
   registrationDate() {
     var entry = TemplateVar.get('entryData')

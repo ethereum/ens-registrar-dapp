@@ -150,6 +150,12 @@ aside {
   top: 5px;
 }
 
+@keyframes yellowfade {
+    from { background: yellow;}
+    to { background: transparent; }
+}
+
+
 ul.names {
   list-style-type: none;
   padding-left: 0;
@@ -164,6 +170,11 @@ ul.names {
       &.can-invalidate {
         color: @colorError;
         font-weight: 500;
+      }
+
+      &.recent {
+          animation-name: yellowfade;
+          animation-duration: 30s;
       }
     }
   }

@@ -8,14 +8,11 @@ export function updatePendingBids(name) {
       if (!err && result !== '0x0000000000000000000000000000000000000000') {
         // check for duplicates 
         var dupBid = MyBids.find({secret:bid.secret}).fetch();
-        if (dupBid && dupBid.name == bid.name && dupBid.secret == bid.secret && dupBid.hash == bid.hash) {
-          console.log('Tried to insert duplicate bid!', dupBid);
-          return;
+        if (dupBid && dupBid.shaBid !== bid.shaBid) {
+          //bid successfully submitted
+          MyBids.insert(bid);
+          PendingBids.remove({_id: bid._id});
         }
-
-        //bid successfully submitted
-        MyBids.insert(bid);
-        PendingBids.remove({id: bid._id});
       }
     });
   })
