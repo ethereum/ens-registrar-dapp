@@ -168,7 +168,10 @@ Template['components_newBid'].events({
         Names.upsert({name: name}, {$set: { watched: true}});
 
         var hashesArray = TemplateVar.get(template, 'hashesArray')
-        if (hashesArray && hashesArray.length == 3) {
+        if (hashesArray && hashesArray.length == 3 
+            && PendingBids.find({shaBid:bid.shaBid}).fetch().length > 0
+            && Names.findOne({name:name}).watched == true) {
+          // Checks if hashes are loaded, and if pendingBids were saved
           registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
               from: owner,
@@ -176,22 +179,20 @@ Template['components_newBid'].events({
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-              onSuccess: () => { 
-                updatePendingBids(name);
-                EthElements.Modal.show('modals_backup'); 
-              },
-              onError: (error) => {
-                PendingBids.remove({shaBid: bid.shaBid});
-              }
+              onSuccess: () => updatePendingBids(name),
+              onError: (error) => PendingBids.remove({shaBid: bid.shaBid})
             }));
+
+            EthElements.Modal.show('modals_backup');               
+
         } else {
-          console.log('Hash array not loading', hashesArray);
+          console.log('Error', hashesArray, PendingBids.find({shaBid:bid.shaBid}).fetch());
 
           EthElements.Modal.question({
-            text: 'Bid failed, please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
+            text: 'Bid failed to be created. No ether was sent. Please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
             ok: true
           });
-
+          PendingBids.remove({shaBid: bid.shaBid});
           TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);         
           return;
         }
