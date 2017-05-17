@@ -1,7 +1,7 @@
 import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
 import initCollections from './collections';
-import {fromWords, toWords} from './daefen';
+import Daefen from './daefen';
 
 //These get assigned at init() below
 export let ens;
@@ -286,6 +286,11 @@ export default ethereum = (function() {
         // add an interval to check on auctions every so ofter
         setInterval(updateRevealNames, 60000);
              
+        if (LocalStore && !LocalStore.get('mastersalt')) {
+            var random = Math.floor(Math.random()*Math.pow(2,55)).toString();
+            LocalStore.set('mastersalt', Daefen(random));
+         } 
+
         reportStatus('Ready!', true);
       })
       .catch(err => {

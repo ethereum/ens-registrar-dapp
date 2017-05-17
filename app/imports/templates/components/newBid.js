@@ -128,20 +128,14 @@ Template['components_newBid'].events({
     let secret;
     template.createHashesArray(name);
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
+    let mastersalt = LocalStore.get('mastersalt') || '';
 
-    if (window.crypto && window.crypto.getRandomValues) {
-      secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
+    if (mastersalt) {
+      secret = web3.sha3(mastersalt+name);
     } else {
-      EthElements.Modal.question({
-        text: 'Your browser does not support window.crypto.getRandomValues ' + 
-          'your bid anonymity is going to be weaker.',
-        ok: true
-      });
-      secret = Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString();
+      secret = web3.sha3(Math.floor(Math.random()*Math.pow(2,55)).toString());
     }
+
     console.log('secret', secret);
 
     if (web3.eth.accounts.length == 0) {
@@ -162,6 +156,7 @@ Template['components_newBid'].events({
 
         PendingBids.insert(Object.assign({
           date: Date.now(),
+          mastersalt: mastersalt,
           depositAmount
         }, bid));
 
