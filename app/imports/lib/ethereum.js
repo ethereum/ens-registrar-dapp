@@ -1,6 +1,7 @@
 import ENS from 'ethereum-ens';
 import Registrar from 'eth-registrar-ens';
 import initCollections from './collections';
+import Daefen from './daefen';
 
 //These get assigned at init() below
 export let ens;
@@ -89,8 +90,6 @@ export default ethereum = (function() {
       });
     })
   }
-
-  
   
   function initRegistrar() {
     reportStatus('Initializing ENS registrar...');
@@ -178,7 +177,9 @@ export default ethereum = (function() {
                   name = binarySearchNamesResult;
                 }
 
-                if (name) {
+                // if name database is growing too big, don't add as many
+                namesCount = Names.find({watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
+                if (name && Math.random() * namesCount < 200) {
                   Names.upsert({ name: name }, {
                     $set: {
                       fullname: name + '.eth',
@@ -190,11 +191,9 @@ export default ethereum = (function() {
                   });
 
                   var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;  
-                  namesCount = Names.find({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
-                  if (namesCount > 100) { 
-                    console.log('Auctioned names db reached', namesCount, 'removing some excess names');
-                    Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
-                  }
+                  Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
+
+                  console.log('added name', name, Math.floor(20000/namesCount) + '% chance')
                 }
             } 
           });
@@ -231,8 +230,9 @@ export default ethereum = (function() {
               namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
               if (namesCount > 100) {
                 console.log('Registered names db reached', namesCount, 'removing some excess names');
+                var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: -1}, limit: 1, skip: 99});
                 Names.remove({name:'', watched: {$not: true}});
-                Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: Math.floor(new Date().getTime()/1000) - 12 * 60 * 60 }});
+                Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: limit.registrationDate }});
               } 
             } 
           }); 
@@ -286,6 +286,14 @@ export default ethereum = (function() {
         // add an interval to check on auctions every so ofter
         setInterval(updateRevealNames, 60000);
              
+        if (LocalStore && !LocalStore.get('mastersalt')) {
+          if (window.crypto && window.crypto.getRandomValues) {
+            var random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
+          } else {
+            var random = Math.floor(Math.random()*Math.pow(2,55)).toString();
+          }
+          LocalStore.set('mastersalt', Daefen(random));
+         } 
 
         reportStatus('Ready!', true);
       })

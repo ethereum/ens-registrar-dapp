@@ -125,23 +125,21 @@ Template['components_newBid'].events({
     let totalDeposit = TemplateVar.get(template, 'depositAmount')+TemplateVar.get(template, 'bidAmount');
     const depositAmount = EthTools.toWei(totalDeposit, 'ether');
     const name = Session.get('name');
-    let secret;
     template.createHashesArray(name);
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
+    let mastersalt = LocalStore.get('mastersalt') || '';
+    let random;
+    if (LocalStore && !LocalStore.get('mastersalt')) {
+      if (window.crypto && window.crypto.getRandomValues) {
+        random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
+      } else {
+        random = Math.floor(Math.random()*Math.pow(2,55)).toString();
+      }
+      LocalStore.set('mastersalt', Daefen(random));
+    } 
 
-    if (window.crypto && window.crypto.getRandomValues) {
-      secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
-    } else {
-      EthElements.Modal.question({
-        text: 'Your browser does not support window.crypto.getRandomValues ' + 
-          'your bid anonymity is going to be weaker.',
-        ok: true
-      });
-      secret = Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString();
-    }
+    let secret = web3.sha3(LocalStore.get('mastersalt')+name);
+
     console.log('secret', secret);
 
     if (web3.eth.accounts.length == 0) {
@@ -162,13 +160,17 @@ Template['components_newBid'].events({
 
         PendingBids.insert(Object.assign({
           date: Date.now(),
+          mastersalt: mastersalt,
           depositAmount
         }, bid));
 
         Names.upsert({name: name}, {$set: { watched: true}});
 
         var hashesArray = TemplateVar.get(template, 'hashesArray')
-        if (hashesArray && hashesArray.length == 3) {
+        if (hashesArray && hashesArray.length == 3 
+            && PendingBids.find({shaBid:bid.shaBid}).fetch().length > 0
+            && Names.findOne({name:name}).watched == true) {
+          // Checks if hashes are loaded, and if pendingBids were saved
           registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
               from: owner,
@@ -176,22 +178,20 @@ Template['components_newBid'].events({
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-              onSuccess: () => { 
-                updatePendingBids(name);
-                EthElements.Modal.show('modals_backup'); 
-              },
-              onError: (error) => {
-                PendingBids.remove({shaBid: bid.shaBid});
-              }
+              onSuccess: () => updatePendingBids(name),
+              onError: (error) => PendingBids.remove({shaBid: bid.shaBid})
             }));
+
+            setTimeout(() => {EthElements.Modal.show('modals_backup')}, 2000);              
+
         } else {
-          console.log('Hash array not loading', hashesArray);
+          console.log('Error', hashesArray, PendingBids.find({shaBid:bid.shaBid}).fetch());
 
           EthElements.Modal.question({
-            text: 'Bid failed, please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
+            text: 'Bid failed to be created. No ether was sent. Please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
             ok: true
           });
-
+          PendingBids.remove({shaBid: bid.shaBid});
           TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);         
           return;
         }

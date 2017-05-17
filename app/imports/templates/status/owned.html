@@ -15,8 +15,6 @@
   </p>
 
   {{#if needsFinalization}}
-    {{#if deedOwner}}  deedOwner  {{/if}}
-
     <p>Owned by: {{> components_address addr=deedOwner}} </p>
     {{#if hasOwner}}
       <p>Currently assigned to: {{> components_address addr=owner}} </p>
