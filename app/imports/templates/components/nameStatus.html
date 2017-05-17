@@ -11,19 +11,20 @@
     <aside class="col-md-4">
         {{> Template.dynamic template=(TemplateVar.get 'aside') data=(TemplateVar.get 'nameInfo')}}
         {{>view_names}}
-    </aside>    
+    </aside>
   {{else}}
     <div class="col-md-8 main-content">
 
-        <h1> Check availability of an Ethereum Name</h1> 
+        <h1> Check availability of an Ethereum Name</h1>
 
         {{#if showStats}}
+        <h3> Stats on recent auctions </h3>
         <ul class="big-numerals">
             <li>
                 <span class="big-numeral">{{percentageDisputed}}</span> <span class="unit">percent</span> <br> names registered for minimum amount
             </li>
             <li>
-                <span class="big-numeral">{{averageValue}}</span> <span class="unit">ether</span> <br> average price paid per disputed name
+                <span class="big-numeral">{{medianValue}}</span> <span class="unit">ether</span> <br> median price paid per disputed name
             </li>
         </ul>
         {{/if}}
@@ -31,13 +32,13 @@
         {{#unless isMainNetwork}}
           <p><strong>You are NOT on the main Network, but on the {{TemplateVar.get 'network'}} network. Names bought here are not valid on the main net.</strong></p>
         {{/unless}}
-        
+
         {{> component_explainerBody}}
 
 
         {{#unless hasNode}}
         {{> components_noNode}}
-        {{/unless}}  
+        {{/unless}}
 
         {{#if hasAuctions}}
         <br>
@@ -48,9 +49,9 @@
         <ul class="names">
           {{#each auction in publicAuctions}}
               <li>
-                  <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
+                  <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}} {{recent auction.registrationDate}}'>
                     {{auction.fullname}}
-                  </a> 
+                  </a>
               </li>
             {{/each}}
         </ul>
@@ -80,11 +81,11 @@
         <ul class="names">
           {{#each auction in knownNamesRegistered}}
               <li>
-                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}} {{#if auction.watched}}watched{{/if}}'>
+                  <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}} {{#if auction.watched}}watched{{/if}} {{recent auction.registrationDate}}'>
                     {{auction.fullname}}
-                  </a>  
+                  </a>
                     {{#if canBeInvalidated auction.name }}
-                    <icon class="icon-alert">!</icon> 
+                    <icon class="icon-alert">!</icon>
                     {{/if}}
               </li>
             {{/each}}
@@ -95,7 +96,7 @@
     </div>
     <aside class="col-md-4">
         {{>view_names}}
-    </aside> 
+    </aside>
   {{/if}}
 </template>
 
@@ -176,7 +177,7 @@
           {{/each}}
 
         {{/if}}
-        
+
         {{#unless hasNode}}
         {{> components_noNode}}
         {{/unless}}
@@ -189,8 +190,11 @@
     <h3> Time remaining until auction ends</h3>
     <h1>{{timeRemaining}}</h1>
     <p> {{registrationDate}} </p>
+    <br>
     <h3>Current highest bidder</h3>
     <span class="big-numeral">{{highestBid}}</span> <span class="unit">ether</span>
+    <br>
+    <h3>Current second-highest bidder</h3>
+    <span class="big-numeral">{{secondHighestBid}}</span> <span class="unit">ether</span>
 
 </template>
-

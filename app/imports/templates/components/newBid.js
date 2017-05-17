@@ -5,11 +5,13 @@ var template;
 
 Template['components_newBid'].onRendered(function() {
   template = this;
+  let name = Session.get('searched');
   TemplateVar.set(template, 'anonymizer', 0.5);
   let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
   console.log('launchRatio', launchRatio);
   TemplateVar.set(template, 'bidAmount', 0.01);
   TemplateVar.set(template, 'depositAmount', 0);
+  TemplateVar.set(template, 'bidding-' + name, false);
 
   if (web3.eth.accounts.length > 0 ){
     web3.eth.getBalance(web3.eth.accounts[0], function(e, balance) { 
@@ -59,7 +61,7 @@ Template['components_newBid'].onRendered(function() {
   template.randomMix = function() {
     // gets a random name we know about
     var availableNow = _.pluck(Names.find({mode:'open', name:{$not: name}, availableDate: {$lt: Date.now()/1000}}).fetch(), 'name');
-    if ( Math.random() * 20 < availableNow.length ) {
+    if ( Math.random() * 200 < availableNow.length ) {
       return '0x' + web3.sha3(availableNow[Math.floor(Math.random()*availableNow.length)]).replace('0x','')
     } else {
       return Math.random() > 0.5 ? template.randomHash() : template.randomName();
@@ -87,9 +89,15 @@ Template['components_newBid'].onRendered(function() {
     console.log('hashesArray created', name, typeof knownNames, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}), hashesArray);
   };
 
-  let name = Session.get('searched');
   console.log('name:', name);
   template.createHashesArray();
+
+  var pending = PendingBids.find({name: name}, {sort: {value: -1}}).fetch();
+  if (pending && pending.length > 0) {
+    TemplateVar.set(template, 'bidAmount', web3.fromWei(pending[0].value, 'ether'));
+  }
+
+  TemplateVar.set(template, 'dictionaryLoaded', false)
 
   this.autorun(() => {
     // This changes as the searched name changes
@@ -98,7 +106,9 @@ Template['components_newBid'].onRendered(function() {
     var dictionaryLoader = setInterval(()=>{
       // try loading dictionary
       if (typeof knownNames !== "undefined"){
+
         template.createHashesArray();
+        TemplateVar.set(template, 'dictionaryLoaded', true)
         clearInterval(dictionaryLoader);
       }
     }, 1000)
@@ -167,8 +177,11 @@ Template['components_newBid'].events({
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
               onSuccess: () => { 
-                EthElements.Modal.show('modals_backup'); 
                 updatePendingBids(name);
+                EthElements.Modal.show('modals_backup'); 
+              },
+              onError: (error) => {
+                PendingBids.remove({shaBid: bid.shaBid});
               }
             }));
         } else {
@@ -227,13 +240,21 @@ Template['components_newBid'].events({
 
 Template['components_newBid'].helpers({
   bidding() {
-    return TemplateVar.get('bidding-' + Session.get('searched'));
+    var name = Session.get('searched');
+    var pending = PendingBids.find({name: name}, {sort: {date: -1}}).fetch();
+    var bidding = TemplateVar.get('bidding-' + name);
+    // If there is a pending bid, wait for 15 minutes
+    if (pending && pending.length > 0 && Math.abs(Date.now() - pending[0].date) < 15*60*1000 ) {
+      bidding = true;
+      TemplateVar.set('bidding-' + Session.get('searched'), bidding);
+    } 
+    return bidding !== true;
   },
   depositAmount(){
     return TemplateVar.get('depositAmount');
   },
   dictionaryLoaded() {
-    return typeof knownNames !== "undefined";
+    return TemplateVar.get('dictionaryLoaded');
   },
   feeExplainer() {
     var priceInShannon = TemplateVar.get(template, 'priceInShannon') || 20;

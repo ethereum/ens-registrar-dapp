@@ -91,7 +91,7 @@ Template['components_nameStatus'].onCreated(function() {
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
                   value: value, 
-                highestBid: entry.highestBid, 
+                  highestBid: entry.highestBid, 
                   availableDate: entry.availableDate ? Number(entry.availableDate) :  0,
                   hash: entry.hash.replace('0x','').slice(0,12),
                   owner: entry.mode == 'owned' ? entry.deed.owner : '',
@@ -144,35 +144,39 @@ Template['components_nameStatus'].helpers({
     },
     showExpiring() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: -1}}).count() > 100;
+      return Names.find({registrationDate: {$gt: revealDeadline, $lt: revealDeadline + 24 * 60 * 60}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 48}).count() > 1;
     }, 
     publicAuctionsAboutToExpire() {
       // subtracts 10 minutes from the reveal deadline, for good measure
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60 + 10 * 60;      
-      return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 48});
+      return Names.find({registrationDate: {$gt: revealDeadline, $lt: revealDeadline + 24 * 60 * 60}, name:{$gt: '', $regex: /^.{7,}$/}},{sort: {registrationDate: 1}, limit: 48});
     }, 
     knownNamesRegistered() {
-      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 99});
+      return Names.find({registrationDate: {$lt: Math.floor(Date.now()/1000)}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}, name:{$gt: ''}},{sort: {registrationDate: -1}, limit: 48});
     },
     namesRegistered() {
-      return Names.find({value: {$gt:0}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}}).count();
+      return Names.find({value: {$gt:0}, mode: {$nin: ['open', 'forbidden', 'not-yet-available']}}).count() > 1;
     }, 
     hasAuctions() {
       var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;      
       return Names.find({registrationDate: {$gt: revealDeadline}, name:{$gt: ''}},{}).count() > 0;
     },
-    averageValue() {
-      var average = _.reduce(
-          Names.find({value: {$gt:0.01}}).fetch(), function(memo,num) { 
-            return memo + num.value; 
-          }, 0);
-      return Math.round(average*100/Names.find({value: {$gt:0.01}}).count())/100 || '--';
+    medianValue() {
+      var disputedNames = Names.find({value: {$gt:0.01}}, {sort: {value: 1}}).fetch();
+      if (!disputedNames) return '---';
+      return disputedNames[Math.floor(disputedNames.length/2)].value;
     }, 
     percentageDisputed() {
       return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
     },
     canBeInvalidated(name) {
       return name.length < 7;
+    },
+    recent(registrationDate) {
+      // Check to see if it should be either on recently registered or started recently
+      var hours = 60*60;
+      var diff = Math.floor(new Date().getTime()/1000) - registrationDate;      
+      return ((diff > 0 && diff < 3 * hours)|| (diff < 5*60-5*24*hours)) ? 'recent' : '';
     },
     hasNode() {
       return LocalStore.get('hasNode');
@@ -216,18 +220,24 @@ Template['status-reveal'].helpers({
 
 Template['aside-reveal'].helpers({ 
   registrationDate() {
+    if (Template.instance().data == null) return 'loading...';
     var m = moment(Template.instance().data.entry.registrationDate * 1000);
-
     return m.format('YYYY-MM-DD HH:mm');
   }, 
   timeRemaining() {
+    if (Template.instance().data == null) return '--h --m';
     var m = moment(Template.instance().data.entry.registrationDate * 1000);
-    
     return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ' + Math.floor(m.diff(moment(), 'minutes')%60) + 'm ' + Math.floor(m.diff(moment(), 'seconds')%60) + 's';
     
   },
   highestBid() {
+    if (Template.instance().data == null) return '--';
     var val = Template.instance().data.entry.highestBid;
+    return web3.fromWei(val, 'ether');
+  },
+  secondHighestBid() {
+    if (Template.instance().data == null) return '--';
+    var val = Template.instance().data.entry.value;
     return web3.fromWei(val, 'ether');
   }
 })
@@ -236,7 +246,7 @@ Template['aside-reveal'].helpers({
 Template['status-not-yet-available'].helpers({
   availableDate() {
     // console.log('getAvailableDate: ', Template.instance().data.entry); 
-    if (Template.instance().data == null) return;
+    if (Template.instance().data == null) return 'loading...';
 
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     return m.format('MMMM Do YYYY, HH:mm'); // April 28th 2017, 12:26:11 pm
@@ -246,7 +256,7 @@ Template['status-not-yet-available'].helpers({
 
 Template['aside-not-yet-available'].helpers({
   availableCountdown() {
-    if (Template.instance().data == null) return;
+    if (Template.instance().data == null) return '--h --m';
 
     var m = moment(Template.instance().data.entry.availableDate * 1000);
     if (m.diff(moment(), 'days') > 1)

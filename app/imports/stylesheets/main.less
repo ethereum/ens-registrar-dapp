@@ -131,12 +131,16 @@ input[type='checkbox'] + label {
 }
 
 aside {
+  h3 {
+    margin-bottom: 0;
+  }
+
   ul {
     padding: 0;
 
     li {
       list-style-type: none;
-      padding-bottom: 32px;
+      padding-bottom: 10px;
     }
   }
 }
@@ -146,9 +150,11 @@ aside {
   top: 5px;
 }
 
-aside ul li {
-    padding-bottom: 10px;
+@keyframes yellowfade {
+    from { background: yellow;}
+    to { background: transparent; }
 }
+
 
 ul.names {
   list-style-type: none;
@@ -164,6 +170,11 @@ ul.names {
       &.can-invalidate {
         color: @colorError;
         font-weight: 500;
+      }
+
+      &.recent {
+          animation-name: yellowfade;
+          animation-duration: 30s;
       }
     }
   }

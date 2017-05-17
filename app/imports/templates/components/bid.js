@@ -65,7 +65,7 @@ Template['components_bid'].helpers({
   },
   refund() {
     var bid = MyBids.findOne({_id: this.bid._id});
-    return web3.fromWei(bid.depositAmount - bid.value, 'ether');
+    return Number(bid.depositAmount) - Number(bid.value);
   },
   canReveal() {
     return this.status === 'reveal';

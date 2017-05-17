@@ -4,7 +4,7 @@
         <ul class="names">
             {{#each name in names}}
               <li>
-                  {{ > components_nameLink fullname=(name.fullname) }}
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
               </li>
             {{/each}}
         </ul>
