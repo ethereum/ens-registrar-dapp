@@ -122,10 +122,18 @@ Template['modals_restore'].helpers({
     return Template.instance().allBids.get();
   },
   newBidsCount() {
-    return Template.instance().newBids.get().length + Template.instance().pendingBids.get().length;
+    if (Template.instance().pendingBids.get()) {
+      return Template.instance().newBids.get().length + Template.instance().pendingBids.get().length;
+    } else {
+      return Template.instance().newBids.get().length;
+    }
   },
   totalBids() {
-    return Template.instance().allBids.get().length + Template.instance().pendingBids.get().length;
+    if (Template.instance().pendingBids.get()) {
+      return Template.instance().allBids.get().length + Template.instance().pendingBids.get().length;
+    } else {
+      return Template.instance().allBids.get().length;
+    }
   },
   fileError() {
     return Template.instance().fileError.get();
@@ -133,6 +141,10 @@ Template['modals_restore'].helpers({
   buttonDisabled() {
     let newBids = Template.instance().newBids.get();
     let pendingBids = Template.instance().newBids.get();
-    return (newBids && pendingBids && newBids.length + pendingBids.length > 0);
+    if (pendingBids) {
+      return !(newBids && pendingBids && newBids.length + pendingBids.length > 0);
+    } else {
+      return !(newBids && newBids.length > 0);
+    }
   }
 })
