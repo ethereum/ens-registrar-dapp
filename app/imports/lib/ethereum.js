@@ -128,6 +128,8 @@ export default ethereum = (function() {
     var currentIndex = (maxIndex + minIndex) / 2 | 0;
     var currentElement, currentElementSha3;
 
+    // @TODO: extract web3.sha3 to a const.
+    // @impact: low
     if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
       searchElement = searchElement.slice(2);
     } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
@@ -137,6 +139,9 @@ export default ethereum = (function() {
     while (minIndex <= maxIndex) {
       currentIndex = (minIndex + maxIndex) / 2 | 0;
       currentElement = knownNames[currentIndex];
+
+      // @TODO: Buffer web3.sha3(currentElement);
+      // @impact: low
       currentElementSha3 = web3.sha3(currentElement);
 
       if (currentElementSha3 < searchElement) {
@@ -154,7 +159,7 @@ export default ethereum = (function() {
   window.watchEvents = function watchEvents() {
 
       web3.eth.getBlock('latest', (error, block) => {
-        var STEP = 500; // blocks until now to look at
+        var STEP = 500; // blocks to look behind
         var lastBlockLooked = localStorage.getItem('lastBlockLooked');
         var searchFromBlock = Math.max(lastBlockLooked, block.number - STEP);
         var namesCount;
@@ -168,7 +173,7 @@ export default ethereum = (function() {
             if (!error) {
                 LocalStore.set('lastBlockLooked', result.blockNumber);
                 var hash = result.args.hash.replace('0x','').slice(0,12);
-                var nameObj = Names.findOne({hash: hash});
+                var nameObj = Names.findOne(hash);
                 var name, mode, binarySearchNamesResult;
 
                 if (nameObj) {
@@ -179,7 +184,7 @@ export default ethereum = (function() {
                 }
 
                 if (name) {
-                  Names.upsert({ name: name }, {
+                  Names.upsert(hash, {
                     $set: {
                       name: name,
                       registrationDate: Number(result.args.registrationDate.toFixed()),
@@ -205,7 +210,7 @@ export default ethereum = (function() {
               LocalStore.set('lastBlockLooked', result.blockNumber);
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var nameObj = Names.findOne({hash: hash});
+              var nameObj = Names.findOne(hash);
               var name, mode, binarySearchNamesResult;
 
               if (nameObj) {
@@ -216,7 +221,7 @@ export default ethereum = (function() {
               }
 
               if (name) {
-                Names.upsert({ hash: hash }, {
+                Names.upsert(hash, {
                     $set: {
                     name: name ? name : null,
                     registrationDate: Number(result.args.registrationDate.toFixed()),
@@ -298,7 +303,7 @@ export default ethereum = (function() {
   function updateMistMenu() {
 
     if (typeof mist !== 'undefined' && mist && mist.menu) {
-        var names = Names.find({mode: {$in: ['auction', 'reveal']}, watched: true}, {sort: {registrationDate: 1}}).fetch();
+        var names = Names.find({watched: true, mode: {$in: ['auction', 'reveal']}}, {sort: {registrationDate: 1}}).fetch();
         mist.menu.clear();
         mist.menu.setBadge('');
 
