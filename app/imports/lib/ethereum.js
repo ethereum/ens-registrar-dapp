@@ -347,7 +347,7 @@ export default ethereum = (function() {
       _.each(names, function(e, i) {
           registrar.getEntry(e.name, (err, entry) => {
           if(!err && entry) {
-              Names.upsert({name: e.name}, {$set: {
+              Names.upsert(hash, {$set: {
                   mode: entry.mode,
                   value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0,
                   highestBid: entry.highestBid,
