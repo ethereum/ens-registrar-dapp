@@ -287,8 +287,12 @@ export default ethereum = (function() {
         setInterval(updateRevealNames, 60000);
              
         if (LocalStore && !LocalStore.get('mastersalt')) {
+          if (window.crypto && window.crypto.getRandomValues) {
+            var random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
+          } else {
             var random = Math.floor(Math.random()*Math.pow(2,55)).toString();
-            LocalStore.set('mastersalt', Daefen(random));
+          }
+          LocalStore.set('mastersalt', Daefen(random));
          } 
 
         reportStatus('Ready!', true);

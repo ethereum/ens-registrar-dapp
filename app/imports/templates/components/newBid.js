@@ -133,7 +133,11 @@ Template['components_newBid'].events({
     if (mastersalt) {
       secret = web3.sha3(mastersalt+name);
     } else {
-      secret = web3.sha3(Math.floor(Math.random()*Math.pow(2,55)).toString());
+      if (window.crypto && window.crypto.getRandomValues) {
+        secret = web3.sha3(window.crypto.getRandomValues(new Uint32Array(2)).join(''));
+      } else {
+        secret = web3.sha3(Math.floor(Math.random()*Math.pow(2,55)).toString());
+      }
     }
 
     console.log('secret', secret);
@@ -178,7 +182,7 @@ Template['components_newBid'].events({
               onError: (error) => PendingBids.remove({shaBid: bid.shaBid})
             }));
 
-            EthElements.Modal.show('modals_backup');               
+            setTimeout(() => {EthElements.Modal.show('modals_backup')}, 2000);              
 
         } else {
           console.log('Error', hashesArray, PendingBids.find({shaBid:bid.shaBid}).fetch());
