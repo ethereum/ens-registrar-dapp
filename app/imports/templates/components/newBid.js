@@ -125,20 +125,20 @@ Template['components_newBid'].events({
     let totalDeposit = TemplateVar.get(template, 'depositAmount')+TemplateVar.get(template, 'bidAmount');
     const depositAmount = EthTools.toWei(totalDeposit, 'ether');
     const name = Session.get('name');
-    let secret;
     template.createHashesArray(name);
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
     let mastersalt = LocalStore.get('mastersalt') || '';
 
-    if (mastersalt) {
-      secret = web3.sha3(mastersalt+name);
-    } else {
+    if (LocalStore && !LocalStore.get('mastersalt')) {
       if (window.crypto && window.crypto.getRandomValues) {
-        secret = web3.sha3(window.crypto.getRandomValues(new Uint32Array(2)).join(''));
+        var random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
       } else {
-        secret = web3.sha3(Math.floor(Math.random()*Math.pow(2,55)).toString());
+        var random = Math.floor(Math.random()*Math.pow(2,55)).toString();
       }
-    }
+      LocalStore.set('mastersalt', Daefen(random));
+    } 
+    
+    let secret = web3.sha3(LocalStore.get('mastersalt')+name);
 
     console.log('secret', secret);
 

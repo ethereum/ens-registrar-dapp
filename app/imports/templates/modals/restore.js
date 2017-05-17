@@ -78,7 +78,6 @@ Template['modals_restore'].events({
     let pendingBids = template.pendingBids.get();
     try {
       let insertCount = 0;
-      let insertPendingCount = 0;
       newBids.forEach(bid => {
         // Check not exists again just in case
         if (!MyBids.findOne({ "_id": bid._id })) {
@@ -94,7 +93,7 @@ Template['modals_restore'].events({
           // Check not exists again just in case
           if (!PendingBids.findOne({ "_id": bid._id })) {
             PendingBids.insert(bid);
-            insertPendingCount++;
+            insertCount++;
           };
           console.log('bid inserted', bid)
           Names.upsert({name: bid.name}, { $set: {fullname: bid.name + '.eth', watched: true}});
@@ -102,7 +101,6 @@ Template['modals_restore'].events({
         })      
       }
       alert(`${insertCount} bids successfully imported.`);
-      console.log('inserted ', insertCount, insertPendingCount)
       
       // Reset file input
       let input = document.getElementById("restore-input");
@@ -124,16 +122,17 @@ Template['modals_restore'].helpers({
     return Template.instance().allBids.get();
   },
   newBidsCount() {
-    return Template.instance().newBids.get().length;
+    return Template.instance().newBids.get().length + Template.instance().pendingBids.get().length;
   },
   totalBids() {
-    return Template.instance().allBids.get().length;
+    return Template.instance().allBids.get().length + Template.instance().pendingBids.get().length;
   },
   fileError() {
     return Template.instance().fileError.get();
   },
   buttonDisabled() {
     let newBids = Template.instance().newBids.get();
-    return !newBids || newBids.length == 0;
+    let pendingBids = Template.instance().newBids.get();
+    return (newBids && pendingBids && newBids.length + pendingBids.length > 0);
   }
 })

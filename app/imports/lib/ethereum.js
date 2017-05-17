@@ -179,7 +179,7 @@ export default ethereum = (function() {
 
                 // if name database is growing too big, don't add as many
                 namesCount = Names.find({watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
-                if (name && Math.random() * namesCount < 100) {
+                if (name && Math.random() * namesCount < 200) {
                   Names.upsert({ name: name }, {
                     $set: {
                       fullname: name + '.eth',
@@ -193,7 +193,7 @@ export default ethereum = (function() {
                   var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;  
                   Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
 
-                  console.log('added name', name, Math.floor(10000/namesCount) + '% chance')
+                  console.log('added name', name, Math.floor(20000/namesCount) + '% chance')
                 }
             } 
           });
@@ -230,7 +230,7 @@ export default ethereum = (function() {
               namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
               if (namesCount > 100) {
                 console.log('Registered names db reached', namesCount, 'removing some excess names');
-                var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: 1}, limit: 1, skip: 99});
+                var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: -1}, limit: 1, skip: 99});
                 Names.remove({name:'', watched: {$not: true}});
                 Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: limit.registrationDate }});
               } 
