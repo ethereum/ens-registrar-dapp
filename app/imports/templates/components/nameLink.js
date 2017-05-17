@@ -7,8 +7,11 @@ Template['components_nameLink'].events({
 
 Template['components_nameLink'].helpers({
   name() {
-    const fullname = this.fullname;
+    const name = this.name;
     if (fullname)
         return fullname.slice(0, fullname.length - 4);
+  },
+  fullname() {
+  	return this.name + '.eth';
   }
 })

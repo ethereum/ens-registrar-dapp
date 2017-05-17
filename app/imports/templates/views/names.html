@@ -4,14 +4,14 @@
         <ul class="names">
             {{#each name in names}}
               <li>
-                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+                  {{ > components_nameLink name=(name.name) mode=(name.mode)}}
               </li>
             {{/each}}
         </ul>
         <a href="" class="toggle-sort">
             {{#if sortedByDate}}
                 Sort by name
-            {{else}} 
+            {{else}}
                 Sort by date
             {{/if}}
         </a>
@@ -29,4 +29,3 @@
 
 
 </template>
-

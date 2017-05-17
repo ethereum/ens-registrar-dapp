@@ -181,7 +181,7 @@ export default ethereum = (function() {
                 if (name) {
                   Names.upsert({ name: name }, {
                     $set: {
-                      fullname: name + '.eth',
+                      name: name,
                       registrationDate: Number(result.args.registrationDate.toFixed()),
                       hash: hash,
                       mode: mode || 'open',
@@ -219,7 +219,6 @@ export default ethereum = (function() {
                 Names.upsert({ hash: hash }, {
                     $set: {
                     name: name ? name : null,
-                    fullname: name ? name + '.eth' : null,
                     registrationDate: Number(result.args.registrationDate.toFixed()),
                     value: value,
                     mode: mode || 'owned',
@@ -234,7 +233,7 @@ export default ethereum = (function() {
                 Names.remove({name:'', watched: {$not: true}});
                 Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: Math.floor(new Date().getTime()/1000) - 12 * 60 * 60 }});
               }
-            } 
+            }
           });
 
           resolve();
@@ -315,7 +314,7 @@ export default ethereum = (function() {
             }
 
             mist.menu.add(e._id, {
-                name: e.fullname,
+                name: e.name + '.eth',
                 badge: badge,
                 position: i
             }, function(){

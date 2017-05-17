@@ -87,7 +87,6 @@ Template['components_nameStatus'].onCreated(function() {
 
                 console.log('upsert', name);
                 Names.upsert({name: name}, {$set: {
-                  fullname: name + '.eth',
                   mode: entry.mode, 
                   registrationDate: entry.registrationDate, 
                   value: value, 
@@ -135,10 +134,6 @@ Template['components_nameStatus'].helpers({
     searched() {
       return Session.get('searched');
     },
-    fullName() {
-      //searched + .eth
-      return TemplateVar.get('nameInfo').name
-    }, 
     publicAuctions() {
       return Names.find({registrationDate: {$gt:0}, name:{$gt: '', $regex: /^.{7,}$/}, mode: {$nin: ['forbidden', 'not-yet-available']}},{sort: {registrationDate: -1}, limit: 48});
     },
