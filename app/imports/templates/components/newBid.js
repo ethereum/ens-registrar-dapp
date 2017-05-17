@@ -128,16 +128,16 @@ Template['components_newBid'].events({
     template.createHashesArray(name);
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
     let mastersalt = LocalStore.get('mastersalt') || '';
-
+    let random;
     if (LocalStore && !LocalStore.get('mastersalt')) {
       if (window.crypto && window.crypto.getRandomValues) {
-        var random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
+        random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
       } else {
-        var random = Math.floor(Math.random()*Math.pow(2,55)).toString();
+        random = Math.floor(Math.random()*Math.pow(2,55)).toString();
       }
       LocalStore.set('mastersalt', Daefen(random));
     } 
-    
+
     let secret = web3.sha3(LocalStore.get('mastersalt')+name);
 
     console.log('secret', secret);
