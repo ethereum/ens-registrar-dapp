@@ -145,7 +145,7 @@ Template['components_newBid'].events({
     let secret = web3.sha3(LocalStore.get('mastersalt')+name);
     console.log('secret', secret);
 
-    if (!mainAccount && !(mainAccount.length >= 40)) {
+    if (!mainAccount || !(mainAccount.length >= 40)) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',
           duration: 3
@@ -206,7 +206,7 @@ Template['components_newBid'].events({
   @event change input[name="fee"], input input[name="fee"]
   */
   'input input[name="bidAmount"]': function(e){
-    var maxAmount = TemplateVar.get('maxAmount');
+    var maxAmount = TemplateVar.get('maxAmount') || 0.01;
     var bidAmount = Math.min(Number(e.currentTarget.value) || 0.01, maxAmount);
     TemplateVar.set('bidAmount', bidAmount);
   },
