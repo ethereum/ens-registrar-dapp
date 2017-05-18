@@ -2,6 +2,26 @@
 // Basic (local) collections
 // we use {connection: null} to prevent them from syncing with our not existing Meteor server
 
+function migrateFromV1ToV2(oldCollection, newCollection){
+  oldNamesCount = oldCollection.find().count();
+  if (oldNamesCount > 0) {
+    oldCollection.find().fetch().forEach((n) => {
+      var name = n;
+      var _id = name.hash;
+
+      delete name._id;
+      delete name.hash;
+      delete name.fullname;
+
+      newCollection.upsert(_id, name);
+      console.log('Migrated ' + name.hash + ' - ' + name.name, name);
+    });
+
+    // TODO: Enable when on production
+    // oldCollection.remove();
+  }
+}
+
 export default function initCollections(networkId) {
   MyBids = new Mongo.Collection('ens-dapp-db-'+networkId, {connection: null});
   new PersistentMinimongo(MyBids);
@@ -19,15 +39,6 @@ export default function initCollections(networkId) {
   new PersistentMinimongo(Names);
 
   // Migrating data from old schema
-  oldNamesCount = NamesV1.find().count();
-  if (oldNamesCount > 0) {
-    NamesV1.find().fetch().forEach((n) => {
-      var name = n;
-      delete name._id;
-      // TODO: do not save hash on record.
-      Names.upsert(name.hash, name);
-    });
-    // TODO: Enable when on production
-    // NamesV1.remove();
-  }
+  // from `ens-dapp-db-names` to `ens-dapp-db-namesV2`
+  migrateFromV1ToV2(NamesV1, Names);
 }
