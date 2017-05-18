@@ -176,8 +176,6 @@ export default ethereum = (function() {
                 } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
                   name = binarySearchNamesResult;
                 }
-
-                // if name database is growing too big, don't add as many
                 
                 if (name) {
                   Names.upsert({ name: name }, {
@@ -197,6 +195,7 @@ export default ethereum = (function() {
                   var unwatchedNames = _.pluck(Names.find({watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).fetch(),'name');
 
                   if (unwatchedNames.length > 2000) {
+                    // if more than 2000 entries, remove 500 randomly
                     console.log('You have', unwatchedNames.length, 'names, removing some..')
                     Names.remove({name: {$in: _.sample(unwatchedNames, 500)}});
                     Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
@@ -237,6 +236,7 @@ export default ethereum = (function() {
 
               namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
               if (namesCount > 100) {
+                // if more than 100 entries, remove 50 older ones              
                 console.log('Registered names db reached', namesCount, 'removing some excess names');
                 var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: -1}, limit: 1, skip: 50});
                 Names.remove({name:'', watched: {$not: true}});
