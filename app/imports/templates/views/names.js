@@ -3,7 +3,7 @@ Template['view_names'].helpers({
     return MyBids.find();
   },
   hasBids() {
-    return MyBids.find().count() > 0;
+    return (MyBids.find().count() + PendingBids.find().count()) > 0;
   },
   names() {
     if (LocalStore.get('sort-date')) {

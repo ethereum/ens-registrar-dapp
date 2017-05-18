@@ -51,7 +51,7 @@ Template['aside-auction'].helpers({
     var m = moment(TemplateVar.get('revealDate'));
 
     if (m && m.diff(moment(), 'hours') > 48) {
-      return Math.floor(m.diff(moment(), 'hours')/24) + ' days, ' + Math.floor(m.diff(moment(), 'hours')%24) + ' hours';
+      return Math.round(m.diff(moment(), 'hours')/24) + ' days, ' + Math.round(m.diff(moment(), 'minutes')/60)%24 + ' hours';
     } else if (m.diff(moment(), 'seconds') < 1) {
       return 'Bids are closed';
     } else if (m) {

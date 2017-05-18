@@ -21,6 +21,12 @@ Template['status-owned'].onCreated(function() {
   TemplateVar.set(template, 'owner', null);
   let prevName;
 
+  web3.eth.getAccounts((err, accounts) => {
+    if (!err && accounts && accounts.length > 0) {
+      TemplateVar.set(template, 'accounts', accounts);
+    }
+  })   
+
   template.autorun(() => {
     const name = Session.get('searched');
     if (prevName == name) return;
@@ -87,8 +93,9 @@ Template['status-owned'].helpers({
   },
   isMine() {
     var entry = TemplateVar.get('entryData')
-    if (!entry) return;    
-    return web3.eth.accounts.filter((acc) => acc == entry.owner).length > 0;
+    var accounts = TemplateVar.get('accounts')
+    if (!entry || !accounts) return;    
+    return accounts.indexOf(entry.owner) > 0;
   },
   registrationDate() {
     var entry = TemplateVar.get('entryData')
@@ -324,10 +331,6 @@ Template['finalizeButton'].events({
 
     console.log('template' ,template)
     
-    if (web3.eth.accounts.length == 0) {
-      alert('No accounts added to dapp');
-      return;
-    }
     TemplateVar.set(template, 'finalizing', true);
     registrar.finalizeAuction(name, {
       from: template.data.owner,
