@@ -145,7 +145,7 @@ Template['components_newBid'].events({
     let secret = web3.sha3(LocalStore.get('mastersalt')+name);
     console.log('secret', secret);
 
-    if (!mainAccount) {
+    if (!mainAccount && !(mainAccount.length >= 40)) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',
           duration: 3
@@ -157,8 +157,7 @@ Template['components_newBid'].events({
       });
     } else {
       TemplateVar.set(template, 'bidding-' + name, true)
-      let owner = web3.eth.accounts[0];
-      registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
+      registrar.bidFactory(name, mainAccount, bidAmount, secret, (err, bid) => {
         if(err != undefined) throw err;
 
         PendingBids.insert(Object.assign({
@@ -176,7 +175,7 @@ Template['components_newBid'].events({
           // Checks if hashes are loaded, and if pendingBids were saved
           registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
-              from: owner,
+              from: mainAccount,
               gas: 650000, 
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
@@ -239,7 +238,7 @@ Template['components_newBid'].events({
       var priceInShannon = web3.fromWei(TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice'), 'shannon');
       TemplateVar.set(template, 'priceInShannon', priceInShannon);
   }
-})
+});
 
 Template['components_newBid'].helpers({
   bidding() {

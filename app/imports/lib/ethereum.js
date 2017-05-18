@@ -196,10 +196,9 @@ export default ethereum = (function() {
 
                   var unwatchedNames = _.pluck(Names.find({watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).fetch(),'name');
 
-                  if (unwatchedNames.length > 1000) {
+                  if (unwatchedNames.length > 2000) {
                     console.log('You have', unwatchedNames.length, 'names, removing some..')
-
-                    Names.remove({name: unwatchedNames[Math.floor(Math.random()*unwatchedNames.length)]});
+                    Names.remove({name: {$in: _.sample(unwatchedNames, 500)}});
                     Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
                   }
 
@@ -239,7 +238,7 @@ export default ethereum = (function() {
               namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
               if (namesCount > 100) {
                 console.log('Registered names db reached', namesCount, 'removing some excess names');
-                var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: -1}, limit: 1, skip: 99});
+                var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: -1}, limit: 1, skip: 50});
                 Names.remove({name:'', watched: {$not: true}});
                 Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: limit.registrationDate }});
               } 
@@ -369,10 +368,9 @@ export default ethereum = (function() {
           }})        
       })
 
-      var lastDay = Math.floor(new Date().getTime()) - (24 * 60 * 60 + 10 * 60) * 1000;      
 
       // Clean up Pending Bids
-      _.each(PendingBids.find({date: {$gt: lastDay}}).fetch(), ( bid, i) => {  
+      _.each(PendingBids.find().fetch(), ( bid, i) => {  
         // check for duplicates 
         var dupBid = MyBids.find({shaBid:bid.shaBid}).fetch();
         if (dupBid && dupBid.shaBid == bid.shaBid && dupBid.secret == bid.secret){
@@ -390,9 +388,14 @@ export default ethereum = (function() {
             } else {
               // Check for pending bids that are too late
               var name = Names.findOne({name: bid.name});
+              var lastDay = Math.floor(new Date().getTime()) - (24 * 60 * 60 + 10 * 60) * 1000;      
+
               if (name && name.mode == 'owned') {
                 console.log('Pending bid for', bid.name, 'has been removed because name is', name.mode);
                 PendingBids.remove({_id: bid._id});          
+              } else if (bid.date < lastDay) {
+                console.log('A pending bid for', bid.name, 'is older than 24h and will be removed');
+                PendingBids.remove({_id: bid._id});                          
               }
             }
           })        
