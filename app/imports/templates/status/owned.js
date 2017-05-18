@@ -324,10 +324,6 @@ Template['finalizeButton'].events({
 
     console.log('template' ,template)
     
-    if (web3.eth.accounts.length == 0) {
-      alert('No accounts added to dapp');
-      return;
-    }
     TemplateVar.set(template, 'finalizing', true);
     registrar.finalizeAuction(name, {
       from: template.data.owner,

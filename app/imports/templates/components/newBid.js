@@ -13,12 +13,15 @@ Template['components_newBid'].onRendered(function() {
   TemplateVar.set(template, 'depositAmount', 0);
   TemplateVar.set(template, 'bidding-' + name, false);
 
-  if (web3.eth.accounts.length > 0 ){
-    web3.eth.getBalance(web3.eth.accounts[0], function(e, balance) { 
+  web3.eth.getAccounts((err, accounts) => {
+    if (err || !accounts || accounts.length == 0) return;
+    TemplateVar.set(template, 'mainAccount', accounts[0]);
+    web3.eth.getBalance(accounts[0], function(e, balance) { 
       var maxAmount = Number(web3.fromWei(balance, 'ether').toFixed());
       TemplateVar.set(template, 'maxAmount', maxAmount);
     });
-  }
+  })
+  
 
   // The goal here is to obscure the names we actually want
   template.randomName = function() {
@@ -121,6 +124,7 @@ Template['components_newBid'].events({
     event.preventDefault();
 
     const target = event.target;
+    let mainAccount = TemplateVar.get(template, 'mainAccount');    
     const bidAmount = EthTools.toWei(TemplateVar.get(template, 'bidAmount'), 'ether');
     let totalDeposit = TemplateVar.get(template, 'depositAmount')+TemplateVar.get(template, 'bidAmount');
     const depositAmount = EthTools.toWei(totalDeposit, 'ether');
@@ -139,10 +143,9 @@ Template['components_newBid'].events({
     } 
 
     let secret = web3.sha3(LocalStore.get('mastersalt')+name);
-
     console.log('secret', secret);
 
-    if (web3.eth.accounts.length == 0) {
+    if (!mainAccount) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',
           duration: 3

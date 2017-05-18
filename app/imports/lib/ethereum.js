@@ -178,8 +178,8 @@ export default ethereum = (function() {
                 }
 
                 // if name database is growing too big, don't add as many
-                namesCount = Names.find({watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).count();
-                if (name && Math.random() * namesCount < 200) {
+                
+                if (name) {
                   Names.upsert({ name: name }, {
                     $set: {
                       fullname: name + '.eth',
@@ -190,10 +190,19 @@ export default ethereum = (function() {
                     }
                   });
 
-                  var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;  
+                  // remove old names
+                  var revealDeadline = Math.floor(new Date().getTime()/1000) + 48 * 60 * 60;
                   Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
 
-                  console.log('added name', name, Math.floor(20000/namesCount) + '% chance')
+                  var unwatchedNames = _.pluck(Names.find({watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}}).fetch(),'name');
+
+                  if (unwatchedNames.length > 1000) {
+                    console.log('You have', unwatchedNames.length, 'names, removing some..')
+
+                    Names.remove({name: unwatchedNames[Math.floor(Math.random()*unwatchedNames.length)]});
+                    Names.remove({registrationDate: {$lt: revealDeadline}, watched: {$not: true}, mode: {$nin: ['not-yet-available', 'owned']}});
+                  }
+
                 }
             } 
           });

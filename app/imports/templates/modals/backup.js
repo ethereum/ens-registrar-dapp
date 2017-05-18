@@ -19,3 +19,10 @@ Template['modals_backup'].events({
     //window.URL.revokeObjectURL(blob);
   }
 })
+
+
+Template['modals_backup'].helpers({
+  bidAmount() {
+    return PendingBids.find().count() + MyBids.find().count();
+  }
+});
