@@ -95,7 +95,7 @@ Template['status-owned'].helpers({
     var entry = TemplateVar.get('entryData')
     var accounts = TemplateVar.get('accounts')
     if (!entry || !accounts) return;    
-    return accounts.indexOf(entry.owner) > 0;
+    return accounts.indexOf(entry.owner) > -1;
   },
   registrationDate() {
     var entry = TemplateVar.get('entryData')
