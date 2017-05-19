@@ -49,7 +49,7 @@ Template['components_address'].helpers({
   mine() {
     var accounts = TemplateVar.get('accounts')
     if (!accounts) return;    
-    return accounts.indexOf(Template.instance().data.addr) > 0;
+    return accounts.indexOf(Template.instance().data.addr) > -1;
   },
   name() {
     return TemplateVar.get('name');

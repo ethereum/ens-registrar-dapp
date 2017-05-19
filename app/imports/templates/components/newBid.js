@@ -79,7 +79,7 @@ Template['components_newBid'].onRendered(function() {
       // If the name is already open, just create some dummy hashes
       hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
 
-    } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > 0) {
+    } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > -1) {
       // if the name is in the dictionary add a hash that isn't 
       hashesArray = [template.randomHash(), template.randomMix(), hashedName];
     } else {
