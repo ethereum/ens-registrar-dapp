@@ -9,8 +9,8 @@
   },
   "dependencies": {
     "babel-runtime": "^6.18.0",
-    "eth-registrar-ens": "0.8.1",
-    "ethereum-ens": "0.4.2",
+    "eth-registrar-ens": "^0.8.1",
+    "ethereum-ens": "^0.4.2",
     "meteor-node-stubs": "^0.2.4",
     "web3": "^0.18.2"
   },

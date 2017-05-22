@@ -214,6 +214,13 @@ Template['status-reveal'].helpers({
   }
 })
 
+Template['status-reveal'].events({
+  'click .import-bids': function(e) {
+    EthElements.Modal.show('modals_restore');
+    e.preventDefault();
+  }
+})
+
 
 Template['aside-reveal'].helpers({
   registrationDate() {

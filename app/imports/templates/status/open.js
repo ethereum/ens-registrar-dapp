@@ -3,6 +3,11 @@ import Helpers from '/imports/lib/helpers/helperFunctions';
 
 Template['status-open'].onCreated(function() {
   template = this;
+  web3.eth.getAccounts((err, accounts) => {
+    if (!err && accounts && accounts.length > 0) {
+      TemplateVar.set(template, 'mainAccount', accounts[0]);
+    }
+  })  
 });
 
 Template['status-open'].events({
@@ -11,6 +16,7 @@ Template['status-open'].events({
     let template = Template.instance();
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
     var hashes = TemplateVar.getFrom('.new-bid', 'hashesArray');
+    let mainAccount = TemplateVar.get(template, 'mainAccount');    
 
     // check if hashes are present
     if (!hashes || !(hashes.length > 0)) {
@@ -27,7 +33,7 @@ Template['status-open'].events({
         hashes.splice(i, 1);
     }
 
-    if (web3.eth.accounts.length == 0) {
+    if (!mainAccount) {
         GlobalNotification.error({
           content: 'No accounts added to dapp',
           duration: 3
@@ -35,7 +41,7 @@ Template['status-open'].events({
       } else {
       TemplateVar.set(template, 'opening-' + name, true)
       registrar.openAuction(name, hashes, {
-        from: web3.eth.accounts[0],
+        from: mainAccount,
         gas: 300000,
         gasPrice: gasPrice
       }, Helpers.getTxHandler({

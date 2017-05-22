@@ -3,11 +3,11 @@ Template['view_names'].helpers({
     return MyBids.find();
   },
   hasBids() {
-    return MyBids.find().count() > 0;
+    return (MyBids.find().count() + PendingBids.find().count()) > 0;
   },
   names() {
     if (LocalStore.get('sort-date')) {
-      return Names.find({watched:true},{sort: {availableDate: 1}});
+      return Names.find({watched:true},{sort: {availableDate: 1, registrationDate: 100}});
     } else {
       return Names.find({watched:true},{sort: {name: 1}});
     }

@@ -16,6 +16,11 @@ function validateName(claimedAddr, name, cb) {
 
 Template['components_address'].onCreated(function() {
   const template = Template.instance();
+  web3.eth.getAccounts((err, accounts) => {
+    if (!err && accounts && accounts.length > 0) {
+      TemplateVar.set(template, 'accounts', accounts);
+    }
+  })   
   template.autorun(() => {
     const addr = Template.currentData().addr;
     TemplateVar.set(template, 'name', null);
@@ -42,9 +47,9 @@ Template['components_address'].helpers({
     return TemplateVar.get('name') && TemplateVar.get('name').length > 0 ? 'has-name' : '';
   },
   mine() {
-    return web3.eth.accounts.filter(
-      (acc) => acc === Template.instance().data.addr
-    ).length > 0;
+    var accounts = TemplateVar.get('accounts')
+    if (!accounts) return;    
+    return accounts.indexOf(Template.instance().data.addr) > -1;
   },
   name() {
     return TemplateVar.get('name');

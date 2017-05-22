@@ -13,12 +13,15 @@ Template['components_newBid'].onRendered(function() {
   TemplateVar.set(template, 'depositAmount', 0);
   TemplateVar.set(template, 'bidding-' + name, false);
 
-  if (web3.eth.accounts.length > 0 ){
-    web3.eth.getBalance(web3.eth.accounts[0], function(e, balance) { 
+  web3.eth.getAccounts((err, accounts) => {
+    if (err || !accounts || accounts.length == 0) return;
+    TemplateVar.set(template, 'mainAccount', accounts[0]);
+    web3.eth.getBalance(accounts[0], function(e, balance) { 
       var maxAmount = Number(web3.fromWei(balance, 'ether').toFixed());
       TemplateVar.set(template, 'maxAmount', maxAmount);
     });
-  }
+  })
+  
 
   // The goal here is to obscure the names we actually want
   template.randomName = function() {
@@ -76,7 +79,7 @@ Template['components_newBid'].onRendered(function() {
       // If the name is already open, just create some dummy hashes
       hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
 
-    } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > 0) {
+    } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > -1) {
       // if the name is in the dictionary add a hash that isn't 
       hashesArray = [template.randomHash(), template.randomMix(), hashedName];
     } else {
@@ -121,30 +124,28 @@ Template['components_newBid'].events({
     event.preventDefault();
 
     const target = event.target;
+    let mainAccount = TemplateVar.get(template, 'mainAccount');    
     const bidAmount = EthTools.toWei(TemplateVar.get(template, 'bidAmount'), 'ether');
     let totalDeposit = TemplateVar.get(template, 'depositAmount')+TemplateVar.get(template, 'bidAmount');
     const depositAmount = EthTools.toWei(totalDeposit, 'ether');
     const name = Session.get('name');
-    let secret;
     template.createHashesArray(name);
     const gasPrice = TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice') || web3.toWei(20, 'shannon');
+    let mastersalt = LocalStore.get('mastersalt') || '';
+    let random;
+    if (LocalStore && !LocalStore.get('mastersalt')) {
+      if (window.crypto && window.crypto.getRandomValues) {
+        random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
+      } else {
+        random = Math.floor(Math.random()*Math.pow(2,55)).toString();
+      }
+      LocalStore.set('mastersalt', Daefen(random));
+    } 
 
-    if (window.crypto && window.crypto.getRandomValues) {
-      secret = window.crypto.getRandomValues(new Uint32Array(10)).join('');
-    } else {
-      EthElements.Modal.question({
-        text: 'Your browser does not support window.crypto.getRandomValues ' + 
-          'your bid anonymity is going to be weaker.',
-        ok: true
-      });
-      secret = Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString() +
-        Math.floor(Math.random()*1000000).toString();
-    }
+    let secret = web3.sha3(LocalStore.get('mastersalt')+name);
     console.log('secret', secret);
 
-    if (web3.eth.accounts.length == 0) {
+    if (!mainAccount || !(mainAccount.length >= 40)) {
       GlobalNotification.error({
           content: 'No accounts added to dapp',
           duration: 3
@@ -156,42 +157,43 @@ Template['components_newBid'].events({
       });
     } else {
       TemplateVar.set(template, 'bidding-' + name, true)
-      let owner = web3.eth.accounts[0];
-      registrar.bidFactory(name, owner, bidAmount, secret, (err, bid) => {
+      registrar.bidFactory(name, mainAccount, bidAmount, secret, (err, bid) => {
         if(err != undefined) throw err;
 
         PendingBids.insert(Object.assign({
           date: Date.now(),
+          mastersalt: mastersalt,
           depositAmount
         }, bid));
 
         Names.upsert({name: name}, {$set: { watched: true}});
 
         var hashesArray = TemplateVar.get(template, 'hashesArray')
-        if (hashesArray && hashesArray.length == 3) {
+        if (hashesArray && hashesArray.length == 3 
+            && PendingBids.find({shaBid:bid.shaBid}).fetch().length > 0
+            && Names.findOne({name:name}).watched == true) {
+          // Checks if hashes are loaded, and if pendingBids were saved
           registrar.submitBid(bid, hashesArray,  {
               value: depositAmount, 
-              from: owner,
+              from: mainAccount,
               gas: 650000, 
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
-              onSuccess: () => { 
-                updatePendingBids(name);
-                EthElements.Modal.show('modals_backup'); 
-              },
-              onError: (error) => {
-                PendingBids.remove({shaBid: bid.shaBid});
-              }
+              onSuccess: () => updatePendingBids(name),
+              onError: (error) => PendingBids.remove({shaBid: bid.shaBid})
             }));
+
+            setTimeout(() => {EthElements.Modal.show('modals_backup')}, 2000);              
+
         } else {
-          console.log('Hash array not loading', hashesArray);
+          console.log('Error', hashesArray, PendingBids.find({shaBid:bid.shaBid}).fetch());
 
           EthElements.Modal.question({
-            text: 'Bid failed, please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
+            text: 'Bid failed to be created. No ether was sent. Please refresh your page and try again <br> If the problem persists, <a href="https://github.com/ethereum/ens-registrar-dapp/issues/new"> submit an issue </a> ',
             ok: true
           });
-
+          PendingBids.remove({shaBid: bid.shaBid});
           TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);         
           return;
         }
@@ -204,7 +206,7 @@ Template['components_newBid'].events({
   @event change input[name="fee"], input input[name="fee"]
   */
   'input input[name="bidAmount"]': function(e){
-    var maxAmount = TemplateVar.get('maxAmount');
+    var maxAmount = TemplateVar.get('maxAmount') || 0.01;
     var bidAmount = Math.min(Number(e.currentTarget.value) || 0.01, maxAmount);
     TemplateVar.set('bidAmount', bidAmount);
   },
@@ -236,7 +238,7 @@ Template['components_newBid'].events({
       var priceInShannon = web3.fromWei(TemplateVar.getFrom('.dapp-select-gas-price', 'gasPrice'), 'shannon');
       TemplateVar.set(template, 'priceInShannon', priceInShannon);
   }
-})
+});
 
 Template['components_newBid'].helpers({
   bidding() {
