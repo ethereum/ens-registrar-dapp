@@ -9,6 +9,7 @@ function migrateFromV1ToV2(oldCollection, newCollection){
       var name = n;
       var _id = name.hash;
 
+      // Removing unnecessary data
       delete name._id;
       delete name.hash;
       delete name.fullname;
