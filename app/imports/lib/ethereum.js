@@ -19,6 +19,7 @@ export default ethereum = (function() {
   let customEnsAddress;
   let ensAddress;
   let publishedAtBlock;
+  const WEB3HASPREFIX = web3.sha3('').slice(0,2) == '0x';
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -127,11 +128,9 @@ export default ethereum = (function() {
     var currentIndex = (maxIndex + minIndex) / 2 | 0;
     var currentElement, currentElementSha3;
 
-    // @TODO: extract web3.sha3 to a const.
-    // @impact: low
-    if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
+    if (searchElement.slice(0,2) == "0x" && !WEB3HASPREFIX) {
       searchElement = searchElement.slice(2);
-    } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
+    } else if (searchElement.slice(0,2) != "0x" && WEB3HASPREFIX) {
       searchElement = '0x' + searchElement;
     }
 
@@ -139,7 +138,7 @@ export default ethereum = (function() {
       currentIndex = (minIndex + maxIndex) / 2 | 0;
       currentElement = knownNames[currentIndex];
 
-      // @TODO: Buffer web3.sha3(currentElement);
+      // @TODO: Cache web3.sha3(currentElement);
       // @impact: low
       currentElementSha3 = web3.sha3(currentElement);
 
@@ -151,7 +150,6 @@ export default ethereum = (function() {
         return knownNames[currentIndex];
       }
     }
-
     return null;
   }
 
