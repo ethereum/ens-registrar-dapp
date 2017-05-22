@@ -1,11 +1,10 @@
 
-// Basic (local) collections
-// we use {connection: null} to prevent them from syncing with our not existing Meteor server
-
+// Names Collection V2 uses name hash as key.
 function migrateFromV1ToV2(oldCollection, newCollection){
   oldNamesCount = oldCollection.find().count();
   if (oldNamesCount > 0) {
-    oldCollection.find().fetch().forEach((n) => {
+    oldCollection.find({watched: true}).fetch().forEach((n) => {
+      console.log('Migrating name...', n.name, n.hash);
       var name = n;
       var _id = name.hash;
 
@@ -17,11 +16,12 @@ function migrateFromV1ToV2(oldCollection, newCollection){
       newCollection.upsert(_id, name);
       console.log('Migrated ' + name.hash + ' - ' + name.name, name);
     });
-
-    // TODO: Enable when on production
-    // oldCollection.remove();
+    oldCollection.remove();
   }
 }
+
+// Basic (local) collections
+// we use {connection: null} to prevent them from syncing with our not existing Meteor server
 
 export default function initCollections(networkId) {
   MyBids = new Mongo.Collection('ens-dapp-db-'+networkId, {connection: null});

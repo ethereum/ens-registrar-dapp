@@ -16,12 +16,12 @@ Template['components_newBid'].onRendered(function() {
   web3.eth.getAccounts((err, accounts) => {
     if (err || !accounts || accounts.length == 0) return;
     TemplateVar.set(template, 'mainAccount', accounts[0]);
-    web3.eth.getBalance(accounts[0], function(e, balance) { 
+    web3.eth.getBalance(accounts[0], function(e, balance) {
       var maxAmount = Number(web3.fromWei(balance, 'ether').toFixed());
       TemplateVar.set(template, 'maxAmount', maxAmount);
     });
   })
-  
+
 
   // The goal here is to obscure the names we actually want
   template.randomName = function() {
@@ -38,7 +38,7 @@ Template['components_newBid'].onRendered(function() {
     } else {
       return template.randomMix();
     }
-    
+
   }
 
   template.randomHash = function() {
@@ -73,20 +73,20 @@ Template['components_newBid'].onRendered(function() {
 
   template.createHashesArray = function() {
     var hashesArray = [];
-    let hashedName = '0x' + web3.sha3(name).replace('0x','')
-    let entry = Names.findOne({name: name});
-    if (entry && entry.mode && entry.mode == 'auction') { 
+    let hashedName = '0x' + web3.sha3(name).replace('0x','');
+    let entry = Names.findOne(hashedName);
+    if (entry && entry.mode && entry.mode == 'auction') {
       // If the name is already open, just create some dummy hashes
       hashesArray = [template.randomHash(), template.randomName(), template.randomMix()];
 
     } else if (typeof knownNames !== "undefined" && knownNames.indexOf(name) > -1) {
-      // if the name is in the dictionary add a hash that isn't 
+      // if the name is in the dictionary add a hash that isn't
       hashesArray = [template.randomHash(), template.randomMix(), hashedName];
     } else {
       // Otherwise, add a name that is
       hashesArray = [template.randomName(), template.randomMix(), hashedName];
     }
-    
+
     TemplateVar.set(template, 'hashesArray', hashesArray);
 
     console.log('hashesArray created', name, typeof knownNames, typeof knownNames !== "undefined" ?  _.map(hashesArray, (e)=>{ return binarySearchNames(e)}) : '', _.map(hashesArray, (e)=>{ var n = Names.findOne({hash: e.slice(2,14)}); return n ? n.name : ''}), hashesArray);
@@ -124,7 +124,7 @@ Template['components_newBid'].events({
     event.preventDefault();
 
     const target = event.target;
-    let mainAccount = TemplateVar.get(template, 'mainAccount');    
+    let mainAccount = TemplateVar.get(template, 'mainAccount');
     const bidAmount = EthTools.toWei(TemplateVar.get(template, 'bidAmount'), 'ether');
     let totalDeposit = TemplateVar.get(template, 'depositAmount')+TemplateVar.get(template, 'bidAmount');
     const depositAmount = EthTools.toWei(totalDeposit, 'ether');
@@ -140,7 +140,7 @@ Template['components_newBid'].events({
         random = Math.floor(Math.random()*Math.pow(2,55)).toString();
       }
       LocalStore.set('mastersalt', Daefen(random));
-    } 
+    }
 
     let secret = web3.sha3(LocalStore.get('mastersalt')+name);
     console.log('secret', secret);
@@ -169,14 +169,14 @@ Template['components_newBid'].events({
         Names.upsert({name: name}, {$set: { watched: true}});
 
         var hashesArray = TemplateVar.get(template, 'hashesArray')
-        if (hashesArray && hashesArray.length == 3 
+        if (hashesArray && hashesArray.length == 3
             && PendingBids.find({shaBid:bid.shaBid}).fetch().length > 0
             && Names.findOne({name:name}).watched == true) {
           // Checks if hashes are loaded, and if pendingBids were saved
           registrar.submitBid(bid, hashesArray,  {
-              value: depositAmount, 
+              value: depositAmount,
               from: mainAccount,
-              gas: 650000, 
+              gas: 650000,
               gasPrice: gasPrice
             }, Helpers.getTxHandler({
               onDone: () => TemplateVar.set(template, 'bidding-' + Session.get('searched'), false),
@@ -184,7 +184,7 @@ Template['components_newBid'].events({
               onError: (error) => PendingBids.remove({shaBid: bid.shaBid})
             }));
 
-            setTimeout(() => {EthElements.Modal.show('modals_backup')}, 2000);              
+            setTimeout(() => {EthElements.Modal.show('modals_backup')}, 2000);
 
         } else {
           console.log('Error', hashesArray, PendingBids.find({shaBid:bid.shaBid}).fetch());
@@ -194,7 +194,7 @@ Template['components_newBid'].events({
             ok: true
           });
           PendingBids.remove({shaBid: bid.shaBid});
-          TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);         
+          TemplateVar.set(template, 'bidding-' + Session.get('searched'), false);
           return;
         }
       });
@@ -202,7 +202,7 @@ Template['components_newBid'].events({
   },
   /**
   Change the Bid amount
-  
+
   @event change input[name="fee"], input input[name="fee"]
   */
   'input input[name="bidAmount"]': function(e){
@@ -211,7 +211,7 @@ Template['components_newBid'].events({
     TemplateVar.set('bidAmount', bidAmount);
   },
   /**
-  Deposit amount  
+  Deposit amount
   */
   'change input[name="depositAmount"], input input[name="depositAmount"]': function(e){
       TemplateVar.set('depositAmount', Number(e.currentTarget.value));
@@ -249,7 +249,7 @@ Template['components_newBid'].helpers({
     if (pending && pending.length > 0 && Math.abs(Date.now() - pending[0].date) < 15*60*1000 ) {
       bidding = true;
       TemplateVar.set('bidding-' + Session.get('searched'), bidding);
-    } 
+    }
     return bidding !== true;
   },
   depositAmount(){
