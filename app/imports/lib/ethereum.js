@@ -121,6 +121,13 @@ export default ethereum = (function() {
     })();
   }
 
+  window.updateBlockNumber = function(blockNumber) {
+    var storedBlockNumber = LocalStore.get('lastBlockLooked');
+    if (blockNumber > storedBlockNumber) {
+      LocalStore.set('lastBlockLooked', blockNumber);
+    }
+  }
+
   window.binarySearchNames = function(searchElement) {
     if (window.WEB3HASPREFIX == null){
       window.WEB3HASPREFIX = web3.sha3('').slice(0,2) == '0x';
@@ -170,7 +177,7 @@ export default ethereum = (function() {
 
           AuctionStartedEvent.watch(function(error, result) {
             if (!error) {
-                LocalStore.set('lastBlockLooked', result.blockNumber);
+                updateBlockNumber(result.blockNumber);
                 var hash = result.args.hash.replace('0x','').slice(0,12);
                 var nameObj = Names.findOne(hash);
                 var name, mode, binarySearchNamesResult;
@@ -213,7 +220,7 @@ export default ethereum = (function() {
           var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: searchFromBlock});
           HashRegisteredEvent.watch(function(error, result) {
             if (!error) {
-              LocalStore.set('lastBlockLooked', result.blockNumber);
+              updateBlockNumber(result.blockNumber);
 
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
