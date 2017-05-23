@@ -19,7 +19,6 @@ export default ethereum = (function() {
   let customEnsAddress;
   let ensAddress;
   let publishedAtBlock;
-  const WEB3HASPREFIX = web3.sha3('').slice(0,2) == '0x';
 
   function initWeb3() {
     return new Promise((resolve, reject) => {
@@ -123,14 +122,17 @@ export default ethereum = (function() {
   }
 
   window.binarySearchNames = function(searchElement) {
+    if (window.WEB3HASPREFIX == null){
+      window.WEB3HASPREFIX = web3.sha3('').slice(0,2) == '0x';
+    }
+
     var minIndex = 0;
     var maxIndex = knownNames.length - 1;
     var currentIndex = (maxIndex + minIndex) / 2 | 0;
     var currentElement, currentElementSha3;
-
-    if (searchElement.slice(0,2) == "0x" && !WEB3HASPREFIX) {
+    if (searchElement.slice(0,2) == "0x" && !window.WEB3HASPREFIX) {
       searchElement = searchElement.slice(2);
-    } else if (searchElement.slice(0,2) != "0x" && WEB3HASPREFIX) {
+    } else if (searchElement.slice(0,2) != "0x" && window.WEB3HASPREFIX) {
       searchElement = '0x' + searchElement;
     }
 
@@ -212,6 +214,7 @@ export default ethereum = (function() {
           HashRegisteredEvent.watch(function(error, result) {
             if (!error) {
               LocalStore.set('lastBlockLooked', result.blockNumber);
+
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
               var nameObj = Names.findOne(hash);
