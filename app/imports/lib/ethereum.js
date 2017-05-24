@@ -355,14 +355,15 @@ export default ethereum = (function() {
 
   function updateRevealNames() {
       var cutoutDate = Math.floor(Date.now()/1000) + 48*60*60;
-      // keep updating
+      var now = Math.floor(Date.now()/1000);
+      // keep updating 
       var names = Names.find({$or:[
           // any name I'm watching that is still on auction
           {registrationDate: {$gt: Math.floor(Date.now()/1000), $lt: cutoutDate}, name:{$gt: ''}, watched: true},
           // any name whose registration date has passed and isn't finalized
-          {mode: {$nin: ['open', 'owned', 'not-yet-available', 'forbidden']}, registrationDate: {$lt: Math.floor(Date.now()/1000)}, name:{$gt: ''}},
-          // any name registered before this registrar was live (cleans bad data)
-          {registrationDate: {$gt:0, $lt: 1492700000}, name:{$gt: ''}},
+          {mode: {$nin: ['open', 'owned', 'forbidden']}, registrationDate: {$lt: now}, name:{$gt: ''}},
+          // any name that is open or should be open by now
+          {mode: {$in: ['open', 'not-yet-available']}, availableDate: {$lt: now}, name:{$gt: ''}}
           ]}, {limit:100}).fetch();
 
       console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));

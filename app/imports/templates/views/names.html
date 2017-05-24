@@ -1,6 +1,24 @@
 <template name="view_names">
     {{#if watchesNames}}
         <h3> Watched Names </h3>
+        {{#if sortedByDate}}
+        <ul class="names">
+            {{#each name in active}}
+              <li>
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+              </li>
+            {{/each}}
+
+            <hr>
+
+            {{#each name in inactive}}
+              <li>
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+              </li>
+            {{/each}}
+        </ul>
+        <a href="" class="toggle-sort">Sort by name</a>
+        {{else}}
         <ul class="names">
             {{#each name in names}}
               <li>
@@ -8,13 +26,9 @@
               </li>
             {{/each}}
         </ul>
-        <a href="" class="toggle-sort">
-            {{#if sortedByDate}}
-                Sort by name
-            {{else}}
-                Sort by date
-            {{/if}}
-        </a>
+        <a href="" class="toggle-sort">Sort by mode</a>
+        {{/if}}
+
         <br>
 
     {{/if}}

@@ -50,8 +50,11 @@ Template['modals_restore'].onRendered(function() {
        return;
      }
      try {
-       checkBids(bids);
-       if (pendingBids) checkBids(pendingBids);
+       if (pendingBids) {
+        checkBids(bids.concat(pendingBids));
+        } else {
+        checkBids(bids);
+        }
      } catch(e) {
        template.fileError.set(e);
      }
@@ -119,7 +122,11 @@ Template['modals_restore'].events({
 
 Template['modals_restore'].helpers({
   fileIsLoaded() {
-    return Template.instance().allBids.get();
+    if (Template.instance().pendingBids.get()) {
+      return Template.instance().newBids.get() + Template.instance().pendingBids.get();
+    } else {
+      return Template.instance().newBids.get();
+    }
   },
   newBidsCount() {
     if (Template.instance().pendingBids.get()) {
@@ -140,9 +147,9 @@ Template['modals_restore'].helpers({
   },
   buttonDisabled() {
     let newBids = Template.instance().newBids.get();
-    let pendingBids = Template.instance().newBids.get();
+    let pendingBids = Template.instance().pendingBids.get();
     if (pendingBids) {
-      return !(newBids && pendingBids && newBids.length + pendingBids.length > 0);
+      return !(newBids && (newBids.length + pendingBids.length) > 0);
     } else {
       return !(newBids && newBids.length > 0);
     }
