@@ -67,5 +67,4 @@ Template.registerHelper('formatNumber', function(number, format){
 });
 
 Template.registerHelper('fullName', name => {
-    console.log('fullName', name);
     return `${name}.eth`});
