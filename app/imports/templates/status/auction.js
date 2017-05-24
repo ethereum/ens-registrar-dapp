@@ -48,11 +48,16 @@ Template['aside-auction'].helpers({
     return m ? m.format('YYYY-MM-DD HH:mm') : null;
   }, 
   timeRemaining() {
-    var m = moment(TemplateVar.get('revealDate'));
+    var revealDate = TemplateVar.get('revealDate');
+    if (!revealDate) return 'Loading..';
 
-    if (m && m.diff(moment(), 'hours') > 48) {
-      return Math.round(m.diff(moment(), 'hours')/24) + ' days, ' + Math.round(m.diff(moment(), 'minutes')/60)%24 + ' hours';
-    } else if (m.diff(moment(), 'seconds') < 1) {
+    var m = moment(revealDate);
+
+    if (m && m.diff(moment(), 'hours') > 70) {
+      return Math.round((m.diff(moment(), 'hours'))/24) + ' days';
+    } else if (m && m.diff(moment(), 'hours') > 48) {
+      return Math.floor((m.diff(moment(), 'hours'))/24) + ' days, ' + (m.diff(moment(), 'hours')%24) + ' hours';
+    } else if (m && m.diff(moment(), 'seconds') < 1) {
       return 'Bids are closed';
     } else if (m) {
         return Math.floor(m.diff(moment(), 'minutes')/60) + 'h ' + Math.floor(m.diff(moment(), 'minutes')%60) + 'm ' + Math.floor(m.diff(moment(), 'seconds')%60) + 's';

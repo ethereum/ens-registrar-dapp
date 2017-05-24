@@ -189,6 +189,13 @@ Template['components_nameStatus'].helpers({
     }
 });
 
+Template['status-forbidden-can-invalidate'].helpers({
+  hasNode() {
+      return LocalStore.get('hasNode');
+  }
+})
+
+
 Template['aside-forbidden-can-invalidate'].helpers({
   value() {
     var val = Template.instance().data.entry.deed.balance;

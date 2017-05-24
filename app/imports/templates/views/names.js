@@ -6,12 +6,13 @@ Template['view_names'].helpers({
     return (MyBids.find().count() + PendingBids.find().count()) > 0;
   },
   names() {
-    if (LocalStore.get('sort-date')) {
-      return Names.find({watched:true},{sort: {availableDate: 1, registrationDate: 100}});
-    } else {
-      return Names.find({watched:true},{sort: {name: 1}});
-    }
+    return Names.find({watched:true},{sort: {name: 1}});
   },
+  active() {
+    return Names.find({watched:true, mode: {$in: ['owned', 'auction', 'reveal']}},{sort: {registrationDate: 1}});
+  },
+  inactive() {
+    return Names.find({watched:true, mode: {$in: ['not-yet-available', 'open']}},{sort: {availableDate: 1}});  },
   watchesNames() {
     return Names.find({watched:true}).count() > 0;
   }, 

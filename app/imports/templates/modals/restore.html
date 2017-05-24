@@ -21,6 +21,12 @@
   </p>  
 
   <div class="dapp-modal-buttons no-margins">
-    <button class="ok import dapp-primary-button" disabled={{buttonDisabled}}>Import bids</button>
+    <button class="ok import dapp-primary-button" disabled={{buttonDisabled}}>
+      {{#if buttonDisabled}}
+        No bids to import
+      {{else}}
+        Import bids
+      {{/if}}
+    </button>
   </div>  
 </template>
