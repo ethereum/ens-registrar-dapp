@@ -35,7 +35,7 @@ Template['components_bid'].events({
     
     let bid = template.data.bid.bid ? template.data.bid.bid : template.data.bid;
     TemplateVar.set(template, `revealing-${bid.name}`, true);
-    // Names.update({fullname: })
+
     registrar.unsealBid(bid, {
       from: bid.owner, // Any account can reveal
       gas: 300000

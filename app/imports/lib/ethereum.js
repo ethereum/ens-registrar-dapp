@@ -24,7 +24,7 @@ export default ethereum = (function() {
     return new Promise((resolve, reject) => {
       if(typeof web3 !== 'undefined') {
         web3 = new Web3(web3.currentProvider);
-        LocalStore.set('hasNode', true);        
+        LocalStore.set('hasNode', true);
       } else {
         let Web3 = require('web3');
         // web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
@@ -57,7 +57,7 @@ export default ethereum = (function() {
       check();
     });
   }
-  
+
   function checkNetwork() {
     return new Promise((resolve, reject) => {
       web3.eth.getBlock(0, function(e, res){
@@ -90,7 +90,7 @@ export default ethereum = (function() {
       });
     })
   }
-  
+
   function initRegistrar() {
     reportStatus('Initializing ENS registrar...');
     return new Promise((resolve, reject) => {
@@ -121,21 +121,34 @@ export default ethereum = (function() {
     })();
   }
 
+  window.updateBlockNumber = function(blockNumber) {
+    var storedBlockNumber = LocalStore.get('lastBlockLooked');
+    if (blockNumber > storedBlockNumber) {
+      LocalStore.set('lastBlockLooked', blockNumber);
+    }
+  }
+
   window.binarySearchNames = function(searchElement) {
+    if (window.WEB3HASPREFIX == null){
+      window.WEB3HASPREFIX = web3.sha3('').slice(0,2) == '0x';
+    }
+
     var minIndex = 0;
     var maxIndex = knownNames.length - 1;
     var currentIndex = (maxIndex + minIndex) / 2 | 0;
     var currentElement, currentElementSha3;
-
-    if (searchElement.slice(0,2) == "0x" && web3.sha3('').slice(0,2) !== '0x') {
+    if (searchElement.slice(0,2) == "0x" && !window.WEB3HASPREFIX) {
       searchElement = searchElement.slice(2);
-    } else if (searchElement.slice(0,2) != "0x" && web3.sha3('').slice(0,2) == '0x') {
+    } else if (searchElement.slice(0,2) != "0x" && window.WEB3HASPREFIX) {
       searchElement = '0x' + searchElement;
     }
 
     while (minIndex <= maxIndex) {
       currentIndex = (minIndex + maxIndex) / 2 | 0;
       currentElement = knownNames[currentIndex];
+
+      // @TODO: Cache web3.sha3(currentElement);
+      // @impact: low
       currentElementSha3 = web3.sha3(currentElement);
 
       if (currentElementSha3 < searchElement) {
@@ -146,28 +159,27 @@ export default ethereum = (function() {
         return knownNames[currentIndex];
       }
     }
-
     return null;
   }
 
   window.watchEvents = function watchEvents() {
 
       web3.eth.getBlock('latest', (error, block) => {
-        var STEP = 500; // blocks until now to look at
+        var STEP = 500; // blocks to look behind
         var lastBlockLooked = localStorage.getItem('lastBlockLooked');
         var searchFromBlock = Math.max(lastBlockLooked, block.number - STEP);
         var namesCount;
 
         console.log(knownNames.length, ' known names loaded. Now checking for events since block ', searchFromBlock);
-        
+
         return new Promise((resolve, reject) => {
           var AuctionStartedEvent = registrar.contract.AuctionStarted({}, {fromBlock: searchFromBlock});
 
           AuctionStartedEvent.watch(function(error, result) {
-            if (!error) {            
-                LocalStore.set('lastBlockLooked', result.blockNumber);
+            if (!error) {
+                updateBlockNumber(result.blockNumber);
                 var hash = result.args.hash.replace('0x','').slice(0,12);
-                var nameObj = Names.findOne({hash: hash});
+                var nameObj = Names.findOne(hash);
                 var name, mode, binarySearchNamesResult;
 
                 if (nameObj) {
@@ -176,11 +188,11 @@ export default ethereum = (function() {
                 } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
                   name = binarySearchNamesResult;
                 }
-                
+
                 if (name) {
-                  Names.upsert({ name: name }, {
+                  Names.upsert(hash, {
                     $set: {
-                      fullname: name + '.eth',
+                      name: name,
                       registrationDate: Number(result.args.registrationDate.toFixed()),
                       hash: hash,
                       mode: mode || 'open',
@@ -202,16 +214,17 @@ export default ethereum = (function() {
                   }
 
                 }
-            } 
+            }
           });
 
           var HashRegisteredEvent = registrar.contract.HashRegistered({}, {fromBlock: searchFromBlock});
           HashRegisteredEvent.watch(function(error, result) {
             if (!error) {
-              LocalStore.set('lastBlockLooked', result.blockNumber);
+              updateBlockNumber(result.blockNumber);
+
               var value = Number(web3.fromWei(result.args.value.toFixed(), 'ether'));
               var hash = result.args.hash.replace('0x','').slice(0,12);
-              var nameObj = Names.findOne({hash: hash});
+              var nameObj = Names.findOne(hash);
               var name, mode, binarySearchNamesResult;
 
               if (nameObj) {
@@ -220,12 +233,11 @@ export default ethereum = (function() {
               } else if((binarySearchNamesResult = binarySearchNames(result.args.hash)) !== null) {
                 name = binarySearchNamesResult;
               }
-        
-              if (name) { 
-                Names.upsert({ hash: hash }, {
+
+              if (name) {
+                Names.upsert(hash, {
                     $set: {
                     name: name ? name : null,
-                    fullname: name ? name + '.eth' : null,
                     registrationDate: Number(result.args.registrationDate.toFixed()),
                     value: value,
                     mode: mode || 'owned',
@@ -236,16 +248,16 @@ export default ethereum = (function() {
 
               namesCount = Names.find({mode: 'owned', watched: {$not: true}}).count()
               if (namesCount > 100) {
-                // if more than 100 entries, remove 50 older ones              
+                // if more than 100 entries, remove 50 older ones
                 console.log('Registered names db reached', namesCount, 'removing some excess names');
                 var limit = Names.findOne({mode: 'owned', watched: {$not: true}}, {sort: {registrationDate: -1}, limit: 1, skip: 50});
                 Names.remove({name:'', watched: {$not: true}});
                 Names.remove({mode: 'owned', watched: {$not: true}, registrationDate: {$lt: limit.registrationDate }});
-              } 
-            } 
-          }); 
+              }
+            }
+          });
 
-          resolve(); 
+          resolve();
         })
       })
   }
@@ -256,7 +268,7 @@ export default ethereum = (function() {
       theresAnError
     }));
   }
-  
+
   function watchDisconnect() {
     function check() {
       if(web3.isConnected()) {
@@ -265,13 +277,13 @@ export default ethereum = (function() {
         initEthereum();
       }
     }
-    
+
     return new Promise((resolve, reject) => {
       check();
       resolve();
     })
   }
-  
+
   function initEthereum() {
     reportStatus('Connecting to Ethereum network...');
     return initWeb3()
@@ -293,7 +305,6 @@ export default ethereum = (function() {
 
         // add an interval to check on auctions every so ofter
         setInterval(updateRevealNames, 60000);
-             
         if (LocalStore && !LocalStore.get('mastersalt')) {
           if (window.crypto && window.crypto.getRandomValues) {
             var random = window.crypto.getRandomValues(new Uint32Array(2)).join('')
@@ -301,7 +312,7 @@ export default ethereum = (function() {
             var random = Math.floor(Math.random()*Math.pow(2,55)).toString();
           }
           LocalStore.set('mastersalt', Daefen(random));
-         } 
+         }
 
         reportStatus('Ready!', true);
       })
@@ -315,7 +326,7 @@ export default ethereum = (function() {
   function updateMistMenu() {
 
     if (typeof mist !== 'undefined' && mist && mist.menu) {
-        var names = Names.find({mode: {$in: ['auction', 'reveal']}, watched: true}, {sort: {registrationDate: 1}}).fetch();
+        var names = Names.find({watched: true, mode: {$in: ['auction', 'reveal']}}, {sort: {registrationDate: 1}}).fetch();
         mist.menu.clear();
         mist.menu.setBadge('');
 
@@ -331,7 +342,7 @@ export default ethereum = (function() {
             }
 
             mist.menu.add(e._id, {
-                name: e.fullname,
+                name: e.name + '.eth',
                 badge: badge,
                 position: i
             }, function(){
@@ -339,7 +350,7 @@ export default ethereum = (function() {
                 Session.set('searched', e.name);
             })
         })
-    }  
+    }
   }
 
   function updateRevealNames() {
@@ -360,23 +371,22 @@ export default ethereum = (function() {
       _.each(names, function(e, i) {
           registrar.getEntry(e.name, (err, entry) => {
           if(!err && entry) {
-              Names.upsert({name: e.name}, {$set: {
-                  mode: entry.mode, 
-                  value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0, 
+              Names.upsert(hash, {$set: {
+                  mode: entry.mode,
+                  value: entry.mode == 'owned' ? Number(web3.fromWei(entry.deed.balance.toFixed(), 'ether')) : 0,
                   highestBid: entry.highestBid,
                   registrationDate: entry.registrationDate
-                }});            
-          }})        
+                }});
+          }})
       })
 
-
       // Clean up Pending Bids
-      _.each(PendingBids.find().fetch(), ( bid, i) => {  
-        // check for duplicates 
+      _.each(PendingBids.find().fetch(), ( bid, i) => {
+        // check for duplicates
         var dupBid = MyBids.find({shaBid:bid.shaBid}).fetch();
         if (dupBid && dupBid.shaBid == bid.shaBid && dupBid.secret == bid.secret){
             console.log('removing duplicate bid for', bid.name)
-            PendingBids.remove({_id: bid._id});            
+            PendingBids.remove({_id: bid._id});
         } else {
           registrar.contract.sealedBids.call(bid.owner, bid.shaBid, (err, result) => {
             if (err) {
@@ -385,26 +395,25 @@ export default ethereum = (function() {
               console.log('Insert bid', bid.name);
               //bid successfully submitted
               MyBids.insert(bid);
-              PendingBids.remove({_id: bid._id});            
+              PendingBids.remove({_id: bid._id});
             } else {
               // Check for pending bids that are too late
               var name = Names.findOne({name: bid.name});
-              var lastDay = Math.floor(new Date().getTime()) - (24 * 60 * 60 + 10 * 60) * 1000;      
+              var lastDay = Math.floor(new Date().getTime()) - (24 * 60 * 60 + 10 * 60) * 1000;
 
               if (name && name.mode == 'owned') {
                 console.log('Pending bid for', bid.name, 'has been removed because name is', name.mode);
-                PendingBids.remove({_id: bid._id});          
+                PendingBids.remove({_id: bid._id});
               } else if (bid.date < lastDay) {
                 console.log('A pending bid for', bid.name, 'is older than 24h and will be removed');
-                PendingBids.remove({_id: bid._id});                          
+                PendingBids.remove({_id: bid._id});
               }
             }
-          })        
+          })
         }
       })
-
       updateMistMenu();
-  }  
+  }
 
   return {
     init: initEthereum,
@@ -418,5 +427,3 @@ export default ethereum = (function() {
     }
   };
 }());
-
-

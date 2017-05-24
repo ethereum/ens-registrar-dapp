@@ -3,7 +3,7 @@
     {{#if addr}}
       {{> dapp_identicon identity=addr class="dapp-tiny"}}
       {{#if hasName}}
-        {{ > components_nameLink fullname=name }}
+        {{ > components_nameLink name=name }}
         {{#if mine}}
           <i class="icon-user help owns" title="Account is yours"></i>
         {{/if}}

@@ -66,4 +66,5 @@ Template.registerHelper('formatNumber', function(number, format){
         return numeral(number).format(format);
 });
 
-Template.registerHelper('fullName', name => `${name}.eth`);
+Template.registerHelper('fullName', name => {
+    return `${name}.eth`});

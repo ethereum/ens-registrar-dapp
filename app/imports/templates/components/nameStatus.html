@@ -11,11 +11,11 @@
     <aside class="col-md-4">
         {{> Template.dynamic template=(TemplateVar.get 'aside') data=(TemplateVar.get 'nameInfo')}}
         {{>view_names}}
-    </aside>    
+    </aside>
   {{else}}
     <div class="col-md-8 main-content">
 
-        <h1> Check availability of an Ethereum Name</h1> 
+        <h1> Check availability of an Ethereum Name</h1>
 
         {{#if showStats}}
         <h3> Stats on recent auctions </h3>
@@ -32,13 +32,13 @@
         {{#unless isMainNetwork}}
           <p><strong>You are NOT on the main Network, but on the {{TemplateVar.get 'network'}} network. Names bought here are not valid on the main net.</strong></p>
         {{/unless}}
-        
+
         {{> component_explainerBody}}
 
 
         {{#unless hasNode}}
         {{> components_noNode}}
-        {{/unless}}  
+        {{/unless}}
 
         {{#if hasAuctions}}
         <br>
@@ -50,8 +50,8 @@
           {{#each auction in publicAuctions}}
               <li>
                   <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}} {{recent auction.registrationDate}}'>
-                    {{auction.fullname}}
-                  </a> 
+                    {{fullName auction.name}}
+                  </a>
               </li>
             {{/each}}
         </ul>
@@ -65,7 +65,7 @@
             {{#each auction in publicAuctionsAboutToExpire}}
                 <li>
                     <a href='#{{auction.name}}' class='{{#if auction.watched}}watched{{/if}}'>
-                      {{auction.fullname}}
+                      {{fullName auction.name}}
                     </a>
                 </li>
               {{/each}}
@@ -82,10 +82,10 @@
           {{#each auction in knownNamesRegistered}}
               <li>
                   <a href='#{{auction.name}}' class='{{#if canBeInvalidated auction.name }}can-invalidate{{/if}} {{#if auction.watched}}watched{{/if}} {{recent auction.registrationDate}}'>
-                    {{auction.fullname}}
-                  </a>  
+                    {{fullName auction.name}}
+                  </a>
                     {{#if canBeInvalidated auction.name }}
-                    <icon class="icon-alert">!</icon> 
+                    <icon class="icon-alert">!</icon>
                     {{/if}}
               </li>
             {{/each}}
@@ -96,7 +96,7 @@
     </div>
     <aside class="col-md-4">
         {{>view_names}}
-    </aside> 
+    </aside>
   {{/if}}
 </template>
 
@@ -144,7 +144,7 @@
     <div>
         <h1><strong>{{name}}</strong> is not yet available</h1>
         <p>
-          Names are being released on a distributed schedule. Registration for this name can be requested by anyone after <strong>{{availableDate}}</strong>. 
+          Names are being released on a distributed schedule. Registration for this name can be requested by anyone after <strong>{{availableDate}}</strong>.
         </p>
         <p>
           Once a name is requested, a period of 72 hours begins in which anyone can put a sealed bid for it and send the necessary funds (minimum of 0.01 ether). This period is followed by a 48 hour one (the "Reveal Period") in which <strong>bids must be revealed. Any bid that is not revealed during Reveal Period results in the loss of its related funds</strong>. Revealing your bid requires information stored in your browser, or backed up using the 'Export Bids' option. The highest bidder after all bids are revealed during this Reveal Period becomes the registrant of the name, and the ether they sent to the contract will be refunded immediately, <strong>minus the value required to outbid the second highest bidder.</strong> The remaining funds are kept locked in a contract for at least a year, after which they can be withdrawn by the registrant upon releasing rights of use of the name. Names with registrants are controlled only by their registrants, who can transfer or release the name until it needs to be renewed.
@@ -178,7 +178,7 @@
         {{else}}
           <p> You don't have any bids for this name. If you have previously bid, then <a href="" class="import-bids">Import your bids backup</a> to see and reveal them. </p>
         {{/if}}
-        
+
         {{#unless hasNode}}
         {{> components_noNode}}
         {{/unless}}
@@ -199,4 +199,3 @@
     <span class="big-numeral">{{secondHighestBid}}</span> <span class="unit">ether</span>
 
 </template>
-

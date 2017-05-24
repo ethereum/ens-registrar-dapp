@@ -8,7 +8,7 @@
                   {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
               </li>
             {{/each}}
-            
+
             <hr>
 
             {{#each name in inactive}}
@@ -18,17 +18,17 @@
             {{/each}}
         </ul>
         <a href="" class="toggle-sort">Sort by name</a>
-        {{else}} 
+        {{else}}
         <ul class="names">
             {{#each name in names}}
               <li>
-                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+                  {{ > components_nameLink name=(name.name) mode=(name.mode)}}
               </li>
             {{/each}}
         </ul>
-        <a href="" class="toggle-sort">Sort by mode</a>        
+        <a href="" class="toggle-sort">Sort by mode</a>
         {{/if}}
-        
+
         <br>
 
     {{/if}}
@@ -43,4 +43,3 @@
 
 
 </template>
-
