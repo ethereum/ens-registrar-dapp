@@ -3,10 +3,12 @@
 function migrateFromV1ToV2(oldCollection, newCollection){
   oldNamesCount = oldCollection.find().count();
   if (oldNamesCount > 0) {
+    console.log('Migrating data...');
     // clearing block pointer, as we deleted all old unwatched names.
     localStorage.removeItem('lastBlockLooked');
-
+    console.log('Removing lastBlockLooked');
     oldCollection.find({watched: true}).fetch().forEach((n) => {
+      console.log('Migrating ' + name.name, name);
       var name = n;
       var _id = name.hash;
 
@@ -17,7 +19,7 @@ function migrateFromV1ToV2(oldCollection, newCollection){
 
       newCollection.upsert(_id, name);
     });
-
+    console.log('Removing old Names collection...');
     oldCollection.remove({});
   }
 }
