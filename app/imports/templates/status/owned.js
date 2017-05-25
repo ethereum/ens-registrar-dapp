@@ -169,7 +169,15 @@ Template['status-owned'].helpers({
   refund() {
     var entry = TemplateVar.get('entryData');
     if (!entry || !entry.deedBalance) return '-';
-    return entry.deedBalance - entry.value;
+    return web3.toWei(entry.deedBalance - entry.value, 'ether');
+  },
+  canRefund() {
+    var entry = TemplateVar.get('entryData');
+    if (!entry) return false;    
+    return entry.deedBalance !== entry.value;  
+  },
+  finalizing() {
+    return TemplateVar.get('finalizing');
   }
 })
 
@@ -303,6 +311,20 @@ Template['status-owned'].events({
         onDone: () => TemplateVar.set(template, 'settingHash', false)
       })
     )
+  },
+  'click .finalize': function(e, template) {
+    const name = template.data.entry.name;
+
+    console.log('template' ,template)
+    
+    TemplateVar.set(template, 'finalizing', true);
+    registrar.finalizeAuction(name, {
+      from: template.data.entry.deed.owner,
+      gas: 200000
+    }, Helpers.getTxHandler({
+      onDone: () => TemplateVar.set(template, 'finalizing', false),
+      onSuccess: () => Helpers.refreshStatus()
+    }));
   }
 });
 
@@ -324,26 +346,3 @@ Template['aside-owned'].helpers({
 })
 
 
-Template['finalizeButton'].events({
-  'click .finalize': function() {
-    const name = Session.get('searched');
-    const template = Template.instance();
-
-    console.log('template' ,template)
-    
-    TemplateVar.set(template, 'finalizing', true);
-    registrar.finalizeAuction(name, {
-      from: template.data.owner,
-      gas: 200000
-    }, Helpers.getTxHandler({
-      onDone: () => TemplateVar.set(template, 'finalizing', false),
-      onSuccess: () => Helpers.refreshStatus()
-    }));
-  }
-})
-
-Template['finalizeButton'].helpers({
-  finalizing() {
-    return TemplateVar.get('finalizing');
-  }
-})

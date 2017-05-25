@@ -21,13 +21,24 @@
     {{/if}}
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
 
-    <p> <strong> Before any changes can be done to the name, the owner of this name needs to be finalized which can send them a refund {{refund}} ether to them.</strong></p>
+    <p> Owner hasn't set up anything{{#if canRefund}}, or claimed their <strong>{{dapp_formatBalance refund "0,0.00[0000]"}} ether</strong> ether {{/if}} yet.</p>
 
     {{#if hasNode}}
       {{#if isMine}}
-        {{> finalizeButton owner=deedOwner}}
+
+        <button class="dapp-block-button finalize" disabled={{finalizing}}>
+          {{#if finalizing}}
+            Setting it up...
+          {{else}}
+            Set up your name 
+            {{#if canRefund}}
+            (and get {{dapp_formatBalance refund "0,0.00[0000]"}}  ether back)
+            {{/if}}
+          {{/if}}
+        </button>
+
       {{else}}
-        <button class="dapp-block-button disabled" disabled>Only owner can finalize</button>      
+        <button class="dapp-block-button disabled" disabled>Only owner can set up</button>      
       {{/if}}
     {{else}}
     {{> components_noNode}}
@@ -178,14 +189,4 @@
         {{/if}}
         
     </ul>
-</template>
-
-<template name="finalizeButton">
-  <button class="dapp-block-button finalize" disabled={{finalizing}}>
-    {{#if finalizing}}
-      Finalizing...
-    {{else}}
-      Finalize it 
-    {{/if}}
-  </button>
 </template>
