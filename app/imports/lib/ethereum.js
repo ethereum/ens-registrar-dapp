@@ -352,7 +352,9 @@ export default ethereum = (function() {
           // any name whose registration date has passed and isn't finalized
           {mode: {$nin: ['open', 'owned', 'forbidden']}, registrationDate: {$lt: now}, name:{$gt: ''}},
           // any name that is open or should be open by now
-          {mode: {$in: ['open', 'not-yet-available']}, availableDate: {$lt: now}, name:{$gt: ''}}
+          {mode: {$in: ['open', 'not-yet-available']}, availableDate: {$lt: now}, name:{$gt: ''}}, 
+          // any name that I don't know the mode
+          {mode: {$exists: false}, name:{$gt: ''}}
           ]}, {limit:100}).fetch();
 
       console.log('update Reveal Names: ', _.pluck(names, 'name').join(', '));

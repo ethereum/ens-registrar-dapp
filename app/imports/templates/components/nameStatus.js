@@ -121,7 +121,7 @@ Template['components_nameStatus'].onCreated(function() {
     lookupName(searched);
   })
   
-  setInterval(() => lookupName(Session.get('searched')), 1000);
+  setInterval(() => lookupName(Session.get('searched')), 10000);
 });
 
 Template['components_nameStatus'].events({
@@ -164,7 +164,7 @@ Template['components_nameStatus'].helpers({
     medianValue() {
       var disputedNames = Names.find({value: {$gt:0.01}}, {sort: {value: 1}}).fetch();
       if (!disputedNames) return '---';
-      return disputedNames[Math.floor(disputedNames.length/2)].value;
+      return Math.round(100*disputedNames[Math.floor(disputedNames.length/2)].value)/100;
     }, 
     percentageDisputed() {
       return Math.round(100 - (100 * Names.find({value: {$gt:0.01}}).count() / Names.find({value: {$gt:0}}).count())) || 0;
