@@ -1,0 +1,11 @@
+{
+  "dapp": {
+    "app": {
+      "title": "ENS 등록",
+      "texts": {
+          "connectionErrorMist": "연결 할 수 없습니다. 다음 방법으로 geth를 실행하세요:<br><br><small><code>__node__</code><br><br>IPC 경로를 다른 경로를 사용할 때 기본 경로로 설정했는지 확인하십시오. <code>datadir</code>예<br><code>geth --datadir ... --ipcpath /Users/&lt;yourUser&gt;/Library/Ethereum/geth.ipc</code><br>or<br><code>geth --datadir ... --ipcpath /Users/&lt;yourUser&gt;/.ethereum/geth.ipc</code>.<br><br>선택적으로 아래 코드를 추가 할 수 있습니다:<code>--unlock &lt;yourAccount&gt;.</code></small>",
+          "connectionErrorBrowser": "연결 할 수 없습니다. 다음 옵션으로 geth를 실행하세요:<br><br><small><code>__node__</code><br><br>선택적으로 아래 코드를 추가 할 수 있습니다:<code>--unlock &lt;yourAccount&gt;.</code></small>"
+      }
+    }
+  }
+}

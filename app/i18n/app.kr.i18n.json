@@ -1,0 +1,30 @@
+{
+    "app": {
+        "loading": "로딩 중...",
+        "offline": "연결 할 수 없습니다.",
+        "logginIn": "로그인 중..."
+    },
+    "error": {
+        "insufficientRights": "동작을 수행하기 위한 권한이 없습니다."
+		, "notFound": "페이지 없음..."
+    },
+    "buttons": {
+        "ok": "확인",
+        "cancel": "취소",
+        "save": "저장",
+        "edit": "수정",
+        "send": "보내기",
+        "create": "생성",
+        "tryToReconnect": "다시 연결"
+    },
+    "commonWords": {
+        "you": "당신",
+        "send": "보내기",
+        "or": "또는",
+        "of": "의",
+        "with": "와",
+        "and": "그리고",
+        "on": "위에",
+        "per": "당"
+    }
+}
