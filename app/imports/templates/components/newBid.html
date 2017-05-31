@@ -6,8 +6,9 @@
         <input type="text" min="0.01" step="any" name="bidAmount" placeholder="0.01" class="bid-amount dapp-large" pattern="[0-9\.,]*" value="{{TemplateVar.get 'bidAmount'}}"> <span>ether</span>
       </p>
       <br>
+
       {{#if TemplateVar.get 'showAdvanced'}}
-          <h3>Protect bid anonymity</h3>
+        <h3>Protect bid anonymity</h3>
         To keep the bid secret, we strongly recommend sending an extra amount 
         <br>
         <input type="text" min="0.01" step="0.1" name="depositAmount" placeholder="0.01" class="deposit-amount dapp-large" value="{{depositAmount}}"> <span>ether</span>  
