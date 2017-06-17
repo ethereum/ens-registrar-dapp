@@ -1,21 +1,41 @@
 <template name="view_names">
     {{#if watchesNames}}
-        <h3> Watched Names </h3>
         {{#if sortedByDate}}
         <ul class="names">
-            {{#each name in active}}
+            <li><h3>Owned</h3></li>
+            {{#each name in mode 'owned'}}
               <li>
                   {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
               </li>
             {{/each}}
-            
-            <hr>
 
-            {{#each name in inactive}}
+            <li><h3>Bids being revealed</h3></li>
+            {{#each name in mode 'reveal'}}
               <li>
                   {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
               </li>
             {{/each}}
+
+            <li><h3>Waiting for bids</h3></li>
+            {{#each name in mode 'auction'}}
+              <li>
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+              </li>
+            {{/each}}
+            {{#each name in mode 'open'}}
+              <li>
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+              </li>
+            {{/each}}
+
+            <li><h3>Unreleased</h3></li>
+            {{#each name in notYetAvailable}}
+              <li>
+                  {{ > components_nameLink fullname=(name.fullname) mode=(name.mode) }}
+              </li>
+            {{/each}}
+
+            
         </ul>
         <a href="" class="toggle-sort">Sort by name</a>
         {{else}} 
@@ -29,6 +49,7 @@
         <a href="" class="toggle-sort">Sort by mode</a>        
         {{/if}}
         
+        <br>
         <br>
 
     {{/if}}

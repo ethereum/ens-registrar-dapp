@@ -83,14 +83,14 @@ Template['status-owned'].helpers({
   owner() {
     return TemplateVar.get('owner')
   },
-  hasOwner() {
+  hasENSOwner() {
     return Number(TemplateVar.get('owner')) > 0;
   },
   deedOwner() {
     var entry = TemplateVar.get('entryData')
     if (!entry) return '';
     return entry.owner;
-  },
+  }, 
   isMine() {
     var entry = TemplateVar.get('entryData')
     var accounts = TemplateVar.get('accounts')
@@ -163,7 +163,7 @@ Template['status-owned'].helpers({
   needsFinalization() {
     var entry = TemplateVar.get('entryData');
     var owner = TemplateVar.get('owner');
-    if (!entry) return;
+    if (!entry) return true;
     return owner !== entry.owner;
   },
   refund() {
@@ -177,7 +177,8 @@ Template['status-owned'].helpers({
     return entry.deedBalance !== entry.value;  
   },
   finalizing() {
-    return TemplateVar.get('finalizing');
+    const name = Session.get('searched');    
+    return TemplateVar.get('finalizing-'+name);
   }
 })
 
@@ -317,12 +318,12 @@ Template['status-owned'].events({
 
     console.log('template' ,template)
     
-    TemplateVar.set(template, 'finalizing', true);
+    TemplateVar.set(template, 'finalizing-'+name, true);
     registrar.finalizeAuction(name, {
       from: template.data.entry.deed.owner,
       gas: 200000
     }, Helpers.getTxHandler({
-      onDone: () => TemplateVar.set(template, 'finalizing', false),
+      onDone: () => TemplateVar.set(template, 'finalizing-'+name, false),
       onSuccess: () => Helpers.refreshStatus()
     }));
   }

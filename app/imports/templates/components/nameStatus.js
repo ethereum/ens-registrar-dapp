@@ -28,6 +28,7 @@ Template['components_nameStatus'].onCreated(function() {
     try {
       registrar.getEntry(name, (err, entry) => {
         if(!err && entry) {
+
           let prevInfo = TemplateVar.get(template, 'nameInfo');
           TemplateVar.set(template, 'loading', false);
           
@@ -38,6 +39,8 @@ Template['components_nameStatus'].onCreated(function() {
               //don't update unless name and status changed
               return;
           }
+
+          console.log('getEntry', entry);
 
           if (!entry.availableDate || entry.availableDate == 0) {
             registrar.getAllowedTime(name, (err, timestamp) => {
