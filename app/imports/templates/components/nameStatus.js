@@ -40,6 +40,8 @@ Template['components_nameStatus'].onCreated(function() {
               return;
           }
 
+          console.log('getEntry', entry);
+
           if (!entry.availableDate || entry.availableDate == 0) {
             registrar.getAllowedTime(name, (err, timestamp) => {
               entry.availableDate = timestamp.toFixed();
