@@ -5,7 +5,7 @@
     <h1 class="domain-name"><strong>{{TemplateVar.get 'name'}}</strong> is owned</h1> 
   {{/if}}
 
-  <p>
+  <p> 
       This name was registered at <em>{{registrationDate}}</em>. Owner offered to pay up to <em>{{highestBid}} ether</em>. 
   {{#if noBids}} 
       No other bid was above the minimum of <em>0.01 ether</em>.
@@ -15,9 +15,11 @@
   </p>
 
   {{#if needsFinalization}}
-    <p>Owned by: {{> components_address addr=deedOwner}} </p>
-    {{#if hasOwner}}
-      <p>Currently assigned to: {{> components_address addr=owner}} </p>
+    {{#if hasENSOwner}}
+      <p>Owned by: {{> components_address addr=deedOwner}} </p>
+      <p>Currently managed by: {{> components_address addr=owner}} </p>
+    {{else}}
+      <p>Owned by: {{> components_address addr=deedOwner}} </p>
     {{/if}}
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p> 
 
@@ -46,7 +48,7 @@
 
   {{else}}
 
-    <p>Owned by: {{> components_address addr=owner}} </p>
+    <p>Owned by: {{> components_address addr=deedOwner}} </p>
     <p>Needs to be renewed by: <strong>{{renewalDate}}</strong></p>
  
 

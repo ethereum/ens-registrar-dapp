@@ -88,6 +88,8 @@ input[type='checkbox'] + label {
 }
 
 .container {
+  display: flex;
+
   h1 {
     top: 0;
     transition: top 1s ease-in-out;
@@ -131,6 +133,8 @@ input[type='checkbox'] + label {
 }
 
 aside {
+  overflow: auto;
+
   h3 {
     margin-bottom: 0;
   }
@@ -209,6 +213,7 @@ ul.names {
 .main-content {
     padding-bottom: @gridHeight * 5;
     transition: opacity 0.25s;
+    overflow: auto;
 
     &.loading {
         opacity: 0.5;

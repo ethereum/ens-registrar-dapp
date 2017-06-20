@@ -4,7 +4,10 @@
     {{#if (TemplateVar.get 'isReady') }}
       {{> components_nameStatus }}
     {{else}}
+
       {{#if (TemplateVar.get 'theresAnError') }}
+
+      <div class="main-content col-md-12">
         {{#if (TemplateVar.get 'networkError')}}
           {{> useCustomContract }}
         {{else}}
@@ -12,9 +15,15 @@
           <p>{{TemplateVar.get 'description'}}</p>
           <button class="dapp-block-button retry">Retry</button>
         {{/if}}
+      </div>
+
       {{else}}
+
+      <div class="main-content col-md-12">
         <h1 class="connection-status">{{TemplateVar.get 'description'}}</h1>
         {{> component_explainerBody}}
+      </div>
+
       {{/if}}
     {{/if}}
   </main>
