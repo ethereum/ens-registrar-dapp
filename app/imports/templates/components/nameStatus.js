@@ -192,7 +192,47 @@ Template['components_nameStatus'].helpers({
     }
 });
 
+
+Template['status-forbidden-can-invalidate'].onCreated(function() {
+  const template = this;
+
+  web3.eth.getAccounts((err, accounts) => {
+    if (!err && accounts && accounts.length > 0) {
+      TemplateVar.set(template, 'account', accounts[0]);
+    }
+  })
+})
+
+Template['status-forbidden-can-invalidate'].events({
+  'click button.invalidate': function(e) {
+    e.preventDefault();        
+    name = Session.get('searched');
+    TemplateVar.set('invalidating', true);
+
+    registrar.invalidateName(name, { from: TemplateVar.get('account'), gas: 300000 },
+      Helpers.getTxHandler({
+        onSuccess: () => {
+            GlobalNotification.warning({
+              content: 'Name Invalidated',
+              duration: 5
+            })
+        },
+        onError: () => {
+          GlobalNotification.error({
+            content: 'Could not invalidate',
+            duration: 5
+          });
+      }
+      })
+    );
+
+  }
+});
+
 Template['status-forbidden-can-invalidate'].helpers({
+  hasNode() {
+      return LocalStore.get('hasNode');
+  },
   hasNode() {
       return LocalStore.get('hasNode');
   }

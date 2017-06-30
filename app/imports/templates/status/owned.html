@@ -94,8 +94,8 @@
           {{/if}}
           
         {{else}}
-          {{#if records.content}}
-            <a href="bzz://{{records.content}}/">bzz://{{records.content}}/</a> <br><br>
+          {{#if hasContent}}
+            <a href="http://swarm-gateways.net/bzz://{{records.content}}/">bzz://{{records.content}}/</a> <br><br>
             {{#if isMine}}
               <button class="dapp-block-button edit-hash dapp-small">Edit</button>
             {{/if}}
@@ -160,6 +160,19 @@
         
     </div>
     {{/if}}  <!-- /if mine -->
+
+    <hr>    
+    <h3> Set reverse record </h3>
+    <p> This allows someone looking at <strong>{{deedOwner}}</strong> to know it want to mainly to be identified with this <strong>{{name}}</strong>.  <br></p>
+    
+    {{#if claiming}}
+    <button class="dapp-block-button disabled dapp-small" disabled>Setting it up...</button>
+    {{else}}
+    <button class="dapp-block-button claim dapp-small"> Associate account to name </button>
+    {{/if}}
+    <br>
+
+
   {{/if}}   <!-- /if needsFinalizing -->
 
     {{#if hasBids}}
