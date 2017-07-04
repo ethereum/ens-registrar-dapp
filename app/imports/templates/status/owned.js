@@ -30,6 +30,7 @@ Template['status-owned'].onCreated(function() {
     }
   })   
 
+
   function getContent(name) {
     var node = namehash(name)
     var resolverAddress = ens.resolver(node);
@@ -52,6 +53,9 @@ Template['status-owned'].onCreated(function() {
     }
   });
 
+
+  
+
   template.autorun(() => {
     const name = Session.get('searched');
     if (prevName == name) return;
@@ -73,9 +77,21 @@ Template['status-owned'].onCreated(function() {
     TemplateVar.set(template, 'hasSetResolver', false);
     TemplateVar.set(template, 'owner', entry.owner);
 
-    ens.owner(entry.fullname , (err, res) => {
+    ens.owner(entry.fullname , (err, owner) => {
       if (!err) {
-        TemplateVar.set(template, 'owner', res);
+        // gets owner of current name
+        TemplateVar.set(template, 'owner', owner);
+        
+        ens.reverse(owner, (err, resolver) =>{
+            // gets the name that owner goes by
+            if (!err && resolver.name) {
+              resolver.name((err, name) => {   
+                // check if claimed name is valid
+                console.log('reverseIsSet', name, entry.fullname)                     
+                TemplateVar.set(template, 'reverseIsSet', name == entry.fullname); 
+              });
+            }
+        })
       }
     });
     ens.resolver(entry.fullname, (err, res) => {
@@ -265,6 +281,7 @@ Template['status-owned'].events({
   'click .claim': function(e, template) {
     const owner = TemplateVar.get('owner');
     const name = template.data.entry.name;
+
 
     const reverseRegistrar = TemplateVar.get(template, 'reverseRegistrar');
 

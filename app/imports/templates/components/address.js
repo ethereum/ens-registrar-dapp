@@ -1,17 +1,34 @@
 import { ens } from '/imports/lib/ethereum';
 
 function validateName(claimedAddr, name, cb) {
+  // Uses owner instead of addr()
+
   ens.resolver(name, (err, res) => {
-    if (err) {
-      return cb(err);
+    // if (err) {
+    //   return cb(err);
+    // }
+
+    if (res) {
+      // If there's a resolver, check addr()
+      res.addr((err, actualAddr) => {
+        if (err) {
+          return cb(err);
+        }
+        cb(null, claimedAddr == actualAddr);
+      });
+    } else {
+      // If there's no resolver set, check owner of name
+      ens.owner(name, (err, actualAddr) => {
+        if (err) {
+          return cb(err);
+        }
+        cb(null, claimedAddr == actualAddr);
+      });    
     }
-    res.addr((err, actualAddr) => {
-      if (err) {
-        return cb(err);
-      }
-      cb(null, claimedAddr == actualAddr);
-    });
+    
   });
+
+  
 }
 
 Template['components_address'].onCreated(function() {
@@ -30,6 +47,7 @@ Template['components_address'].onCreated(function() {
     ens.reverse(addr, (err, resolver) =>{
       if (!err && resolver.name) {
         resolver.name((err, name) => {
+
           validateName(addr, name, (err, isValid) => {
             if (!err && isValid) {
               TemplateVar.set(template, 'name', name);
