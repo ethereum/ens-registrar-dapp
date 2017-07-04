@@ -120,7 +120,11 @@
         </p>
 
         {{#if hasNode}}
-        <button class="dapp-block-button invalidate"> Invalidate </button>
+          {{#unless TemplateVar.get 'invalidating'}}
+            <button class="dapp-block-button invalidate"> Invalidate </button>
+            {{else}}
+            <button class="dapp-block-button invalidate" disabled> Invalidating... </button>
+            {{/unless}}
         {{else}}
         {{> components_noNode}}
         {{/if}}

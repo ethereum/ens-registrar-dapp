@@ -16,6 +16,9 @@ function getPublicAddrResolver() {
   return publicAddrResolver;
 }
 
+
+
+
 Template['status-owned'].onCreated(function() {
   const template = this;
   TemplateVar.set(template, 'owner', null);
@@ -26,6 +29,32 @@ Template['status-owned'].onCreated(function() {
       TemplateVar.set(template, 'accounts', accounts);
     }
   })   
+
+
+  function getContent(name) {
+    var node = namehash(name)
+    var resolverAddress = ens.resolver(node);
+    if (resolverAddress === '0x0000000000000000000000000000000000000000') {
+      return "0x0000000000000000000000000000000000000000000000000000000000000000";
+    }
+    return resolverContract.at(resolverAddress).content(node);
+  }
+
+
+
+    // // namehash('addr.reverse') = 'd1fc7a8be8c2cba3af74a24ebe54bbde1d4708b33c472dfda6209bfa347264c7'
+    // var reverseRegistrar = ;
+
+  ens.owner('addr.reverse' , (err, res) => {
+    if (!err) {
+      var reverseRegistrarContract = web3.eth.contract([{"constant":false,"inputs":[{"name":"owner","type":"address"},{"name":"resolver","type":"address"}],"name":"claimWithResolver","outputs":[{"name":"node","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"owner","type":"address"}],"name":"claim","outputs":[{"name":"node","type":"bytes32"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"ens","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"defaultResolver","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":true,"inputs":[{"name":"addr","type":"address"}],"name":"node","outputs":[{"name":"ret","type":"bytes32"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"name","type":"string"}],"name":"setName","outputs":[{"name":"node","type":"bytes32"}],"payable":false,"type":"function"},{"inputs":[{"name":"ensAddr","type":"address"},{"name":"resolverAddr","type":"address"}],"payable":false,"type":"constructor"}]);
+
+      TemplateVar.set(template, 'reverseRegistrar', reverseRegistrarContract.at(res));
+    }
+  });
+
+
+  
 
   template.autorun(() => {
     const name = Session.get('searched');
@@ -48,9 +77,21 @@ Template['status-owned'].onCreated(function() {
     TemplateVar.set(template, 'hasSetResolver', false);
     TemplateVar.set(template, 'owner', entry.owner);
 
-    ens.owner(entry.fullname , (err, res) => {
+    ens.owner(entry.fullname , (err, owner) => {
       if (!err) {
-        TemplateVar.set(template, 'owner', res);
+        // gets owner of current name
+        TemplateVar.set(template, 'owner', owner);
+        
+        ens.reverse(owner, (err, resolver) =>{
+            // gets the name that owner goes by
+            if (!err && resolver.name) {
+              resolver.name((err, name) => {   
+                // check if claimed name is valid
+                console.log('reverseIsSet', name, entry.fullname)                     
+                TemplateVar.set(template, 'reverseIsSet', name == entry.fullname); 
+              });
+            }
+        })
       }
     });
     ens.resolver(entry.fullname, (err, res) => {
@@ -63,7 +104,7 @@ Template['status-owned'].onCreated(function() {
         });
         res.content((err, content) => {
           if (!err) {
-            TemplateVar.set(template, 'content', content);
+            TemplateVar.set(template, 'content', content.replace('0x', ''));
           }
         });
       }
@@ -140,11 +181,14 @@ Template['status-owned'].helpers({
     var val = entry.highestBid;
     return web3.fromWei(val, 'ether');
   },
-  content() {
-    return TemplateVar.get('content') == '0x' ? 'not set' : TemplateVar.get('content') ;
+  hasContent() {
+    return TemplateVar.get('content') != 0  ;
   },
   transferring() {
     return TemplateVar.get('transferring');
+  },
+  claiming() {
+    return TemplateVar.get('claiming');
   },
   releasing() {
     return TemplateVar.get('releasing');
@@ -207,7 +251,7 @@ Template['status-owned'].events({
             content: 'Could not transfer name',
             duration: 5
           });
-          TemplateVar.set(template, 'releasing', false);
+          TemplateVar.set(template, 'transferring', false);
       }
       })
     );
@@ -230,6 +274,31 @@ Template['status-owned'].events({
             duration: 5
           });
           TemplateVar.set(template, 'releasing', false);
+      }
+    })
+    );
+  },
+  'click .claim': function(e, template) {
+    const owner = TemplateVar.get('owner');
+    const name = template.data.entry.name;
+
+
+    const reverseRegistrar = TemplateVar.get(template, 'reverseRegistrar');
+
+    TemplateVar.set(template, 'claiming', true);
+    reverseRegistrar.setName(name+'.eth', { from: owner, gas: 300000 },
+      Helpers.getTxHandler({
+        onSuccess: () => GlobalNotification.warning({
+          content: 'Association was completed',
+          duration: 5
+      }),
+        onDone: () => TemplateVar.set(template, 'claiming', false),
+        onError: () => {
+          GlobalNotification.error({
+            content: 'Could not make reverse record',
+            duration: 5
+          });
+          TemplateVar.set(template, 'claiming', false);
       }
     })
     );

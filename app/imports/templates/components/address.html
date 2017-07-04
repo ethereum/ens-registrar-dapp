@@ -4,9 +4,6 @@
       {{> dapp_identicon identity=addr class="dapp-tiny"}}
       {{#if hasName}}
         {{ > components_nameLink fullname=name }}
-        {{#if mine}}
-          <i class="icon-user help owns" title="Account is yours"></i>
-        {{/if}}
       {{else}}
         {{#if mine}}
           <em class="name">this account belongs to you</em>
