@@ -16,9 +16,6 @@ function getPublicAddrResolver() {
   return publicAddrResolver;
 }
 
-
-
-
 Template['status-owned'].onCreated(function() {
   const template = this;
   TemplateVar.set(template, 'owner', null);
@@ -30,7 +27,6 @@ Template['status-owned'].onCreated(function() {
     }
   })   
 
-
   function getContent(name) {
     var node = namehash(name)
     var resolverAddress = ens.resolver(node);
@@ -39,8 +35,6 @@ Template['status-owned'].onCreated(function() {
     }
     return resolverContract.at(resolverAddress).content(node);
   }
-
-
 
     // // namehash('addr.reverse') = 'd1fc7a8be8c2cba3af74a24ebe54bbde1d4708b33c472dfda6209bfa347264c7'
     // var reverseRegistrar = ;
@@ -52,9 +46,6 @@ Template['status-owned'].onCreated(function() {
       TemplateVar.set(template, 'reverseRegistrar', reverseRegistrarContract.at(res));
     }
   });
-
-
-  
 
   template.autorun(() => {
     const name = Session.get('searched');
@@ -181,6 +172,9 @@ Template['status-owned'].helpers({
     var val = entry.highestBid;
     return web3.fromWei(val, 'ether');
   },
+  content() {
+    return TemplateVar.get('content') == '0x' ? 'not set' : TemplateVar.get('content').replace('0x','');
+  },
   hasContent() {
     return TemplateVar.get('content') != 0  ;
   },
@@ -223,6 +217,19 @@ Template['status-owned'].helpers({
   finalizing() {
     const name = Session.get('searched');    
     return TemplateVar.get('finalizing-'+name);
+  },
+  settingResolver(){
+    const name = Session.get('searched');
+    console.log('settingResolver', name, TemplateVar.get('settingResolver-'+name));
+    
+    return TemplateVar.get('settingResolver-'+name);
+
+  },
+  settingAddress(){
+    const name = Session.get('searched');
+    console.log('settingAddr', name, TemplateVar.get('settingAddr-'+name));
+    return TemplateVar.get('settingAddr-'+name);
+
   }
 })
 
@@ -319,11 +326,11 @@ Template['status-owned'].events({
       });
       return;
     }
-    TemplateVar.set('settingResolver', true);
+    TemplateVar.set('settingResolver-'+fullname, true);
     ens.setResolver(fullname, publicResolver.address, {from: owner, gas: 300000},
       Helpers.getTxHandler({
         onSuccess: () => Helpers.refreshStatus(),
-        onDone: () => TemplateVar.set(template, 'settingResolver', false)
+        onDone: () => TemplateVar.set(template, 'settingResolver-'+fullname, false)
       })
     );
   },
@@ -345,11 +352,11 @@ Template['status-owned'].events({
       });
       return;
     }
-    TemplateVar.set('settingAddr', true)
+    TemplateVar.set('settingAddr-'+fullname, true)
     publicResolver.setAddr(ens.namehash(fullname), newAddr, {from: owner, gas: 300000}, 
       Helpers.getTxHandler({
         onSuccess: () => Helpers.refreshStatus(),
-        onDone: () => TemplateVar.set(template, 'settingAddr', false)
+        onDone: () => TemplateVar.set(template, 'settingAddr-'+fullname, false)
       })
     )
   },

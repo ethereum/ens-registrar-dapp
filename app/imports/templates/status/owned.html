@@ -60,7 +60,7 @@
         {{#if (TemplateVar.get 'editingAddr')}}
           {{> dapp_addressInput }} <br>
           
-          {{#if (TemplateVar.get 'settingAddr')}}
+          {{#if (TemplateVar.get 'settingAddress')}}
             <button class="dapp-block-button disabled dapp-small" disabled>Applying...</button>
             <button class="dapp-block-button disabled dapp-small" disabled>Cancel</button>
           {{else}}
@@ -71,11 +71,11 @@
         {{else}}
           {{#if records.addr}}
             {{> components_address addr=records.addr }} <br><br>
-            {{#if isMine}}
-              <button class="dapp-block-button edit-addr dapp-small">Edit</button>
-            {{/if}}
           {{else}}
-            <span>not set</span>
+            <span>Address not set</span>
+          {{/if}}
+          {{#if isMine}}
+            <br/><button class="dapp-block-button edit-addr dapp-small">Edit</button>
           {{/if}}
         {{/if}}
       </p>
@@ -95,12 +95,13 @@
           
         {{else}}
           {{#if hasContent}}
-            <a href="http://swarm-gateways.net/bzz://{{records.content}}/">bzz://{{records.content}}/</a> <br><br>
-            {{#if isMine}}
-              <button class="dapp-block-button edit-hash dapp-small">Edit</button>
-            {{/if}}
+            <a href="bzz:/{{content}}/">bzz://{{content}}/</a> <br>
+            <a href="http://swarm-gateways.net/bzz:/{{content}}/"> (click here if your browser doesn't support hash content addressing)</a> <br><br>
           {{else}}
-            <span>not set</span>
+            <span>Content not set</span><br/>
+          {{/if}}
+          {{#if isMine}}
+            <button class="dapp-block-button edit-hash dapp-small">Edit</button>
           {{/if}}
         {{/if}}
 
