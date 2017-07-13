@@ -32,7 +32,7 @@ ecmascript@0.6.1
 ecmascript-runtime@0.3.15
 ejson@1.0.13
 ethereum:dapp-styles@0.5.8
-ethereum:elements@0.7.12
+ethereum:elements@0.7.17
 ethereum:tools@0.6.0
 ethereum:web3@0.15.3
 fastclick@1.0.13
