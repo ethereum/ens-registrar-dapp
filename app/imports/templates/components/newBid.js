@@ -27,7 +27,7 @@ Template['components_newBid'].onRendered(function() {
   template.randomName = function() {
     if (typeof knownNames !== "undefined") {
       // gets a random name from our preimage hash
-      var someName = knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)];
+      var someName = knownNames[Math.floor(Math.random()*knownNames.length*launchRatio)%knownNames.length];
       if (someName.length > 6 && someName == someName.toLowerCase() && someName !== name) {
         // Check if it's correct
         return '0x' + web3.sha3(someName).replace('0x','');
