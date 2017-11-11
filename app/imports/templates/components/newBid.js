@@ -7,7 +7,7 @@ Template['components_newBid'].onRendered(function() {
   template = this;
   let name = Session.get('searched');
   TemplateVar.set(template, 'anonymizer', 0.5);
-  let launchRatio = (Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60);
+  let launchRatio = Math.min((Date.now()/1000 - registrar.registryStarted.toFixed())/(8*7*24*60*60), 1);
   console.log('launchRatio', launchRatio);
   TemplateVar.set(template, 'bidAmount', 0.01);
   TemplateVar.set(template, 'depositAmount', 0);
