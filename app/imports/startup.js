@@ -32,11 +32,10 @@ import './templates/layout/main.html';
 import './templates/views/names.html';
 import './templates/views/names.js';
 import './templates/modals/explainer.html';
+import './templates/modals/warning.html';
 import './templates/modals/backup.html';
 import './templates/modals/backup.js';
 import './templates/modals/restore.html';
 import './templates/modals/restore.js';
 
 import './index.js';
-
-

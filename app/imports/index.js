@@ -36,7 +36,7 @@ Meteor.startup(function() {
     // add class to the header when scrolling
     $(window).on('scroll', function() {
         var scrollPosition = $(window).scrollTop();
-        
+
         if( scrollPosition > 150 ) {
             $('header').addClass('fixed');
         } else if( scrollPosition > 90 ) {
@@ -47,7 +47,7 @@ Meteor.startup(function() {
         }
     })
 
-    // activates when back button is pressed 
+    // activates when back button is pressed
     window.onpopstate = function(event) {
         var name = event.currentTarget.location.hash.slice(1)
 
@@ -55,13 +55,12 @@ Meteor.startup(function() {
             Session.set('searched', name);
             Session.set('name', name);
             $('#search-input').val(name);
-            window.location.hash = '#' + name;    
+            window.location.hash = '#' + name;
         }
-        
+
     }
+
+    EthElements.Modal.show('modals_warning', {
+      class: 'explainer-modal'
+    });
 });
-
-
-
-
-
